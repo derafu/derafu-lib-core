@@ -22,13 +22,13 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-use Derafu\Lib\Core\Application;
-use Derafu\Lib\Core\Common\Contract\ApplicationInterface;
+namespace Derafu\Lib\Core;
 
-// Función global para el acceso al contenedor de servicios de la biblioteca.
-if (!function_exists('derafu_lib')) {
-    function derafu_lib(?string $serviceRegistry = null): ApplicationInterface
-    {
-        return Application::getInstance($serviceRegistry);
-    }
+use Derafu\Lib\Core\Common\Abstract\AbstractServiceRegistry;
+
+/**
+ * Registro de servicios de la aplicación.
+ */
+class ServiceRegistry extends AbstractServiceRegistry
+{
 }

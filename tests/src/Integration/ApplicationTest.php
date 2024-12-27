@@ -24,7 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Tests\Integration;
 
-use Derafu\Lib\Core\Derafu;
+use Derafu\Lib\Core\Application;
+use Derafu\Lib\Core\Common\Abstract\AbstractServiceRegistry;
 use Derafu\Lib\Core\Foundation\Certificate\CertificateService;
 use Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface;
 use Derafu\Lib\Core\Foundation\Certificate\Worker\Faker as CertificateFaker;
@@ -41,7 +42,8 @@ use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-#[CoversClass(Derafu::class)]
+#[CoversClass(Application::class)]
+#[CoversClass(AbstractServiceRegistry::class)]
 #[CoversClass(CertificateService::class)]
 #[CoversClass(CertificateFaker::class)]
 #[CoversClass(LogService::class)]
@@ -50,7 +52,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 #[CoversClass(SignatureGenerator::class)]
 #[CoversClass(SignatureValidator::class)]
 #[CoversClass(XmlService::class)]
-class DerafuTest extends TestCase
+class ApplicationTest extends TestCase
 {
     private array $testCases = [
         'services' => [
@@ -61,14 +63,14 @@ class DerafuTest extends TestCase
         ],
     ];
 
-    public function testDerafuFunction(): void
+    public function testApplicationGlobalFunction(): void
     {
         $derafu = derafu_lib();
 
-        $this->assertInstanceOf(Derafu::class, $derafu);
+        $this->assertInstanceOf(Application::class, $derafu);
     }
 
-    public function testDerafuGetServices(): void
+    public function testApplicationGetServices(): void
     {
         $derafu = derafu_lib();
 
@@ -77,7 +79,7 @@ class DerafuTest extends TestCase
         }
     }
 
-    public function testDerafuServiceNotFoundWrongServiceName(): void
+    public function testApplicationServiceNotFoundWrongServiceName(): void
     {
         $derafu = derafu_lib();
 
@@ -86,7 +88,7 @@ class DerafuTest extends TestCase
         $derafu->getService('certificat');
     }
 
-    public function testDerafuServiceNotFoundInterfaceServiceName(): void
+    public function testApplicationServiceNotFoundInterfaceServiceName(): void
     {
         $derafu = derafu_lib();
 

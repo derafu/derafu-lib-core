@@ -1,0 +1,9 @@
+services:
+    derafu.lib.example_service:
+        class: \stdClass
+        public: true
+
+    derafu.lib.another_service:
+        class: derafu\lib\Core\Foundation\Service\AnotherService
+        arguments:
+            - 'Hello, World!'

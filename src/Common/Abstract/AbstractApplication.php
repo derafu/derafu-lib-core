@@ -25,25 +25,23 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Common\Abstract;
 
 use Derafu\Lib\Core\Common\Contract\ApplicationInterface;
-use Symfony\Component\Config\FileLocator;
+use Derafu\Lib\Core\Common\Contract\ServiceRegistryInterface;
+use Derafu\Lib\Core\ServiceRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
- * Clase base para la clase principal de la biblioteca.
+ * Clase base para la clase principal de la aplicación.
  */
 abstract class AbstractApplication implements ApplicationInterface
 {
     /**
-     * Archivo de configuración por defecto con los servicios de la biblioteca.
-     *
-     * @var string
+     * Clase para el registro de los servicios de la aplicación.
      */
-    protected string $servicesConfigFile = 'config/services.yaml';
+    protected string $serviceRegistry = ServiceRegistry::class;
 
     /**
      * Prefijo con el que deben ser nombrados todos los servicios asociados a la
-     * biblioteca.
+     * aplicación.
      *
      * @var string
      */
@@ -57,34 +55,32 @@ abstract class AbstractApplication implements ApplicationInterface
     private static self $instance;
 
     /**
-     * Contenedor de servicios de la biblioteca.
+     * Contenedor de servicios de la aplicación.
      *
      * @var ContainerBuilder
      */
     private ContainerBuilder $container;
 
     /**
-     * Constructor de la biblioteca.
+     * Constructor de la aplicación.
      *
      * Debe ser privado para respetar el patrón singleton.
-     *
-     * @param ?string $servicesConfigFile Archivo de configuración de servicios.
      */
-    private function __construct(?string $servicesConfigFile)
+    private function __construct(?string $serviceRegistry)
     {
         $this->container = new ContainerBuilder();
-        $this->loadServices($servicesConfigFile);
+        $this->getServiceRegistry($serviceRegistry)->register($this->container);
         $this->container->compile();
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getInstance(?string $servicesConfigFile = null): self
+    public static function getInstance(?string $serviceRegistry = null): self
     {
         if (!isset(self::$instance)) {
             $class = static::class;
-            self::$instance = new $class($servicesConfigFile);
+            self::$instance = new $class($serviceRegistry);
         }
 
         return self::$instance;
@@ -111,27 +107,15 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * Carga los servicios de la biblioteca al contenedor de servicios.
-     *
-     * @param ?string $configFile Archivo de configuración de servicios.
-     * @return void
+     * Obtiene el registry de servicios.
      */
-    private function loadServices(?string $configFile): void
-    {
-        if ($configFile === null) {
-            $configFile = $this->servicesConfigFile;
+    private function getServiceRegistry(
+        ?string $class = null
+    ): ServiceRegistryInterface {
+        $class = $class ?? $this->serviceRegistry;
+        $serviceRegistry = new $class();
 
-            if ($configFile[0] !== '/') {
-                $configFile = dirname(__DIR__, 3) . '/' . $configFile;
-            }
-        }
-
-        $loader = new YamlFileLoader(
-            $this->container,
-            new FileLocator(dirname($configFile))
-        );
-
-        $loader->load(basename($configFile));
+        return $serviceRegistry;
     }
 
     /**

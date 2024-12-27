@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Derafu: Biblioteca PHP (Núcleo).
+ * Derafu: aplicación PHP (Núcleo).
  * Copyright (C) Derafu <https://www.derafu.org>
  *
  * Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -25,7 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Common\Contract;
 
 /**
- * Interfaz para la clase principal de la biblioteca.
+ * Interfaz para la clase principal de la aplicación.
  */
 interface ApplicationInterface
 {

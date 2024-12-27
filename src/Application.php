@@ -27,8 +27,8 @@ namespace Derafu\Lib\Core;
 use Derafu\Lib\Core\Common\Abstract\AbstractApplication;
 
 /**
- * Clase principal de la biblioteca Derafu.
+ * Clase principal de la aplicación.
  */
-class Derafu extends AbstractApplication
+class Application extends AbstractApplication
 {
 }
