@@ -1,0 +1,46 @@
+# Configuración de servicios que provee la biblioteca.
+services:
+
+    # Configuración por defecto de los servicios.
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Alias de servicios principales (públicos).
+    derafu.lib.certificate:
+        alias: Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface
+        public: true
+    derafu.lib.log:
+        alias: Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface
+        public: true
+    derafu.lib.signature:
+        alias: Derafu\Lib\Core\Foundation\Signature\Contract\SignatureServiceInterface
+        public: true
+    derafu.lib.xml:
+        alias: Derafu\Lib\Core\Foundation\Xml\Contract\XmlServiceInterface
+        public: true
+
+    # Servicios principales (internos).
+    Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface:
+        class: Derafu\Lib\Core\Foundation\Certificate\CertificateService
+    Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface:
+        class: Derafu\Lib\Core\Foundation\Log\LogService
+    Derafu\Lib\Core\Foundation\Signature\Contract\SignatureServiceInterface:
+        class: Derafu\Lib\Core\Foundation\Signature\SignatureService
+    Derafu\Lib\Core\Foundation\Xml\Contract\XmlServiceInterface:
+        class: Derafu\Lib\Core\Foundation\Xml\XmlService
+
+    # Servicios auxiliares (internos): derafu.lib.signature.
+    Derafu\Lib\Core\Foundation\Signature\Contract\GeneratorInterface:
+        class: Derafu\Lib\Core\Foundation\Signature\Worker\Generator
+    Derafu\Lib\Core\Foundation\Signature\Contract\ValidatorInterface:
+        class: Derafu\Lib\Core\Foundation\Signature\Worker\Validator
+
+    # Servicios auxiliares (internos): derafu.lib.xml.
+    Derafu\Lib\Core\Foundation\Xml\Contract\EncoderInterface:
+        class: Derafu\Lib\Core\Foundation\Xml\Worker\Encoder
+    Derafu\Lib\Core\Foundation\Xml\Contract\DecoderInterface:
+        class: Derafu\Lib\Core\Foundation\Xml\Worker\Decoder
+    Derafu\Lib\Core\Foundation\Xml\Contract\ValidatorInterface:
+        class: Derafu\Lib\Core\Foundation\Xml\Worker\Validator
