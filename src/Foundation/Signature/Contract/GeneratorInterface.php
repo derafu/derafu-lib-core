@@ -25,7 +25,9 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Signature\Contract;
 
 use Derafu\Lib\Core\Foundation\Certificate\Entity\Certificate;
+use Derafu\Lib\Core\Foundation\Signature\Exception\SignatureException;
 use Derafu\Lib\Core\Foundation\Xml\Entity\Xml;
+use Derafu\Lib\Core\Foundation\Xml\Exception\XmlException;
 
 /**
  * Interfaz para la clase que maneja la generación de firmas electrónicas.

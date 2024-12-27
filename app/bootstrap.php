@@ -22,12 +22,12 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-use Derafu\Lib\Core\Common\Contract\KernelInterface;
+use Derafu\Lib\Core\Common\Contract\ApplicationInterface;
 use Derafu\Lib\Core\Derafu;
 
 // Función global para el acceso al contenedor de servicios de la biblioteca.
 if (!function_exists('derafu_lib')) {
-    function derafu_lib(?string $servicesConfigFile = null): KernelInterface
+    function derafu_lib(?string $servicesConfigFile = null): ApplicationInterface
     {
         return Derafu::getInstance($servicesConfigFile);
     }

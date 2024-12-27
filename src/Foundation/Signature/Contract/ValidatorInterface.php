@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Signature\Contract;
 
+use Derafu\Lib\Core\Foundation\Signature\Exception\SignatureException;
 use Derafu\Lib\Core\Foundation\Xml\Entity\Xml;
 
 /**

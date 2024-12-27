@@ -65,16 +65,17 @@ class Str extends IlluminateStr
      */
     public static function utf8decode(string $string): string
     {
+        if (empty($string)) {
+            return $string;
+        }
+
         if (!mb_detect_encoding($string, 'UTF-8', true)) {
             return $string;
         }
 
         $result = mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8');
-        if ($result === false) {
-            return $string;
-        }
 
-        return $result;
+        return $result ?: $string;
     }
 
     /**
@@ -88,15 +89,16 @@ class Str extends IlluminateStr
      */
     public static function utf8encode(string $string): string
     {
+        if (empty($string)) {
+            return $string;
+        }
+
         if (!mb_detect_encoding($string, 'ISO-8859-1', true)) {
             return $string;
         }
 
         $result = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
-        if ($result === false) {
-            return $string;
-        }
 
-        return $result;
+        return $result ?: $string;
     }
 }

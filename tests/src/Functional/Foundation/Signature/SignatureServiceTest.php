@@ -122,7 +122,7 @@ class SignatureServiceTest extends TestCase
         $xmlSigned = $this->signatureService->signXml(
             $xml,
             $this->certificate,
-            'LibreDTE_SetDoc'
+            'Derafu_SetDoc'
         );
 
         $this->signatureService->validateXml($xmlSigned);
@@ -139,7 +139,7 @@ class SignatureServiceTest extends TestCase
         $xmlSigned = $this->signatureService->signXml(
             $xml,
             $this->certificate,
-            'LibreDTE_SetDo'
+            'Derafu_SetDo'
         );
     }
 

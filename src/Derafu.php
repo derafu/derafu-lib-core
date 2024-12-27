@@ -24,11 +24,11 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core;
 
-use Derafu\Lib\Core\Common\Abstract\AbstractKernel;
+use Derafu\Lib\Core\Common\Abstract\AbstractApplication;
 
 /**
  * Clase principal de la biblioteca Derafu.
  */
-class Derafu extends AbstractKernel
+class Derafu extends AbstractApplication
 {
 }

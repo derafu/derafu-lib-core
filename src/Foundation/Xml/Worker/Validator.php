@@ -27,6 +27,7 @@ namespace Derafu\Lib\Core\Foundation\Xml\Worker;
 use Derafu\Lib\Core\Foundation\Xml\Contract\ValidatorInterface;
 use Derafu\Lib\Core\Foundation\Xml\Entity\Xml;
 use Derafu\Lib\Core\Foundation\Xml\Exception\XmlException;
+use LogicException;
 
 /**
  * Clase para la validación de XML y manejo de errores.
@@ -165,6 +166,13 @@ class Validator implements ValidatorInterface
      */
     private function getSchemaPath(Xml $xml): string
     {
+        // Si no hay servicio de almacenamiento se debe dar un error.
+        if (!isset($this->storageService)) {
+            throw new LogicException(
+                'No es posible determinar el esquema del XML para su validación pues no está asociado el servicio de almacenamiento. Se debe asociar el servicio o especificar la ruta absoluta al esquema al validar.'
+            );
+        }
+
         // Determinar el nombre del archivo del esquema del XML.
         $schema = $xml->getSchema();
         if ($schema === null) {
@@ -174,13 +182,14 @@ class Validator implements ValidatorInterface
         }
 
         // Armar la ruta al archivo del esquema y corroborar que exista.
-        $schemaPath = PathManager::getSchemasPath($schema);
-        if ($schemaPath === null) {
-            throw new XmlException(sprintf(
-                'No se encontró el archivo de esquema XML %s.',
-                $schema
-            ));
-        }
+        $schemaPath = '';
+        // $schemaPath = $this->storageService->getSchemasPath($schema);
+        // if ($schemaPath === null) {
+        //     throw new XmlException(sprintf(
+        //         'No se encontró el archivo de esquema XML %s.',
+        //         $schema
+        //     ));
+        // }
 
         // Entregar la ruta al esquema (existe y se puede leer el archivo).
         return $schemaPath;

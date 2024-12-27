@@ -144,7 +144,6 @@ class Validator implements ValidatorInterface
      *
      * @param XmlSignatureNode $signatureNode
      * @param string $xml String con el XML del nodo `Signature'.
-     * @return Xml
      */
     private function loadXmlOnSignatureNode(
         XmlSignatureNode $signatureNode,
@@ -167,7 +166,7 @@ class Validator implements ValidatorInterface
      *
      * Valida el DigestValue y la firma de dicho DigestValue.
      *
-     * @param Xml $doc Documento XML que se desea validar.
+     * @param Xml $xml Documento XML que se desea validar.
      * @param XmlSignatureNode $signatureNode Nodo de firma que se validará.
      * @return void
      * @throws SignatureException En caso de error de DigestValue o firma.

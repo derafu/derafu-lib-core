@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Xml\Contract;
 
 use Derafu\Lib\Core\Foundation\Xml\Entity\Xml;
+use Derafu\Lib\Core\Foundation\Xml\Exception\XmlException;
 
 /**
  * Interfaz para la clase que valida un documento XML.

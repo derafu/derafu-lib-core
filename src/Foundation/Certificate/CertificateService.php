@@ -58,6 +58,23 @@ class CertificateService implements CertificateServiceInterface
     private FakerInterface $faker;
 
     /**
+     * Constructor del servicio.
+     *
+     * @param LoaderInterface $loader
+     * @param ValidatorInterface $validator
+     * @param FakerInterface $faker
+     */
+    public function __construct(
+        LoaderInterface $loader,
+        ValidatorInterface $validator,
+        FakerInterface $faker
+    ) {
+        $this->loader = $loader;
+        $this->validator = $validator;
+        $this->faker = $faker;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function createFromFile(string $filepath, string $password): Certificate

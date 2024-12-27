@@ -131,10 +131,10 @@ class Faker implements FakerInterface
         string $C = 'CL',
         string $ST = 'Colchagua',
         string $L = 'Santa Cruz',
-        string $O = 'LibreDTE',
-        string $OU = 'Facturación Electrónica',
-        string $CN = 'LibreDTE Autoridad Certificadora de Pruebas',
-        string $emailAddress = 'fakes-certificates@libredte.cl',
+        string $O = 'Derafu',
+        string $OU = 'Tecnología',
+        string $CN = 'Derafu Autoridad Certificadora de Pruebas',
+        string $emailAddress = 'fakes-certificates@derafu.org',
         string $serialNumber = '76192083-9',
     ): self {
         $this->issuer = [
@@ -166,7 +166,7 @@ class Faker implements FakerInterface
     /**
      * {@inheritdoc}
      */
-    public function setPassword(string $password = 'i_love_libredte')
+    public function setPassword(string $password = 'i_love_derafu')
     {
         $this->password = $password;
     }

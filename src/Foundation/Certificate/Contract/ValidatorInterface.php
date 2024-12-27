@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Certificate\Contract;
 
 use Derafu\Lib\Core\Foundation\Certificate\Entity\Certificate;
+use Derafu\Lib\Core\Foundation\Certificate\Exception\CertificateException;
 
 /**
  * Interfaz para la clase que valida un certificado digital.

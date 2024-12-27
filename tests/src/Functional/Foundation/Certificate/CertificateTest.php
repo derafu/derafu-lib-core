@@ -57,7 +57,7 @@ class CertificateTest extends TestCase
             'getName' => 'Daniel',
             'getEmail' => 'daniel.bot@example.com',
             'isActive' => true,
-            'getIssuer' => 'LibreDTE Autoridad Certificadora de Pruebas',
+            'getIssuer' => 'Derafu Autoridad Certificadora de Pruebas',
         ];
         $actual = [
             'getID' => $certificate->getID(),

@@ -74,17 +74,17 @@ interface FakerInterface
         string $C = 'CL',
         string $ST = 'Colchagua',
         string $L = 'Santa Cruz',
-        string $O = 'LibreDTE',
-        string $OU = 'Facturación Electrónica',
-        string $CN = 'LibreDTE Autoridad Certificadora de Pruebas',
-        string $emailAddress = 'fakes-certificates@libredte.cl',
+        string $O = 'Derafu',
+        string $OU = 'Tecnología',
+        string $CN = 'Derafu Autoridad Certificadora de Pruebas',
+        string $emailAddress = 'fakes-certificates@derafu.org',
         string $serialNumber = '76192083-9',
     ): self;
 
     /**
      * Configura la validez del certificado.
      *
-     * @param string|null $days Días que el certificado será válido desde la
+     * @param int $days Días que el certificado será válido desde la
      * fecha actual. Si no se proporciona, tendrá validez de 365 días.
      * @return self
      */
@@ -96,7 +96,7 @@ interface FakerInterface
      * @param string $password Contraseña para proteger la clave privada.
      * @return void
      */
-    public function setPassword(string $password = 'i_love_libredte');
+    public function setPassword(string $password = 'i_love_derafu');
 
     /**
      * Obtiene la contraseña configurada.

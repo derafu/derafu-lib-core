@@ -48,19 +48,22 @@ interface LogServiceInterface extends LoggerInterface
      * permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param int|string $level Nivel de los logs que se desean recuperar.
+     * @param int|string|null $level Nivel de los logs que se desean recuperar.
      * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
-    public function getLogs(int $level = null, bool $newFirst = true): array;
+    public function getLogs(
+        int|string|null $level = null,
+        bool $newFirst = true
+    ): array;
 
     /**
      * Elimina los logs de un nivel específico de la bitácora.
      *
-     * @param int|string $level Nivel de los logs que se desean limpiar.
+     * @param int|string|null $level Nivel de los logs que se desean limpiar.
      * @return void
      */
-    public function clearLogs(?int $level = null): void;
+    public function clearLogs(int|string|null $level = null): void;
 
     /**
      * Recupera los logs y los elimina de la bitácora.
@@ -69,11 +72,11 @@ interface LogServiceInterface extends LoggerInterface
      * permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param int|string $level Nivel de los logs que se desean recuperar.
+     * @param int|string|null $level Nivel de los logs que se desean recuperar.
      * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
-    public function flushLogs(int $level = null, bool $newFirst = true): array;
+    public function flushLogs(int|string|null $level = null, bool $newFirst = true): array;
 
     /**
      * Registra un mensaje de nivel DEBUG en la bitácora.
@@ -153,7 +156,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getDebugLogs(): array;
@@ -164,7 +166,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getInfoLogs(): array;
@@ -175,7 +176,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getNoticeLogs(): array;
@@ -186,7 +186,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getWarningLogs(): array;
@@ -197,7 +196,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getErrorLogs(): array;
@@ -208,7 +206,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getCriticalLogs(): array;
@@ -219,7 +216,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getAlertLogs(): array;
@@ -230,7 +226,6 @@ interface LogServiceInterface extends LoggerInterface
      * Permite entregar los logs en el orden que fueron ingresados o de más
      * nuevo a más antiguo.
      *
-     * @param bool $newFirst Indica si se deben entregar logs nuevos primero.
      * @return array Arreglo con los logs solicitados.
      */
     public function getEmergencyLogs(): array;

@@ -55,7 +55,7 @@ class Validator implements ValidatorInterface
         // Validar que si el ID (RUN) termina con DV igual a "K", sea mayúscula.
         if ($dv === 'k') {
             throw new CertificateException(sprintf(
-                'El RUN %s asociado a la firma no es válido, termina en "k" (minúscula). Debe adquirir una nueva firma y al comprarla corroborar que la "K" sea mayúscula. Se recomienda no comprar con el mismo proveedor: %s. Esto es necesario porque LibreDTE no puede utilizar un RUN que terminan con "k" (minúscula) en el certificado digital (firma electrónica).',
+                'El RUN %s asociado a la firma no es válido, termina en "k" (minúscula). Debe adquirir una nueva firma y al comprarla corroborar que la "K" sea mayúscula. Se recomienda no comprar con el mismo proveedor: %s. No es posible utilizar un RUN que terminan con "k" (minúscula) en el certificado digital (firma electrónica).',
                 $id,
                 $certificate->getIssuer()
             ));

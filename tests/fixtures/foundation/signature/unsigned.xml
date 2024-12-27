@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <EnvioDTE>
-  <SetDTE ID="LibreDTE_SetDoc">
+  <SetDTE ID="Derafu_SetDoc">
     <Caratula>
       <RutEmisor>76192083-9</RutEmisor>
     </Caratula>

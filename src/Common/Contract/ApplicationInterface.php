@@ -25,8 +25,31 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Common\Contract;
 
 /**
- * Interfaz para el kernel de la biblioteca.
+ * Interfaz para la clase principal de la biblioteca.
  */
-interface KernelInterface
+interface ApplicationInterface
 {
+    /**
+     * Singleton para obtener siempre la misma instancia.
+     *
+     * @param ?string $servicesConfigFile Archivo de configuración de servicios.
+     * @return self
+     */
+    public static function getInstance(?string $servicesConfigFile = null): self;
+
+    /**
+     * Obtiene un servicio registrado en el contenedor.
+     *
+     * @param string $service
+     * @return object
+     */
+    public function getService(string $service): object;
+
+    /**
+     * Verifica si un servicio está registrado.
+     *
+     * @param string $service
+     * @return boolean
+     */
+    public function hasService(string $service): bool;
 }

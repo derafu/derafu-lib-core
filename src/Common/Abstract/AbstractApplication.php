@@ -24,15 +24,15 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Common\Abstract;
 
-use Derafu\Lib\Core\Common\Contract\KernelInterface;
+use Derafu\Lib\Core\Common\Contract\ApplicationInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
- * Clase base para el kernel de la biblioteca.
+ * Clase base para la clase principal de la biblioteca.
  */
-abstract class AbstractKernel implements KernelInterface
+abstract class AbstractApplication implements ApplicationInterface
 {
     /**
      * Archivo de configuración por defecto con los servicios de la biblioteca.
@@ -78,25 +78,20 @@ abstract class AbstractKernel implements KernelInterface
     }
 
     /**
-     * Singleton para obtener la misma instancia siempre del kernel.
-     *
-     * @param ?string $servicesConfigFile Archivo de configuración de servicios.
-     * @return self
+     * {@inheritdoc}
      */
     public static function getInstance(?string $servicesConfigFile = null): self
     {
         if (!isset(self::$instance)) {
-            self::$instance = new static($servicesConfigFile);
+            $class = static::class;
+            self::$instance = new $class($servicesConfigFile);
         }
 
         return self::$instance;
     }
 
     /**
-     * Obtiene un servicio registrado en el contenedor.
-     *
-     * @param string $service
-     * @return object
+     * {@inheritdoc}
      */
     public function getService(string $service): object
     {
@@ -106,10 +101,7 @@ abstract class AbstractKernel implements KernelInterface
     }
 
     /**
-     * Verifica si un servicio está registrado.
-     *
-     * @param string $service
-     * @return boolean
+     * {@inheritdoc}
      */
     public function hasService(string $service): bool
     {

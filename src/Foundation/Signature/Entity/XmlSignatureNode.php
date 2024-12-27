@@ -172,7 +172,7 @@ class XmlSignatureNode
      * Asigna la instancia de Xml construida con los datos del nodo de
      * la firma electrónica.
      *
-     * @param Xml $doc
+     * @param Xml $xml
      * @return self
      */
     public function setXml(Xml $xml): self

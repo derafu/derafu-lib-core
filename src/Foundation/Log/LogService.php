@@ -26,6 +26,7 @@ namespace Derafu\Lib\Core\Foundation\Log;
 
 use Derafu\Lib\Core\Foundation\Log\Abstract\AbstractLogService;
 use Derafu\Lib\Core\Foundation\Log\Contract\StorageInterface;
+use Derafu\Lib\Core\Foundation\Log\Entity\Level;
 use Derafu\Lib\Core\Foundation\Log\Storage\InMemoryStorage;
 use Derafu\Lib\Core\Foundation\Log\Worker\Processor;
 use Derafu\Lib\Core\Foundation\Log\Worker\StorageHandler;
@@ -90,14 +91,18 @@ class LogService extends AbstractLogService
     /**
      * {@inheritdoc}
      */
-    public function getLogs(int $level = null, bool $newFirst = true): array
-    {
+    public function getLogs(
+        int|string|null $level = null,
+        bool $newFirst = true
+    ): array {
+        // Obtener todosl os logs.
         $records = $this->storage->all();
-
         if ($level === null) {
             return $newFirst ? array_reverse($records) : $records;
         }
 
+        // Obtener logs de cierto nivel.
+        $level = (new Level($level))->getCode();
         $filtered = [];
         foreach ($records as $record) {
             if ($record->level->value === $level) {
@@ -111,7 +116,7 @@ class LogService extends AbstractLogService
     /**
      * {@inheritdoc}
      */
-    public function clearLogs(?int $level = null): void
+    public function clearLogs(int|string|null $level = null): void
     {
         // Borrar todos los logs.
         if ($level === null) {
@@ -120,6 +125,7 @@ class LogService extends AbstractLogService
         }
 
         // Dejar todos los logs excepto los de cierto nivel (esos se borran).
+        $level = (new Level($level))->getCode();
         $logs = array_filter(
             $this->storage->all(),
             fn ($log) => $log->level->value !== $level

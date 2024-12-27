@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Log\Worker;
 
 use Derafu\Lib\Core\Foundation\Log\Contract\StorageInterface;
+use Derafu\Lib\Core\Foundation\Log\Entity\Log;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord as MonologLogRecord;
 
@@ -55,6 +56,11 @@ class StorageHandler extends AbstractProcessingHandler
      */
     public function write(MonologLogRecord $logRecord): void
     {
+        if (!($logRecord instanceof Log)) {
+            $processor = new Processor();
+            $logRecord = $processor($logRecord);
+        }
+
         $this->storage->write($logRecord);
     }
 }

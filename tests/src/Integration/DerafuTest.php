@@ -27,6 +27,7 @@ namespace Derafu\Lib\Tests\Integration;
 use Derafu\Lib\Core\Derafu;
 use Derafu\Lib\Core\Foundation\Certificate\CertificateService;
 use Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface;
+use Derafu\Lib\Core\Foundation\Certificate\Worker\Faker as CertificateFaker;
 use Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface;
 use Derafu\Lib\Core\Foundation\Log\LogService;
 use Derafu\Lib\Core\Foundation\Log\Worker\StorageHandler as LogStorageHandler;
@@ -42,6 +43,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 #[CoversClass(Derafu::class)]
 #[CoversClass(CertificateService::class)]
+#[CoversClass(CertificateFaker::class)]
 #[CoversClass(LogService::class)]
 #[CoversClass(LogStorageHandler::class)]
 #[CoversClass(SignatureService::class)]

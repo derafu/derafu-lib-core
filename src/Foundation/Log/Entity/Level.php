@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Log\Entity;
 
+use InvalidArgumentException;
 use LogicException;
 use Monolog\Level as MonologLevel;
 use Psr\Log\LogLevel as PsrLogLevel;
@@ -193,6 +194,25 @@ class Level
      */
     public function getName(): string
     {
-        return MonologLevel::fromValue($this->code)->name;
+        return $this->getMonologLevel()->name;
+    }
+
+    /**
+     * Obtiene la instancia "enum" del nivel.
+     *
+     * @return MonologLevel
+     */
+    public function getMonologLevel(): MonologLevel
+    {
+        $level = MonologLevel::tryFrom($this->code);
+
+        if ($level === null) {
+            throw new InvalidArgumentException(sprintf(
+                'El código de nivel de log %d es inválido como nivel de Monolog.',
+                $this->code
+            ));
+        }
+
+        return $level;
     }
 }

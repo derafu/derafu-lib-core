@@ -58,7 +58,7 @@ abstract class AbstractLogService implements LogServiceInterface
      * Activa o desactiva el guardar quién llamó al log para los mensajes que se
      * escribirán en la bitácora.
      *
-     * @param bool $useCaller Define si se activa o no el backtrace.
+     * @param bool $saveCaller Define si se debe o no guardar el caller.
      * @return void
      */
     public function saveCaller(bool $saveCaller = true): void
@@ -71,7 +71,7 @@ abstract class AbstractLogService implements LogServiceInterface
      */
     public function log($level, $message, array $context = []): void
     {
-        $level = (new Level($level))->getCode();
+        $level = (new Level($level))->getMonologLevel();
         $context = $this->normalizeContext($context);
         $this->logger->log($level, $message, $context);
     }
@@ -79,8 +79,10 @@ abstract class AbstractLogService implements LogServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function flushLogs(int $level = null, bool $newFirst = true): array
-    {
+    public function flushLogs(
+        int|string|null $level = null,
+        bool $newFirst = true
+    ): array {
         $logs = $this->getLogs($level, $newFirst);
         $this->clearLogs($level);
 
