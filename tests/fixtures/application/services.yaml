@@ -1,9 +1,15 @@
 services:
-    derafu.lib.example_service:
+    derafu.lib.public_service:
+        class: Derafu\Lib\Tests\Functional\Foundation\TestService
+        public: true
+
+    derafu.lib.private_service:
+        class: derafu\lib\Tests\Functional\Foundation\TestPrivateService
+
+    derafu.lib.stdClass_service:
         class: \stdClass
         public: true
 
-    derafu.lib.another_service:
-        class: derafu\lib\Core\Foundation\Service\AnotherService
-        arguments:
-            - 'Hello, World!'
+    derafu.lib.adaptee_service:
+        class: Derafu\Lib\Tests\Functional\Foundation\TestAdaptee
+        public: true

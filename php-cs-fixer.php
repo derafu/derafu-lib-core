@@ -16,8 +16,8 @@ declare(strict_types=1);
  * PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública
  * General Affero de GNU para obtener una información más detallada.
  *
- * Debería haber recibido una copia de la Licencia Pública General Affero de
- * GNU junto a este programa.
+ * Debería haber recibido una copia de la Licencia Pública General Affero de GNU
+ * junto a este programa.
  *
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */

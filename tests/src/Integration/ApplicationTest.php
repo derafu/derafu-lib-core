@@ -16,84 +16,132 @@ declare(strict_types=1);
  * PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública
  * General Affero de GNU para obtener una información más detallada.
  *
- * Debería haber recibido una copia de la Licencia Pública General Affero de
- * GNU junto a este programa.
+ * Debería haber recibido una copia de la Licencia Pública General Affero de GNU
+ * junto a este programa.
  *
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
 namespace Derafu\Lib\Tests\Integration;
 
-use Derafu\Lib\Core\Application;
-use Derafu\Lib\Core\Common\Abstract\AbstractServiceRegistry;
-use Derafu\Lib\Core\Foundation\Certificate\CertificateService;
-use Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface;
-use Derafu\Lib\Core\Foundation\Certificate\Worker\Faker as CertificateFaker;
-use Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface;
-use Derafu\Lib\Core\Foundation\Log\LogService;
-use Derafu\Lib\Core\Foundation\Log\Worker\StorageHandler as LogStorageHandler;
-use Derafu\Lib\Core\Foundation\Signature\Contract\SignatureServiceInterface;
-use Derafu\Lib\Core\Foundation\Signature\SignatureService;
-use Derafu\Lib\Core\Foundation\Signature\Worker\Generator as SignatureGenerator;
-use Derafu\Lib\Core\Foundation\Signature\Worker\Validator as SignatureValidator;
-use Derafu\Lib\Core\Foundation\Xml\Contract\XmlServiceInterface;
-use Derafu\Lib\Core\Foundation\Xml\XmlService;
+use Derafu\Lib\Core\Foundation\Abstract\AbstractPackage;
+use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
+use Derafu\Lib\Core\Foundation\Application;
+use Derafu\Lib\Core\Foundation\CompilerPass;
+use Derafu\Lib\Core\Helper\Xml as XmlHelper;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\EncoderWorker as XmlEncoderWorker;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\XmlComponent;
+use Derafu\Lib\Core\Package\Prime\Contract\PrimePackageInterface;
+use Derafu\Lib\Core\Package\Prime\PrimePackage;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 #[CoversClass(Application::class)]
+#[CoversClass(AbstractPackage::class)]
 #[CoversClass(AbstractServiceRegistry::class)]
-#[CoversClass(CertificateService::class)]
-#[CoversClass(CertificateFaker::class)]
-#[CoversClass(LogService::class)]
-#[CoversClass(LogStorageHandler::class)]
-#[CoversClass(SignatureService::class)]
-#[CoversClass(SignatureGenerator::class)]
-#[CoversClass(SignatureValidator::class)]
-#[CoversClass(XmlService::class)]
+#[CoversClass(XmlComponent::class)]
+#[CoversClass(CompilerPass::class)]
+#[CoversClass(XmlHelper::class)]
+#[CoversClass(Xml::class)]
+#[CoversClass(XmlEncoderWorker::class)]
+#[CoversClass(PrimePackage::class)]
 class ApplicationTest extends TestCase
 {
     private array $testCases = [
-        'services' => [
-            'certificate' => CertificateServiceInterface::class,
-            'log' => LogServiceInterface::class,
-            'signature' => SignatureServiceInterface::class,
-            'xml' => XmlServiceInterface::class,
-        ],
+        'packages' => [
+            'prime' => [
+                'class' => PrimePackageInterface::class,
+                'components' => [
+                    'certificate' => CertificateComponentInterface::class,
+                    'log' => LogComponentInterface::class,
+                    'signature' => SignatureComponentInterface::class,
+                    'xml' => XmlComponentInterface::class,
+                ],
+            ],
+        ] ,
     ];
 
     public function testApplicationGlobalFunction(): void
     {
-        $derafu = derafu_lib();
+        $app = derafu_lib();
 
-        $this->assertInstanceOf(Application::class, $derafu);
+        $this->assertInstanceOf(Application::class, $app);
     }
 
-    public function testApplicationGetServices(): void
+    public function testApplicationGetPackages(): void
     {
-        $derafu = derafu_lib();
+        $app = derafu_lib();
 
-        foreach ($this->testCases['services'] as $name => $interface) {
-            $this->assertInstanceOf($interface, $derafu->getService($name));
+        foreach ($this->testCases['packages'] as $name => $package) {
+            $this->assertInstanceOf(
+                $package['class'],
+                $app->getPackage($name)
+            );
         }
     }
 
     public function testApplicationServiceNotFoundWrongServiceName(): void
     {
-        $derafu = derafu_lib();
+        $app = derafu_lib();
 
         $this->expectException(ServiceNotFoundException::class);
 
-        $derafu->getService('certificat');
+        $app->getService('foundation');
     }
 
     public function testApplicationServiceNotFoundInterfaceServiceName(): void
     {
-        $derafu = derafu_lib();
+        $app = derafu_lib();
 
         $this->expectException(ServiceNotFoundException::class);
 
-        $derafu->getService(CertificateServiceInterface::class);
+        $app->getService(PrimePackageInterface::class);
+    }
+
+    public function testApplicationServicePackagesCount(): void
+    {
+        $app = derafu_lib();
+
+        $this->assertSame(1, count($app->getPackages()));
+    }
+
+    public function testApplicationServiceMagicHierarchyPrimeXmlEncoder(): void
+    {
+        $app = derafu_lib();
+        $package = $app->getPackage('prime');
+        $component = $package->getComponent('xml');
+        $worker = $component->getWorker('encoder');
+
+        $data = ['root' => ['element' => 'Árbol']];
+        $expected = '<?xml version="1.0" encoding="ISO-8859-1"?>' . "\n<root>\n  <element>" .
+            mb_convert_encoding('Árbol', 'ISO-8859-1', 'UTF-8') . "</element>\n</root>\n"
+        ;
+
+        assert($worker instanceof XmlEncoderWorker);
+
+        $result = $worker->encode($data);
+        $this->assertSame($expected, $result->saveXml());
+    }
+
+    public function testApplicationServiceMethodsHierarchyPrimeXmlEncoder(): void
+    {
+        $app = derafu_lib();
+        $package = $app->getPrimePackage();
+        $component = $package->getXmlComponent();
+        $worker = $component->getEncoderWorker();
+
+        $data = ['root' => ['element' => 'Árbol']];
+        $expected = '<?xml version="1.0" encoding="ISO-8859-1"?>' . "\n<root>\n  <element>" .
+            mb_convert_encoding('Árbol', 'ISO-8859-1', 'UTF-8') . "</element>\n</root>\n"
+        ;
+
+        $result = $worker->encode($data);
+        $this->assertSame($expected, $result->saveXml());
     }
 }

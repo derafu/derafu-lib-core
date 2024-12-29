@@ -7,48 +7,42 @@ services:
         autoconfigure: true
         public: false
 
-    # Alias de servicios principales (públicos).
-    derafu.lib.certificate:
-        alias: Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface
-        public: true
-    derafu.lib.log:
-        alias: Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface
-        public: true
-    derafu.lib.signature:
-        alias: Derafu\Lib\Core\Foundation\Signature\Contract\SignatureServiceInterface
-        public: true
-    derafu.lib.xml:
-        alias: Derafu\Lib\Core\Foundation\Xml\Contract\XmlServiceInterface
-        public: true
+    # Paquetes.
+    Derafu\Lib\Core\Package\Prime\Contract\PrimePackageInterface:
+        class: Derafu\Lib\Core\Package\Prime\PrimePackage
 
-    # Servicios principales (internos).
-    Derafu\Lib\Core\Foundation\Certificate\Contract\CertificateServiceInterface:
-        class: Derafu\Lib\Core\Foundation\Certificate\CertificateService
-    Derafu\Lib\Core\Foundation\Log\Contract\LogServiceInterface:
-        class: Derafu\Lib\Core\Foundation\Log\LogService
-    Derafu\Lib\Core\Foundation\Signature\Contract\SignatureServiceInterface:
-        class: Derafu\Lib\Core\Foundation\Signature\SignatureService
-    Derafu\Lib\Core\Foundation\Xml\Contract\XmlServiceInterface:
-        class: Derafu\Lib\Core\Foundation\Xml\XmlService
+    # Componentes del paquete "prime".
+    Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Certificate\CertificateComponent
+    Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Log\LogComponent
+    Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Signature\SignatureComponent
+    Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Xml\XmlComponent
 
-    # Servicios auxiliares (internos): derafu.lib.certificate.
-    Derafu\Lib\Core\Foundation\Certificate\Contract\FakerInterface:
-        class: Derafu\Lib\Core\Foundation\Certificate\Worker\Faker
-    Derafu\Lib\Core\Foundation\Certificate\Contract\LoaderInterface:
-        class: Derafu\Lib\Core\Foundation\Certificate\Worker\Loader
-    Derafu\Lib\Core\Foundation\Certificate\Contract\ValidatorInterface:
-        class: Derafu\Lib\Core\Foundation\Certificate\Worker\Validator
+    # Workers del componente "prime.certificate".
+    Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\FakerWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\FakerWorker
+    Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\LoaderWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker
+    Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\ValidatorWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\ValidatorWorker
 
-    # Servicios auxiliares (internos): derafu.lib.signature.
-    Derafu\Lib\Core\Foundation\Signature\Contract\GeneratorInterface:
-        class: Derafu\Lib\Core\Foundation\Signature\Worker\Generator
-    Derafu\Lib\Core\Foundation\Signature\Contract\ValidatorInterface:
-        class: Derafu\Lib\Core\Foundation\Signature\Worker\Validator
+    # Workers del componente "prime.log".
+    Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LoggerWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Log\Worker\LoggerWorker
 
-    # Servicios auxiliares (internos): derafu.lib.xml.
-    Derafu\Lib\Core\Foundation\Xml\Contract\EncoderInterface:
-        class: Derafu\Lib\Core\Foundation\Xml\Worker\Encoder
-    Derafu\Lib\Core\Foundation\Xml\Contract\DecoderInterface:
-        class: Derafu\Lib\Core\Foundation\Xml\Worker\Decoder
-    Derafu\Lib\Core\Foundation\Xml\Contract\ValidatorInterface:
-        class: Derafu\Lib\Core\Foundation\Xml\Worker\Validator
+    # Workers del componente "prime.signature".
+    Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\GeneratorWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Signature\Worker\GeneratorWorker
+    Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\ValidatorWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Signature\Worker\ValidatorWorker
+
+    # Workers del componente "prime.xml".
+    Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\EncoderWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\EncoderWorker
+    Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\DecoderWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\DecoderWorker
+    Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\ValidatorWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\ValidatorWorker

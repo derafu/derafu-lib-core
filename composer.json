@@ -42,7 +42,10 @@
         "symfony/dependency-injection": "^7.2",
         "symfony/filesystem": "^7.2",
         "symfony/mime": "^7.2",
-        "symfony/yaml": "^7.2"
+        "symfony/yaml": "^7.2",
+        "symfony/options-resolver": "^7.2",
+        "symfony/property-access": "^7.2",
+        "opis/json-schema": "^2.3"
     },
     "require-dev": {
         "ext-xdebug": "*",
