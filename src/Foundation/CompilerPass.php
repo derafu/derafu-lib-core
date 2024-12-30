@@ -51,17 +51,39 @@ class CompilerPass implements CompilerPassInterface
      *
      * Estas clases deben implementar además la interfaz ServiceInterface.
      *
-     * @var array<string, string>
+     * @var array<string, array>
      */
     protected array $servicesPatterns = [
         // Strategies.
-        'strategy' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)Strategy$/",
+        'strategy' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)StrategyInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Strategy\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)Strategy$/",
+        ],
+        // Handlers.
+        'handler' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)HandlerInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Handler\\\\([A-Za-z0-9_]+)Handler$/",
+        ],
+        // Jobs.
+        'job' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)JobInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Job\\\\([A-Za-z0-9_]+)Job$/",
+        ],
         // Workers.
-        'worker' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)WorkerInterface$/",
+        'worker' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)WorkerInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)Worker$/",
+        ],
         // Components.
-        'component' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)ComponentInterface$/",
+        'component' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)ComponentInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)Component$/",
+        ],
         // Packages.
-        'package' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)PackageInterface$/",
+        'package' => [
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)PackageInterface$/",
+            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\(?:[A-Za-z0-9_]+)Package$/",
+        ],
     ];
 
     /**
@@ -93,7 +115,11 @@ class CompilerPass implements CompilerPassInterface
             }
 
             // Procesar paquetes, componentes y workers.
-            $this->processFoundationService($id, $definition, $container);
+            $this->processFoundationServiceDefinition(
+                $id,
+                $definition,
+                $container
+            );
 
             // Asignar los servicios como lazy.
             // Se creará un proxy y se cargará solo al acceder al servicio. Esto
@@ -109,8 +135,10 @@ class CompilerPass implements CompilerPassInterface
      *
      * Este método permite realizar de manera automática:
      *
-     *   - Crear alias para paquetes, componentes, workers y estrategias.
-     *   - Agregar un tag a paquetes, componentes, workers y estrategias.
+     *   - Crear alias para paquetes, componentes, workers, trabajos, handlers y
+     *     estrategias.
+     *   - Agregar un tag a paquetes, componentes, workers, trabajos, handlers y
+     *     estrategias.
      *   - Marcar como servicio público los paquetes.
      *
      * @param string $id
@@ -118,7 +146,7 @@ class CompilerPass implements CompilerPassInterface
      * @param ContainerBuilder $container
      * @return void
      */
-    private function processFoundationService(
+    private function processFoundationServiceDefinition(
         string $id,
         Definition $definition,
         ContainerBuilder $container
@@ -134,159 +162,105 @@ class CompilerPass implements CompilerPassInterface
 
         // Revisar si la clase hace match con alguno de los patrones de búsqueda
         // de clases de servicios de Foundation.
-        foreach ($this->servicesPatterns as $type => $regex) {
-            if (preg_match($regex, $id, $matches)) {
-                $package = Str::snake($matches[1]);
-                $component = Str::snake($matches[2] ?? '');
-                $worker = Str::snake($matches[3] ?? '');
-                $strategyGroup = Str::snake($matches[4] ?? '');
-                $strategy = Str::snake($matches[5] ?? '');
-                if ($strategyGroup && $strategy) {
-                    $strategy = $strategyGroup . '.' . $strategy;
-                }
+        foreach ($this->servicesPatterns as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $id, $matches)) {
+                    $package = Str::snake($matches[1]);
+                    $component = Str::snake($matches[2] ?? '');
+                    $worker = Str::snake($matches[3] ?? '');
+                    $action1 = Str::snake($matches[4] ?? ''); // Job, Handler o Strategy.
+                    $action2 = Str::snake($matches[5] ?? ''); // Usado solo para estrategias por ahora.
+                    $action = ($action1 && $action2)
+                        ? $action1 . '.' . $action2
+                        : $action1
+                    ;
 
-                match($type) {
-                    'package' => $this->processServicePackage(
+                    $this->processFoundationServiceType(
+                        $type,
                         $id,
                         $definition,
-                        $package,
-                        $container
-                    ),
-                    'component' => $this->processServiceComponent(
-                        $id,
-                        $definition,
-                        $package,
-                        $component,
-                        $container
-                    ),
-                    'worker' => $this->processServiceWorker(
-                        $id,
-                        $definition,
+                        $container,
                         $package,
                         $component,
                         $worker,
-                        $container
-                    ),
-                    'strategy' => $this->processServiceStrategy(
-                        $id,
-                        $definition,
-                        $package,
-                        $component,
-                        $worker,
-                        $strategy,
-                        $container
-                    ),
-                    default => throw new LogicException(sprintf(
-                        'Tipo de servicio %s no es manejado por CompilerPass::processFoundationService().',
-                        $type
-                    )),
-                };
+                        $action
+                    );
+                }
             }
         }
     }
 
     /**
-     * Procesa un servicio que representa un paquete.
+     * Procesa un servicio genérico basado en su tipo.
      *
+     * @param string $type El tipo de servicio: package, component, worker, job,
+     * handler, strategy.
      * @param string $serviceId
      * @param Definition $definition
-     * @param string $package
      * @param ContainerBuilder $container
+     * @param string $package
+     * @param string|null $component
+     * @param string|null $worker
+     * @param string|null $action
      * @return void
      */
-    private function processServicePackage(
+    private function processFoundationServiceType(
+        string $type,
         string $serviceId,
         Definition $definition,
+        ContainerBuilder $container,
         string $package,
-        ContainerBuilder $container
+        ?string $component = null,
+        ?string $worker = null,
+        ?string $action = null
     ): void {
-        $aliasId = $this->servicesPrefix . $package;
-        $alias = $container->setAlias($aliasId, $serviceId);
-        $alias->setPublic(true);
+        // Construir alias ID según el tipo.
+        $aliasParts = [$package];
+        if ($component) {
+            $aliasParts[] = $component;
+        }
+        if ($worker) {
+            $aliasParts[] = $worker;
+        }
+        if ($action) {
+            $aliasParts[] = $action;
+        }
 
-        $definition->addTag('package', [
-            'name' => $package,
-        ]);
-    }
-
-    /**
-     * Procesa un servicio que representa un componente.
-     *
-     * @param string $serviceId
-     * @param Definition $definition
-     * @param string $package
-     * @param string $component
-     * @param ContainerBuilder $container
-     * @return void
-     */
-    private function processServiceComponent(
-        string $serviceId,
-        Definition $definition,
-        string $package,
-        string $component,
-        ContainerBuilder $container
-    ): void {
-        $aliasId = $this->servicesPrefix . $package . '.' . $component;
+        $aliasId = $this->servicesPrefix . implode('.', $aliasParts);
         $alias = $container->setAlias($aliasId, $serviceId);
 
-        $definition->addTag($package . '.component', [
-            'name' => $component,
-        ]);
-    }
+        // Determinar el tag y atributos según el tipo.
+        $tagName = match ($type) {
+            'package' => 'package',
+            'component' => "{$package}.component",
+            'worker' => "{$package}.{$component}.worker",
+            'job' => "{$package}.{$component}.{$worker}.job",
+            'handler' => "{$package}.{$component}.{$worker}.handler",
+            'strategy' => "{$package}.{$component}.{$worker}.strategy",
+            default => throw new LogicException(sprintf(
+                'Tipo de servicio %s no es manejado por CompilerPass::processFoundationServiceType().',
+                $type
+            )),
+        };
 
-    /**
-     * Procesa un servicio que representa un worker.
-     *
-     * @param string $serviceId
-     * @param Definition $definition
-     * @param string $package
-     * @param string $component
-     * @param string $worker
-     * @param ContainerBuilder $container
-     * @return void
-     */
-    private function processServiceWorker(
-        string $serviceId,
-        Definition $definition,
-        string $package,
-        string $component,
-        string $worker,
-        ContainerBuilder $container
-    ): void {
-        $aliasId = $this->servicesPrefix . $package . '.' . $component . '.' . $worker;
-        $alias = $container->setAlias($aliasId, $serviceId);
+        $tagAttributes = [
+            'name' => match ($type) {
+                'package' => $package,
+                'component' => $component,
+                'worker' => $worker,
+                'job' => $action,
+                'handler' => $action,
+                'strategy' => $action,
+                default => null,
+            },
+        ];
 
-        $definition->addTag($package . '.' . $component . '.worker', [
-            'name' => $worker,
-        ]);
-    }
+        // Agregar tag al servicio.
+        $definition->addTag($tagName, $tagAttributes);
 
-    /**
-     * Procesa un servicio que representa un worker.
-     *
-     * @param string $serviceId
-     * @param Definition $definition
-     * @param string $package
-     * @param string $component
-     * @param string $worker
-     * @param string $strategy
-     * @param ContainerBuilder $container
-     * @return void
-     */
-    private function processServiceStrategy(
-        string $serviceId,
-        Definition $definition,
-        string $package,
-        string $component,
-        string $worker,
-        string $strategy,
-        ContainerBuilder $container
-    ): void {
-        $aliasId = $this->servicesPrefix . $package . '.' . $component . '.' . $worker . '.' . $strategy;
-        $alias = $container->setAlias($aliasId, $serviceId);
-
-        $definition->addTag($package . '.' . $component . '.' . $worker . '.strategy', [
-            'name' => $strategy,
-        ]);
+        // Si el tipo es 'package', hacemos el alias público.
+        if ($type === 'package') {
+            $alias->setPublic(true);
+        }
     }
 }

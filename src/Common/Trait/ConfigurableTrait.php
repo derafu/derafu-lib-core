@@ -82,10 +82,12 @@ trait ConfigurableTrait
     public function resolveConfiguration(
         array $configuration
     ): DataContainerInterface {
-        $configuration = array_merge(
-            $this->configuration->all(),
-            $configuration
-        );
+        if (isset($this->configuration)) {
+            $configuration = array_merge(
+                $this->configuration->all(),
+                $configuration
+            );
+        }
 
         return $this->setConfiguration($configuration)->configuration;
     }

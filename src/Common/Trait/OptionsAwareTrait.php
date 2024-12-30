@@ -77,7 +77,9 @@ trait OptionsAwareTrait
      */
     public function resolveOptions(array $options): DataContainerInterface
     {
-        $options = array_merge($this->options->all(), $options);
+        if (isset($this->options)) {
+            $options = array_merge($this->options->all(), $options);
+        }
 
         return $this->setOptions($options)->options;
     }
