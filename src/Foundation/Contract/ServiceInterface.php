@@ -24,9 +24,11 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
+use Derafu\Lib\Core\Common\Contract\IdentifiableInterface;
+
 /**
  * Interfaz para los servicios de la aplicación.
  */
-interface ServiceInterface
+interface ServiceInterface extends IdentifiableInterface
 {
 }

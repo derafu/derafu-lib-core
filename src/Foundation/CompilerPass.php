@@ -24,7 +24,9 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation;
 
+use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
 use Derafu\Lib\Core\Helper\Str;
+use LogicException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -43,6 +45,24 @@ class CompilerPass implements CompilerPassInterface
      * @var string
      */
     protected string $servicesPrefix;
+
+    /**
+     * Patrones de búsqueda de clases de servicios de Foundation.
+     *
+     * Estas clases deben implementar además la interfaz ServiceInterface.
+     *
+     * @var array<string, string>
+     */
+    protected array $servicesPatterns = [
+        // Strategies.
+        'strategy' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)Strategy$/",
+        // Workers.
+        'worker' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)WorkerInterface$/",
+        // Components.
+        'component' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)ComponentInterface$/",
+        // Packages.
+        'package' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)PackageInterface$/",
+    ];
 
     /**
      * Constructor de la clase.
@@ -75,7 +95,6 @@ class CompilerPass implements CompilerPassInterface
             // Procesar paquetes, componentes y workers.
             $this->processFoundationService($id, $definition, $container);
 
-
             // Asignar los servicios como lazy.
             // Se creará un proxy y se cargará solo al acceder al servicio. Esto
             // es cuando se acceda a un método o propiedas (aunque no deberían
@@ -104,17 +123,27 @@ class CompilerPass implements CompilerPassInterface
         Definition $definition,
         ContainerBuilder $container
     ): void {
-        $patters = [
-            'worker' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)WorkerInterface$/",
-            'component' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)ComponentInterface$/",
-            'package' => "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)PackageInterface$/",
-        ];
+        // Solo se procesan servicios que implementen `ServiceInterface`.
+        if (
+            str_contains($id, '.')
+            || !str_contains($id, '\\')
+            || !in_array(ServiceInterface::class, (array) class_implements($id))
+        ) {
+            return;
+        }
 
-        foreach ($patters as $type => $regex) {
+        // Revisar si la clase hace match con alguno de los patrones de búsqueda
+        // de clases de servicios de Foundation.
+        foreach ($this->servicesPatterns as $type => $regex) {
             if (preg_match($regex, $id, $matches)) {
                 $package = Str::snake($matches[1]);
                 $component = Str::snake($matches[2] ?? '');
                 $worker = Str::snake($matches[3] ?? '');
+                $strategyGroup = Str::snake($matches[4] ?? '');
+                $strategy = Str::snake($matches[5] ?? '');
+                if ($strategyGroup && $strategy) {
+                    $strategy = $strategyGroup . '.' . $strategy;
+                }
 
                 match($type) {
                     'package' => $this->processServicePackage(
@@ -138,6 +167,19 @@ class CompilerPass implements CompilerPassInterface
                         $worker,
                         $container
                     ),
+                    'strategy' => $this->processServiceStrategy(
+                        $id,
+                        $definition,
+                        $package,
+                        $component,
+                        $worker,
+                        $strategy,
+                        $container
+                    ),
+                    default => throw new LogicException(sprintf(
+                        'Tipo de servicio %s no es manejado por CompilerPass::processFoundationService().',
+                        $type
+                    )),
                 };
             }
         }
@@ -187,8 +229,7 @@ class CompilerPass implements CompilerPassInterface
         $aliasId = $this->servicesPrefix . $package . '.' . $component;
         $alias = $container->setAlias($aliasId, $serviceId);
 
-        $definition->addTag('component', [
-            'package' => $package,
+        $definition->addTag($package . '.component', [
             'name' => $component,
         ]);
     }
@@ -215,10 +256,37 @@ class CompilerPass implements CompilerPassInterface
         $aliasId = $this->servicesPrefix . $package . '.' . $component . '.' . $worker;
         $alias = $container->setAlias($aliasId, $serviceId);
 
-        $definition->addTag('worker', [
-            'package' => $package,
-            'component' => $component,
+        $definition->addTag($package . '.' . $component . '.worker', [
             'name' => $worker,
+        ]);
+    }
+
+    /**
+     * Procesa un servicio que representa un worker.
+     *
+     * @param string $serviceId
+     * @param Definition $definition
+     * @param string $package
+     * @param string $component
+     * @param string $worker
+     * @param string $strategy
+     * @param ContainerBuilder $container
+     * @return void
+     */
+    private function processServiceStrategy(
+        string $serviceId,
+        Definition $definition,
+        string $package,
+        string $component,
+        string $worker,
+        string $strategy,
+        ContainerBuilder $container
+    ): void {
+        $aliasId = $this->servicesPrefix . $package . '.' . $component . '.' . $worker . '.' . $strategy;
+        $alias = $container->setAlias($aliasId, $serviceId);
+
+        $definition->addTag($package . '.' . $component . '.' . $worker . '.strategy', [
+            'name' => $strategy,
         ]);
     }
 }

@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
+use Derafu\Lib\Core\Common\Trait\ConfigurableTrait;
 use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
 use Derafu\Lib\Core\Foundation\Contract\PackageInterface;
 use LogicException;
@@ -33,6 +34,23 @@ use LogicException;
  */
 abstract class AbstractPackage extends AbstractService implements PackageInterface
 {
+    use ConfigurableTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        $regex = "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\/";
+
+        $class = (string) $this;
+        if (preg_match($regex, $class, $matches)) {
+            return $matches[1];
+        }
+
+        return parent::getName();
+    }
+
     /**
      * {@inheritdoc}
      */

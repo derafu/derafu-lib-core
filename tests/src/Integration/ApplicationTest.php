@@ -144,4 +144,34 @@ class ApplicationTest extends TestCase
         $result = $worker->encode($data);
         $this->assertSame($expected, $result->saveXml());
     }
+
+    public function testApplicationPackageIdentification(): void
+    {
+        $app = derafu_lib();
+        $package = $app->getPrimePackage();
+
+        $this->assertSame(PrimePackage::class, (string) $package);
+        $this->assertSame('prime', $package->getId());
+        $this->assertSame('Prime', $package->getName());
+    }
+
+    public function testApplicationComponentIdentification(): void
+    {
+        $app = derafu_lib();
+        $component = $app->getPrimePackage()->getXmlComponent();
+
+        $this->assertSame(XmlComponent::class, (string) $component);
+        $this->assertSame('prime.xml', $component->getId());
+        $this->assertSame('Prime Xml', $component->getName());
+    }
+
+    public function testApplicationWorkerIdentification(): void
+    {
+        $app = derafu_lib();
+        $worker = $app->getPrimePackage()->getXmlComponent()->getEncoderWorker();
+
+        $this->assertSame(XmlEncoderWorker::class, (string) $worker);
+        $this->assertSame('prime.xml.encoder', $worker->getId());
+        $this->assertSame('Prime Xml Encoder', $worker->getName());
+    }
 }

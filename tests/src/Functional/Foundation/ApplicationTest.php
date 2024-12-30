@@ -84,7 +84,6 @@ class ApplicationTest extends TestCase
         $this->assertInstanceOf(ServiceAdapter::class, $service);
 
         if ($service instanceof ServiceAdapter) {
-            /** @phpstan-ignore-next-line */
             $this->assertSame(123, $service->getId());
         }
     }

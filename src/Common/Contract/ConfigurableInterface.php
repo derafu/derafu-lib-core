@@ -27,30 +27,35 @@ namespace Derafu\Lib\Core\Common\Contract;
 use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
 
 /**
- * Interfaz para clases que deben implementar un sistema simple de opciones.
+ * Interfaz para clases que deben implementar un sistema simple de
+ * configuración.
  */
-interface OptionsAwareInterface
+interface ConfigurableInterface
 {
     /**
-     * Asigna las opciones que se deben usar en la clase.
+     * Asigna una configuración a la clase.
      *
-     * @param array|DataContainerInterface $options
+     * @param array|DataContainerInterface $configuration
      * @return static
      */
-    public function setOptions(array|DataContainerInterface $options): static;
+    public function setConfiguration(
+        array|DataContainerInterface $configuration
+    ): static;
 
     /**
-     * Obtiene las opciones que tiene asignada la clase.
+     * Obtiene la configuración de la clase.
      *
      * @return DataContainerInterface
      */
-    public function getOptions(): DataContainerInterface;
+    public function getConfiguration(): DataContainerInterface;
 
     /**
-     * Normaliza, y valida, las opciones de la clase.
+     * Normaliza, y valida, la configuración de la clase.
      *
-     * @param array $options Opciones sin normalizar o validar.
-     * @return DataContainerInterface Opciones normalizadas y validadas.
+     * @param array $configuration Configuración sin normalizar o validar.
+     * @return DataContainerInterface Configuración normalizadas y validadas.
      */
-    public function resolveOptions(array $options): DataContainerInterface;
+    public function resolveConfiguration(
+        array $configuration
+    ): DataContainerInterface;
 }

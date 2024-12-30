@@ -24,10 +24,12 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
+use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
+
 /**
  * Interfaz para los paquetes de la aplicación.
  */
-interface PackageInterface extends ServiceInterface
+interface PackageInterface extends ServiceInterface, ConfigurableInterface
 {
     /**
      * Obtiene un componente del paquete.

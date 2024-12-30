@@ -24,29 +24,11 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
+use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
 
 /**
- * Interfaz para la clase de componentes de la aplicación.
+ * Interfaz para las estrategias de los workers de la aplicación.
  */
-interface ComponentInterface extends ServiceInterface, ConfigurableInterface
+interface StrategyInterface extends ServiceInterface, OptionsAwareInterface
 {
-    /**
-     * Obtiene un worker del componente.
-     *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @param string $worker
-     * @return WorkerInterface
-     */
-    public function getWorker(string $worker): WorkerInterface;
-
-    /**
-     * Obtiene la lista de workers del paquete.
-     *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @return WorkerInterface[]
-     */
-    public function getWorkers(): array;
 }

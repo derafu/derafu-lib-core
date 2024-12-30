@@ -22,31 +22,24 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Contract;
-
-use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
+namespace Derafu\Lib\Core\Common\Contract;
 
 /**
- * Interfaz para la clase de componentes de la aplicación.
+ * Interfaz para clases que deben identificarse.
  */
-interface ComponentInterface extends ServiceInterface, ConfigurableInterface
+interface IdentifiableInterface extends StringableInterface
 {
     /**
-     * Obtiene un worker del componente.
+     * Obtiene el identificador único de la clase.
      *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @param string $worker
-     * @return WorkerInterface
+     * @return int|string
      */
-    public function getWorker(string $worker): WorkerInterface;
+    public function getId(): int|string;
 
     /**
-     * Obtiene la lista de workers del paquete.
+     * Obtiene el nombre descriptivo de la clase.
      *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @return WorkerInterface[]
+     * @return string
      */
-    public function getWorkers(): array;
+    public function getName(): string;
 }

@@ -24,20 +24,17 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
+use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
+use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Support\Store\DataContainer;
+use Derafu\Lib\Core\Foundation\Exception\StrategyException;
 
 /**
  * Clase base para los workers de la aplicación.
  */
-abstract class AbstractWorker implements WorkerInterface
+abstract class AbstractWorker extends AbstractService implements WorkerInterface
 {
-    /**
-     * Contenedor para las opciones del worker.
-     *
-     * @var DataContainer
-     */
-    protected DataContainer $options;
+    use OptionsAwareTrait;
 
     /**
      * Reglas de esquema del worker.
@@ -50,22 +47,66 @@ abstract class AbstractWorker implements WorkerInterface
     protected array $optionsSchema = [];
 
     /**
-     * {@inheritdoc}
+     * Estrategias que el worker implementa.
+     *
+     * @var StrategyInterface[]
      */
-    public function setOptions(array $options): static
-    {
-        $this->options = new DataContainer($options, $this->optionsSchema);
+    protected array $strategies;
 
-        return $this;
+    /**
+     * Constructor del worker.
+     *
+     * @param array $strategies Estrategias que este worker implementa.
+     */
+    public function __construct(iterable $strategies = [])
+    {
+        $this->strategies = is_array($strategies)
+            ? $strategies
+            : iterator_to_array($strategies)
+        ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOptions(): array
+    public function getName(): string
     {
-        $this->options->validate();
+        $regex = "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)Worker/";
 
-        return $this->options->all();
+        $class = (string) $this;
+        if (preg_match($regex, $class, $matches)) {
+            return $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+        }
+
+        return parent::getName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStrategy(string $strategy): StrategyInterface
+    {
+        if (!str_contains($strategy, '.')) {
+            $strategy = 'default.' . $strategy;
+        }
+
+        if (!isset($this->strategies[$strategy])) {
+            throw new StrategyException(sprintf(
+                'No se encontró la estrategia %s en el worker %s (%s).',
+                $strategy,
+                $this->getName(),
+                $this->getId(),
+            ));
+        }
+
+        return $this->strategies[$strategy];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStrategies(): array
+    {
+        return $this->strategies;
     }
 }

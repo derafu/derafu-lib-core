@@ -76,4 +76,36 @@ class ServiceAdapter implements ServiceInterface
     {
         return call_user_func_array([$this->adaptee, $name], $arguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString(): string
+    {
+        return (string) $this->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId(): int|string
+    {
+        if (method_exists($this->adaptee, 'getId')) {
+            return $this->adaptee->getId();
+        }
+
+        return get_class($this->adaptee);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        if (method_exists($this->adaptee, 'getName')) {
+            return $this->adaptee->getName();
+        }
+
+        return get_class($this->adaptee);
+    }
 }

@@ -31,4 +31,18 @@ use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
  */
 interface WorkerInterface extends ServiceInterface, OptionsAwareInterface
 {
+    /**
+     * Entrega una estrategia específica que el worker implementa.
+     *
+     * @param string $strategy
+     * @return StrategyInterface
+     */
+    public function getStrategy(string $strategy): StrategyInterface;
+
+    /**
+     * Entrega el listado de estrategias disponibles en el worker.
+     *
+     * @return StrategyInterface[]
+     */
+    public function getStrategies(): array;
 }

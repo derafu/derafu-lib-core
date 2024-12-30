@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Derafu: Biblioteca PHP (Núcleo).
+ * Derafu: aplicación PHP (Núcleo).
  * Copyright (C) Derafu <https://www.derafu.org>
  *
  * Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -22,28 +22,49 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Abstract;
+namespace Derafu\Lib\Core\Common\Trait;
 
-use Derafu\Lib\Core\Common\Trait\IdentifiableTrait;
-use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
-use Symfony\Component\VarExporter\LazyObjectInterface;
+use Derafu\Lib\Core\Helper\Str;
 
 /**
- * Clase base para los servicios de la aplicación.
+ * Trait para clases que deben identificarse.
+ *
+ * Cada clase debería escribir al menos los métodos getId() y getName(). Las
+ * implementaciones de este trait solo existir para entregar lo mínimo en caso
+ * de no ser implementados. Sin embargo, esta implementación mínima puede no ser
+ * la óptima en todos los casos donde se necesite usar.
+ *
+ * @see Derafu\Lib\Core\Common\Contract\IdentifiableInterface
  */
-abstract class AbstractService implements ServiceInterface
+trait IdentifiableTrait
 {
-    use IdentifiableTrait;
-
     /**
      * {@inheritdoc}
      */
     public function __toString(): string
     {
-        if ($this instanceof LazyObjectInterface) {
-            return get_parent_class($this);
-        }
-
         return static::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId(): int|string
+    {
+        $name = $this->getName();
+
+        $id = str_replace(['\\', ' '], [':', '.'], $name);
+        $id = Str::snake($id);
+        $id = str_replace([':_', '._'], [':', '.'], $id);
+
+        return $id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return $this->__toString();
     }
 }

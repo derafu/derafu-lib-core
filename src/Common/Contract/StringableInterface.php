@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Derafu: aplicación PHP (Núcleo).
+ * Derafu: Biblioteca PHP (Núcleo).
  * Copyright (C) Derafu <https://www.derafu.org>
  *
  * Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -22,31 +22,12 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Contract;
-
-use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
+namespace Derafu\Lib\Core\Common\Contract;
 
 /**
- * Interfaz para la clase de componentes de la aplicación.
+ * Interfaz para clases que deben proporcionar su representación en string.
  */
-interface ComponentInterface extends ServiceInterface, ConfigurableInterface
+interface StringableInterface
 {
-    /**
-     * Obtiene un worker del componente.
-     *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @param string $worker
-     * @return WorkerInterface
-     */
-    public function getWorker(string $worker): WorkerInterface;
-
-    /**
-     * Obtiene la lista de workers del paquete.
-     *
-     * Un worker es un servicio que implementa WorkerInterface.
-     *
-     * @return WorkerInterface[]
-     */
-    public function getWorkers(): array;
+    public function __toString(): string;
 }
