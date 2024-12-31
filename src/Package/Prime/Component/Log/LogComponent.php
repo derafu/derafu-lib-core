@@ -64,7 +64,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     /**
      * {@inheritdoc}
      */
-    public function getLogger(): LoggerWorkerInterface
+    public function getLoggerWorker(): LoggerWorkerInterface
     {
         return $this->logger;
     }
@@ -76,7 +76,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
         int|string|null $level = null,
         bool $newFirst = true
     ): array {
-        $journal = $this->getLogger()->getJournal();
+        $journal = $this->getLoggerWorker()->getJournal();
 
         // Obtener todos los logs.
         $records = $journal->all();
@@ -101,7 +101,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
      */
     public function clearLogs(int|string|null $level = null): void
     {
-        $journal = $this->getLogger()->getJournal();
+        $journal = $this->getLoggerWorker()->getJournal();
 
         // Borrar todos los logs.
         if ($level === null) {

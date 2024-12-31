@@ -34,7 +34,7 @@ class SelectorTest extends TestCase
 {
     public static function provideGetSelector(): array
     {
-        $test = require self::getFixturesPath('support/util/selector_get.php');
+        $test = require self::getFixturesPath('helper/selector_get.php');
 
         $getSelectors = [];
 
@@ -51,7 +51,7 @@ class SelectorTest extends TestCase
 
     public static function provideSetSelector(): array
     {
-        $tests = require self::getFixturesPath('support/util/selector_set.php');
+        $tests = require self::getFixturesPath('helper/selector_set.php');
 
         $setSelectors = [];
 

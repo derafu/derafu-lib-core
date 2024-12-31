@@ -22,12 +22,22 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-use Derafu\Lib\Core\Foundation\Application;
+namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
 
-// Función global para el acceso al contenedor de servicios de la biblioteca.
-if (!function_exists('derafu_lib')) {
-    function derafu_lib(string|array|null $config = null): Application
-    {
-        return Application::getInstance($config);
-    }
+use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
+
+/**
+ * Interfaz para el administrador de entidades.
+ */
+interface ManagerWorkerInterface extends WorkerInterface
+{
+    /**
+     * Entrega el repositorio asociado a una clase.
+     *
+     * @param string $class
+     * @return RepositoryInterface Repositorio solicitado.
+     * @throws ManagerException
+     */
+    public function getRepository(string $class): RepositoryInterface;
 }

@@ -22,12 +22,13 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-use Derafu\Lib\Core\Foundation\Application;
+namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Exception;
 
-// Función global para el acceso al contenedor de servicios de la biblioteca.
-if (!function_exists('derafu_lib')) {
-    function derafu_lib(string|array|null $config = null): Application
-    {
-        return Application::getInstance($config);
-    }
+use Derafu\Lib\Core\Common\Exception\Exception;
+
+/**
+ * Excepción para el worker "prime.entity.manager".
+ */
+class ManagerException extends Exception
+{
 }

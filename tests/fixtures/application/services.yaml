@@ -1,15 +1,15 @@
 services:
-    derafu.lib.public_service:
+    public_service:
         class: Derafu\Lib\Tests\Functional\Foundation\TestService
         public: true
 
-    derafu.lib.private_service:
+    private_service:
         class: derafu\lib\Tests\Functional\Foundation\TestPrivateService
 
-    derafu.lib.stdClass_service:
+    stdClass_service:
         class: \stdClass
         public: true
 
-    derafu.lib.adaptee_service:
+    adaptee_service:
         class: Derafu\Lib\Tests\Functional\Foundation\TestAdaptee
         public: true

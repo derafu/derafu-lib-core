@@ -71,6 +71,10 @@ trait ConfigurableTrait
      */
     public function getConfiguration(): DataContainerInterface
     {
+        if (!isset($this->configuration)) {
+            $this->setConfiguration([]);
+        }
+
         $this->configuration->validate();
 
         return $this->configuration;

@@ -32,9 +32,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
- * Clase para modificar servicios durante la compilación.
+ * Clase para modificar servicios previo a la compilación del contenedor.
  */
-class CompilerPass implements CompilerPassInterface
+class ServiceProcessingCompilerPass implements CompilerPassInterface
 {
     /**
      * Prefijo con el que deben ser nombrados todos los servicios asociados a la
@@ -54,35 +54,35 @@ class CompilerPass implements CompilerPassInterface
      * @var array<string, array>
      */
     protected array $servicesPatterns = [
-        // Strategies.
-        'strategy' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)StrategyInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Strategy\\\\([A-Za-z0-9_]+)\\\\([A-Za-z0-9_]+)Strategy$/",
-        ],
-        // Handlers.
-        'handler' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)HandlerInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Handler\\\\([A-Za-z0-9_]+)Handler$/",
-        ],
-        // Jobs.
-        'job' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)JobInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)\\\\Job\\\\([A-Za-z0-9_]+)Job$/",
-        ],
-        // Workers.
-        'worker' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\([A-Za-z0-9]+)WorkerInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Worker\\\\([A-Za-z0-9_]+)Worker$/",
+        // Packages.
+        'package' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Contract\\\\(?P=package)PackageInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\(?P=package)Package$/",
         ],
         // Components.
         'component' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)ComponentInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Component\\\\([A-Za-z0-9_]+)Component$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?P=component)ComponentInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\(?P=component)Component$/",
         ],
-        // Packages.
-        'package' => [
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\Contract\\\\(?:[A-Z][a-zA-Z0-9]+)PackageInterface$/",
-            "/\\\\Package\\\\([A-Za-z0-9_]+)\\\\(?:[A-Za-z0-9_]+)Package$/",
+        // Workers.
+        'worker' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)WorkerInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\(?<worker>[A-Za-z0-9_]+)Worker$/",
+        ],
+        // Jobs.
+        'job' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)\\\\Job\\\\(?<job>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)JobInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)\\\\Job\\\\(?<job>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)Job$/",
+        ],
+        // Handlers.
+        'handler' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)\\\\Handler\\\\(?<handler>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)HandlerInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)\\\\Handler\\\\(?<handler>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)Handler$/",
+        ],
+        // Strategies.
+        'strategy' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)\\\\Strategy\\\\(?<strategy>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)StrategyInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)\\\\Strategy\\\\(?<strategy>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)Strategy$/",
         ],
     ];
 
@@ -97,7 +97,7 @@ class CompilerPass implements CompilerPassInterface
     }
 
     /**
-     * Procesar servicios en tiempo de compilación.
+     * Procesar servicios.
      *
      * @param ContainerBuilder $container
      * @return void
@@ -165,17 +165,12 @@ class CompilerPass implements CompilerPassInterface
         foreach ($this->servicesPatterns as $type => $patterns) {
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $id, $matches)) {
-                    $package = Str::snake($matches[1]);
-                    $component = Str::snake($matches[2] ?? '');
-                    $worker = Str::snake($matches[3] ?? '');
-                    $action1 = Str::snake($matches[4] ?? ''); // Job, Handler o Strategy.
-                    $action2 = Str::snake($matches[5] ?? ''); // Usado solo para estrategias por ahora.
-                    $action = ($action1 && $action2)
-                        ? $action1 . '.' . $action2
-                        : $action1
-                    ;
+                    $package = Str::snake($matches['package']);
+                    $component = Str::snake($matches['component'] ?? '');
+                    $worker = Str::snake($matches['worker'] ?? '');
+                    $action = str_replace('\\_', '.', Str::snake($matches[4] ?? ''));
 
-                    $this->processFoundationServiceType(
+                    $aliasId = $this->processFoundationServiceType(
                         $type,
                         $id,
                         $definition,
@@ -202,7 +197,7 @@ class CompilerPass implements CompilerPassInterface
      * @param string|null $component
      * @param string|null $worker
      * @param string|null $action
-     * @return void
+     * @return string
      */
     private function processFoundationServiceType(
         string $type,
@@ -213,7 +208,7 @@ class CompilerPass implements CompilerPassInterface
         ?string $component = null,
         ?string $worker = null,
         ?string $action = null
-    ): void {
+    ): string {
         // Construir alias ID según el tipo.
         $aliasParts = [$package];
         if ($component) {
@@ -223,7 +218,7 @@ class CompilerPass implements CompilerPassInterface
             $aliasParts[] = $worker;
         }
         if ($action) {
-            $aliasParts[] = $action;
+            $aliasParts[] = $type . ':' . $action;
         }
 
         $aliasId = $this->servicesPrefix . implode('.', $aliasParts);
@@ -255,12 +250,25 @@ class CompilerPass implements CompilerPassInterface
             },
         ];
 
+        if ($type === 'component') {
+            $tagAttributes['package'] = $package;
+        }
+
+        if ($type === 'worker') {
+            $tagAttributes['package'] = $package;
+            $tagAttributes['component'] = $component;
+        }
+
         // Agregar tag al servicio.
         $definition->addTag($tagName, $tagAttributes);
+        $definition->addTag('service:' . $type, $tagAttributes);
 
         // Si el tipo es 'package', hacemos el alias público.
         if ($type === 'package') {
             $alias->setPublic(true);
         }
+
+        // Entregar el ID del alias.
+        return $aliasId;
     }
 }

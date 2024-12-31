@@ -30,12 +30,32 @@ namespace Derafu\Lib\Core\Foundation\Contract;
 interface ApplicationInterface
 {
     /**
-     * Singleton para obtener siempre la misma instancia.
+     * Entrega una ruta dentro de la aplicación.
      *
-     * @param ?string $servicesConfigFile Archivo de configuración de servicios.
-     * @return static
+     * Si no se especifica el $path se entregará el directorio raíz de la
+     * aplicación.
+     *
+     * @param $path Ruta que se desea resolver.
+     * @return string
      */
-    public static function getInstance(?string $servicesConfigFile = null): static;
+    public function path(?string $path = null): string;
+
+    /**
+     * Obtiene una configuración mediante su nombre (clave/selector).
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function config(string $name, mixed $default = null): mixed;
+
+    /**
+     * Verifica si un paquete está registrado en el contenedor.
+     *
+     * @param string $package
+     * @return boolean
+     */
+    public function hasPackage(string $package): bool;
 
     /**
      * Obtiene un paquete registrado en el contenedor.
@@ -57,6 +77,14 @@ interface ApplicationInterface
     public function getPackages(): array;
 
     /**
+     * Verifica si un servicio está registrado en el contenedor.
+     *
+     * @param string $service
+     * @return boolean
+     */
+    public function hasService(string $service): bool;
+
+    /**
      * Obtiene un servicio registrado en el contenedor.
      *
      * @param string $service
@@ -65,18 +93,10 @@ interface ApplicationInterface
     public function getService(string $service): ServiceInterface;
 
     /**
-     * Verifica si un paquete está registrado en el contenedor.
+     * Singleton para obtener siempre la misma instancia.
      *
-     * @param string $package
-     * @return boolean
+     * @param ?string $servicesConfigFile Archivo de configuración de servicios.
+     * @return static
      */
-    public function hasPackage(string $package): bool;
-
-    /**
-     * Verifica si un servicio está registrado en el contenedor.
-     *
-     * @param string $service
-     * @return boolean
-     */
-    public function hasService(string $service): bool;
+    public static function getInstance(?string $servicesConfigFile = null): static;
 }

@@ -39,7 +39,7 @@ class DataContainerTest extends TestCase
     public static function provideTestCases(): array
     {
         $tests = require self::getFixturesPath(
-            'support/storage/data_container.php'
+            'support/store/data_container.php'
         );
 
         $testCases = [];

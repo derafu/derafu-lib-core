@@ -27,6 +27,7 @@ namespace Derafu\Lib\Core\Foundation\Abstract;
 use Derafu\Lib\Core\Common\Trait\ConfigurableTrait;
 use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
+use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
 use LogicException;
 
 /**
@@ -69,5 +70,19 @@ abstract class AbstractComponent extends AbstractService implements ComponentInt
 
         // Entregar el worker encontrado.
         return $workers[$worker];
+    }
+
+    /**
+     * Entrega la configuración de un worker del componente.
+     *
+     * @param string $worker
+     * @return array|DataContainerInterface
+     */
+    protected function getWorkerConfiguration(
+        string $worker
+    ): array|DataContainerInterface {
+        $config = $this->getConfiguration()->get('workers.' . $worker);
+
+        return $config ?? [];
     }
 }

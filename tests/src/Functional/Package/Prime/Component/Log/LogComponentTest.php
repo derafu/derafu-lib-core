@@ -24,6 +24,9 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Tests\Functional\Foundation\Log;
 
+use Derafu\Lib\Core\Helper\Selector;
+use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LoggerWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Entity\Caller;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Entity\Level;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Entity\Log;
@@ -33,6 +36,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Log\Worker\LineFormatter;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Worker\LoggerWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Worker\Processor;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
+use Derafu\Lib\Core\Support\Store\DataContainer;
 use Derafu\Lib\Core\Support\Store\Journal;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -50,9 +54,13 @@ use Psr\Log\LogLevel as PsrLogLevel;
 #[CoversClass(JournalHandler::class)]
 #[CoversClass(AbstractStore::class)]
 #[CoversClass(Journal::class)]
+#[CoversClass(Selector::class)]
+#[CoversClass(DataContainer::class)]
 class LogComponentTest extends TestCase
 {
-    private LogComponent $logComponent;
+    private LogComponentInterface $logComponent;
+
+    private LoggerWorkerInterface $logger;
 
     private static array $testCases = [
         'messages' => [
@@ -105,6 +113,7 @@ class LogComponentTest extends TestCase
             formatter: new LineFormatter()
         );
         $this->logComponent = new LogComponent($loggerWorker);
+        $this->logger = $this->logComponent->getLoggerWorker();
     }
 
     public static function provideStandardLevelsAndMessages(): array
@@ -143,28 +152,28 @@ class LogComponentTest extends TestCase
     {
         switch ($level) {
             case Level::EMERGENCY:
-                $this->logComponent->getLogger()->emergency($message);
+                $this->logger->emergency($message);
                 break;
             case Level::ALERT:
-                $this->logComponent->getLogger()->alert($message);
+                $this->logger->alert($message);
                 break;
             case Level::CRITICAL:
-                $this->logComponent->getLogger()->critical($message);
+                $this->logger->critical($message);
                 break;
             case Level::ERROR:
-                $this->logComponent->getLogger()->error($message);
+                $this->logger->error($message);
                 break;
             case Level::WARNING:
-                $this->logComponent->getLogger()->warning($message);
+                $this->logger->warning($message);
                 break;
             case Level::NOTICE:
-                $this->logComponent->getLogger()->notice($message);
+                $this->logger->notice($message);
                 break;
             case Level::INFO:
-                $this->logComponent->getLogger()->info($message);
+                $this->logger->info($message);
                 break;
             case Level::DEBUG:
-                $this->logComponent->getLogger()->debug($message);
+                $this->logger->debug($message);
                 break;
         }
 
@@ -180,7 +189,7 @@ class LogComponentTest extends TestCase
     #[DataProvider('provideCustomLevelsAndMessages')]
     public function testLogWithCustomLevelAndMessage($level, $message): void
     {
-        $this->logComponent->getLogger()->log($level, $message);
+        $this->logger->log($level, $message);
 
         $level = (new Level($level))->getCode();
         $logs = $this->logComponent->getLogs($level);
@@ -196,7 +205,7 @@ class LogComponentTest extends TestCase
     public function testLogWithCaller(): void
     {
 
-        $this->logComponent->getLogger()->error('With caller error message');
+        $this->logger->error('With caller error message');
 
         $logs = $this->logComponent->getLogs(Level::ERROR);
         $this->assertCount(1, $logs);
@@ -211,9 +220,9 @@ class LogComponentTest extends TestCase
 
     public function testFlushLogs(): void
     {
-        $this->logComponent->getLogger()->error('First error message');
-        $this->logComponent->getLogger()->warning('First warning message');
-        $this->logComponent->getLogger()->error('Second error message');
+        $this->logger->error('First error message');
+        $this->logger->warning('First warning message');
+        $this->logger->error('Second error message');
 
         $logs = $this->logComponent->flushLogs(Level::ERROR);
 
@@ -227,7 +236,7 @@ class LogComponentTest extends TestCase
 
     public function testClearLogs(): void
     {
-        $this->logComponent->getLogger()->error('Error message');
+        $this->logger->error('Error message');
         $this->logComponent->clearLogs(Level::ERROR);
 
         $logs = $this->logComponent->getLogs(Level::ERROR);
@@ -236,8 +245,8 @@ class LogComponentTest extends TestCase
 
     public function testClearAllLogs(): void
     {
-        $this->logComponent->getLogger()->error('Error message');
-        $this->logComponent->getLogger()->warning('Warning message');
+        $this->logger->error('Error message');
+        $this->logger->warning('Warning message');
         $this->logComponent->clearLogs();
 
         $allLogs = $this->logComponent->getLogs();
@@ -247,7 +256,7 @@ class LogComponentTest extends TestCase
     public function testLogWithContext(): void
     {
         $context = ['key' => 'value'];
-        $this->logComponent->getLogger()->info('Info message with context', $context);
+        $this->logger->info('Info message with context', $context);
 
         $logs = $this->logComponent->getLogs(Level::INFO);
         $this->assertCount(1, $logs);
@@ -282,14 +291,14 @@ class LogComponentTest extends TestCase
             foreach ($cases as $level => $messages) {
                 foreach ($messages as $contextCode => $message) {
                     if ($level === Level::ERROR) {
-                        $this->logComponent->getLogger()->error(
+                        $this->logger->error(
                             $message,
                             [
                                 'code' => $contextCode,
                             ]
                         );
                     } elseif ($level === Level::WARNING) {
-                        $this->logComponent->getLogger()->warning(
+                        $this->logger->warning(
                             $message,
                             [
                                 'code' => $contextCode,

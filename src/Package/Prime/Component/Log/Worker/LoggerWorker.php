@@ -43,7 +43,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
      *
      * @var Logger
      */
-    protected Logger $logger;
+    private Logger $logger;
 
     /**
      * Instancia del almacenamiento de los logs.
@@ -53,38 +53,43 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     private JournalInterface $journal;
 
     /**
+     * Esquema de la configuración del worker.
+     *
+     * @var array
+     */
+    protected array $configurationSchema = [
+        'channel' => [
+            'types' => 'string',
+            'default' => 'derafu_lib',
+        ],
+    ];
+
+    /**
+     * Arreglo con los handlers del logger.
+     *
+     * @var array
+     */
+    private array $loggerHandlers;
+
+    /**
+     * Formateador para los mensajes del log.
+     *
+     * @var FormatterInterface|null
+     */
+    private ?FormatterInterface $formatter;
+
+    /**
      * Constructor del worker.
      *
-     * @param string $channel Nombre del canal para el logger.
-     * @param FormatterInterface|null $formatter Formatter para los logs.
      * @param array $handlers Lista de handlers adicionales.
+     * @param FormatterInterface|null $formatter Formatter para los logs.
      */
     public function __construct(
-        string $channel = 'derafu_lib',
+        array $handlers = [],
         ?FormatterInterface $formatter = null,
-        array $handlers = []
     ) {
-        // Crear el logger.
-        $this->logger = new Logger($channel);
-
-        // Crear el procesador de los registros de la bitácora.
-        $processor = new Processor();
-        $this->logger->pushProcessor($processor);
-
-        // Crear el almacenamiento de los registros de la bitácora.
-        $this->journal = new Journal();
-
-        // Crear el handler de almacenamiento en memoria de los logs.
-        $journalHandler = new JournalHandler($this->journal);
-        if ($formatter !== null) {
-            $journalHandler->setFormatter($formatter);
-        }
-        $handlers[] = $journalHandler;
-
-        // Agregar los handlers.
-        foreach ($handlers as $handler) {
-            $this->logger->pushHandler($handler);
-        }
+        $this->handlers = $handlers;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -102,7 +107,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     {
         $level = (new Level($level))->getMonologLevel();
         $context = $this->normalizeContext($context);
-        $this->logger->log($level, $message, $context);
+        $this->getLogger()->log($level, $message, $context);
     }
 
     /**
@@ -111,7 +116,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function debug($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->debug($message, $context);
+        $this->getLogger()->debug($message, $context);
     }
 
     /**
@@ -120,7 +125,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function info($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->info($message, $context);
+        $this->getLogger()->info($message, $context);
     }
 
     /**
@@ -129,7 +134,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function notice($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->notice($message, $context);
+        $this->getLogger()->notice($message, $context);
     }
 
     /**
@@ -138,7 +143,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function warning($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->warning($message, $context);
+        $this->getLogger()->warning($message, $context);
     }
 
     /**
@@ -147,7 +152,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function error($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->error($message, $context);
+        $this->getLogger()->error($message, $context);
     }
 
     /**
@@ -156,7 +161,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function critical($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->critical($message, $context);
+        $this->getLogger()->critical($message, $context);
     }
 
     /**
@@ -165,7 +170,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function alert($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->alert($message, $context);
+        $this->getLogger()->alert($message, $context);
     }
 
     /**
@@ -174,7 +179,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     public function emergency($message, array $context = []): void
     {
         $context = $this->normalizeContext($context);
-        $this->logger->emergency($message, $context);
+        $this->getLogger()->emergency($message, $context);
     }
 
     /**
@@ -197,5 +202,50 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
 
         // Entregar el contexto normalizado.
         return $context;
+    }
+
+    /**
+     * Entrega la instancia del logger asegurándo que esté inicializada.
+     *
+     * @return Logger
+     */
+    private function getLogger(): Logger
+    {
+        if (!isset($this->logger)) {
+            $this->initialize();
+        }
+
+        return $this->logger;
+    }
+
+    /**
+     * Inicializa el logger.
+     *
+     * @return void
+     */
+    private function initialize(): void
+    {
+        // Crear el logger.
+        $channel = $this->getConfiguration()->get('channel');
+        $this->logger = new Logger($channel);
+
+        // Crear el procesador de los registros de la bitácora.
+        $processor = new Processor();
+        $this->logger->pushProcessor($processor);
+
+        // Crear el almacenamiento de los registros de la bitácora.
+        $this->journal = new Journal();
+
+        // Crear el handler de almacenamiento en memoria de los logs.
+        $journalHandler = new JournalHandler($this->journal);
+        if ($this->formatter !== null) {
+            $journalHandler->setFormatter($this->formatter);
+        }
+        $this->loggerHandlers[] = $journalHandler;
+
+        // Agregar los handlers.
+        foreach ($this->loggerHandlers as $handler) {
+            $this->logger->pushHandler($handler);
+        }
     }
 }

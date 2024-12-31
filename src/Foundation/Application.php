@@ -39,7 +39,7 @@ class Application extends AbstractApplication
      */
     public function getPrimePackage(): PrimePackageInterface
     {
-        $package =  $this->getPackage('prime');
+        $package = $this->getPackage('prime');
 
         assert($package instanceof PrimePackageInterface);
 

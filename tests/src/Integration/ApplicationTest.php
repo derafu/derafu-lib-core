@@ -27,7 +27,11 @@ namespace Derafu\Lib\Tests\Integration;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractPackage;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
 use Derafu\Lib\Core\Foundation\Application;
-use Derafu\Lib\Core\Foundation\CompilerPass;
+use Derafu\Lib\Core\Foundation\Configuration;
+use Derafu\Lib\Core\Foundation\Kernel;
+use Derafu\Lib\Core\Foundation\ServiceConfigurationCompilerPass;
+use Derafu\Lib\Core\Foundation\ServiceProcessingCompilerPass;
+use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Helper\Xml as XmlHelper;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
@@ -38,6 +42,8 @@ use Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\EncoderWorker as XmlEncod
 use Derafu\Lib\Core\Package\Prime\Component\Xml\XmlComponent;
 use Derafu\Lib\Core\Package\Prime\Contract\PrimePackageInterface;
 use Derafu\Lib\Core\Package\Prime\PrimePackage;
+use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
+use Derafu\Lib\Core\Support\Store\DataContainer;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -46,11 +52,17 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 #[CoversClass(AbstractPackage::class)]
 #[CoversClass(AbstractServiceRegistry::class)]
 #[CoversClass(XmlComponent::class)]
-#[CoversClass(CompilerPass::class)]
+#[CoversClass(ServiceConfigurationCompilerPass::class)]
+#[CoversClass(ServiceProcessingCompilerPass::class)]
 #[CoversClass(XmlHelper::class)]
 #[CoversClass(Xml::class)]
 #[CoversClass(XmlEncoderWorker::class)]
 #[CoversClass(PrimePackage::class)]
+#[CoversClass(Configuration::class)]
+#[CoversClass(Kernel::class)]
+#[CoversClass(Selector::class)]
+#[CoversClass(AbstractStore::class)]
+#[CoversClass(DataContainer::class)]
 class ApplicationTest extends TestCase
 {
     private array $testCases = [

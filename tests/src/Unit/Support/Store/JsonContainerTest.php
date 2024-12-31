@@ -37,7 +37,7 @@ class JsonContainerTest extends TestCase
     public static function provideTestCases(): array
     {
         $tests = require self::getFixturesPath(
-            'support/storage/json_container.php'
+            'support/store/json_container.php'
         );
 
         $testCases = [];

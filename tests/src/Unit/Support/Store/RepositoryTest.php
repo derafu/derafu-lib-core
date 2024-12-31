@@ -36,7 +36,7 @@ class RepositoryTest extends TestCase
     public static function provideTestCases(): array
     {
         $tests = require self::getFixturesPath(
-            'support/storage/repository.php'
+            'support/store/repository.php'
         );
 
         $testCases = [];

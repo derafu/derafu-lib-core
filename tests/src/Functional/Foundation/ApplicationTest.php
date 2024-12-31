@@ -28,24 +28,38 @@ use Derafu\Lib\Core\Foundation\Abstract\AbstractService;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
 use Derafu\Lib\Core\Foundation\Adapter\ServiceAdapter;
 use Derafu\Lib\Core\Foundation\Application;
-use Derafu\Lib\Core\Foundation\CompilerPass;
+use Derafu\Lib\Core\Foundation\Configuration;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
+use Derafu\Lib\Core\Foundation\Kernel;
+use Derafu\Lib\Core\Foundation\ServiceConfigurationCompilerPass;
+use Derafu\Lib\Core\Foundation\ServiceProcessingCompilerPass;
+use Derafu\Lib\Core\Helper\Selector;
+use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
+use Derafu\Lib\Core\Support\Store\DataContainer;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 #[CoversClass(AbstractServiceRegistry::class)]
 #[CoversClass(Application::class)]
-#[CoversClass(CompilerPass::class)]
+#[CoversClass(ServiceConfigurationCompilerPass::class)]
+#[CoversClass(ServiceProcessingCompilerPass::class)]
 #[CoversClass(ServiceAdapter::class)]
+#[CoversClass(Configuration::class)]
+#[CoversClass(Kernel::class)]
+#[CoversClass(Selector::class)]
+#[CoversClass(AbstractStore::class)]
+#[CoversClass(DataContainer::class)]
 class ApplicationTest extends TestCase
 {
     private Application $app;
 
+    protected $config = __DIR__ . '/../../../fixtures/application/config.yaml';
+
     // Cargar la configuración específica para pruebas.
     protected function setUp(): void
     {
-        $this->app = Application::getInstance(TestServiceRegistry::class);
+        $this->app = Application::getInstance($this->config);
     }
 
     // Obtener un servicio público.
@@ -91,7 +105,7 @@ class ApplicationTest extends TestCase
     // Obtener servicio a través de la función global.
     public function testApplicationGlobalFunction(): void
     {
-        $app = derafu_lib(TestServiceRegistry::class);
+        $app = derafu_lib($this->config);
 
         $service = $app->getService('public_service');
         $this->assertInstanceOf(TestService::class, $service);

@@ -119,7 +119,7 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
         string $name,
         string $email
     ): Certificate {
-        $faker = clone $this->faker;
+        $faker = clone $this->getFakerWorker();
 
         $faker->setSubject(
             serialNumber: $id,

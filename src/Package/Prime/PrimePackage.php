@@ -26,6 +26,7 @@ namespace Derafu\Lib\Core\Package\Prime;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractPackage;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
@@ -46,6 +47,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
      */
     public function __construct(
         private CertificateComponentInterface $certificate,
+        private EntityComponentInterface $entity,
         private LogComponentInterface $log,
         private SignatureComponentInterface $signature,
         private XmlComponentInterface $xml,
@@ -59,6 +61,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     {
         return [
             'certificate' => $this->certificate,
+            'entity' => $this->entity,
             'log' => $this->log,
             'signature' => $this->signature,
             'xml' => $this->xml,
@@ -76,9 +79,19 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     /**
      * {@inheritdoc}
      */
+    public function getEntityComponent(): EntityComponentInterface
+    {
+        return $this->entity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getLogComponent(): LogComponentInterface
     {
-        return $this->log;
+        $config = $this->getComponentConfiguration('log');
+
+        return $this->log->setConfiguration($config);
     }
 
     /**

@@ -14,6 +14,8 @@ services:
     # Componentes del paquete "prime".
     Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Certificate\CertificateComponent
+    Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Entity\EntityComponent
     Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Log\LogComponent
     Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface:
@@ -28,6 +30,10 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker
     Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\ValidatorWorkerInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\ValidatorWorker
+
+    # Workers del componente "prime.entity".
+    Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\ManagerWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Entity\Worker\ManagerWorker
 
     # Workers del componente "prime.log".
     Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LoggerWorkerInterface:

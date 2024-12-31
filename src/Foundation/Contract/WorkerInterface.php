@@ -24,13 +24,46 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
+use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
 use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
 
 /**
  * Interfaz para los workers de la aplicación.
+ *
+ * Coordina y ejecuta trabajos (jobs).
  */
-interface WorkerInterface extends ServiceInterface, OptionsAwareInterface
+interface WorkerInterface extends ServiceInterface, ConfigurableInterface, OptionsAwareInterface
 {
+    /**
+     * Entrega un trabajo específico que el worker implementa.
+     *
+     * @param string $job
+     * @return JobInterface
+     */
+    public function getJob(string $job): JobInterface;
+
+    /**
+     * Entrega el listado de trabajos disponibles en el worker.
+     *
+     * @return JobInterface[]
+     */
+    public function getJobs(): array;
+
+    /**
+     * Entrega un manejador (handler) específico que el worker implementa.
+     *
+     * @param string $handler
+     * @return HandlerInterface
+     */
+    public function getHandler(string $handler): HandlerInterface;
+
+    /**
+     * Entrega el listado de estrategias disponibles en el worker.
+     *
+     * @return HandlerInterface[]
+     */
+    public function getHandlers(): array;
+
     /**
      * Entrega una estrategia específica que el worker implementa.
      *

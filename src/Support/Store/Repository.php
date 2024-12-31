@@ -26,21 +26,44 @@ namespace Derafu\Lib\Core\Support\Store;
 
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
+use Error;
+use LogicException;
+use ReflectionClass;
+use stdClass;
 
 /**
-* Clase para repositorios de objetos/entidades.
-*
-* Proporciona métodos estándar para acceder y buscar objetos/entidades desde
-* una fuente de datos.
-*/
+ * Clase para repositorios de objetos/entidades.
+ *
+ * Proporciona métodos estándar para acceder y buscar objetos/entidades desde
+ * una fuente de datos.
+ */
 class Repository extends AbstractStore implements RepositoryInterface
 {
+    /**
+     * Clase de la entidad donde se colocarán los datos que se obtengan a través
+     * del repositorio.
+     *
+     * @var string
+     */
+    protected string $entityClass = stdClass::class;
+
     /**
      * Constructor del repositorio.
      *
      * @param array|string $source Arreglo de datos o ruta al archivo PHP.
      */
     public function __construct(array|string $source)
+    {
+        $this->load($source);
+    }
+
+    /**
+     * Carga los datos del repositorio.
+     *
+     * @param array|string $source
+     * @return void
+     */
+    protected function load(array|string $source): void
     {
         $data = is_string($source) ? require $source : $source;
 
@@ -168,11 +191,45 @@ class Repository extends AbstractStore implements RepositoryInterface
     /**
      * Crea una entidad a partir de los datos.
      *
-     * Por defecto retorna un objeto stdClass, las clases hijas pueden
-     * sobreescribir este método para retornar una entidad específica.
+     * @param array $data Datos que se asignarán a la entidad.
+     * @return object Instancia de la entidad con los datos cargados.
      */
     protected function createEntity(array $data): object
     {
-        return (object) $data;
+        // Si es la entidad por defecto solo se castea.
+        if ($this->entityClass === stdClass::class) {
+            return (object) $data;
+        }
+
+        // Crear la instancia de la entidad y asignar los datos.
+        $reflectionClass = new ReflectionClass($this->entityClass);
+        $entity = $reflectionClass->newInstanceWithoutConstructor();
+        foreach ($data as $column => $value) {
+            // Si la propiedad existe se configura.
+            if ($reflectionClass->hasProperty($column)) {
+                $property = $reflectionClass->getProperty($column);
+                $property->setAccessible(true);
+                $property->setValue($entity, $value);
+            }
+            // Si la propiedad no existe se tratará de asignar mediante el
+            // método setAttribute(). Si este método no está disponible se
+            // generará inmediatamente un error.
+            else {
+                try {
+                    $entity->setAttribute($column, $value);
+                } catch (Error $e) {
+                    throw new LogicException(sprintf(
+                        'No fue posible asignar la columna %s de la entidad %s. Probablemente no existe el método %s::setAttribute() requerido cuando la propiedad %s no está definida explícitamente en la entidad.',
+                        $column,
+                        $this->entityClass,
+                        $this->entityClass,
+                        $column
+                    ));
+                }
+            }
+        }
+
+        // Entregar la instancia de la entidad.
+        return $entity;
     }
 }

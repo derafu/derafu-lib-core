@@ -36,7 +36,7 @@ interface LogComponentInterface extends ComponentInterface
      *
      * @return LoggerWorkerInterface
      */
-    public function getLogger(): LoggerWorkerInterface;
+    public function getLoggerWorker(): LoggerWorkerInterface;
 
     /**
      * Recupera los logs de la bitácora.

@@ -27,6 +27,7 @@ namespace Derafu\Lib\Core\Foundation\Abstract;
 use Derafu\Lib\Core\Common\Trait\ConfigurableTrait;
 use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
 use Derafu\Lib\Core\Foundation\Contract\PackageInterface;
+use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
 use LogicException;
 
 /**
@@ -69,5 +70,19 @@ abstract class AbstractPackage extends AbstractService implements PackageInterfa
 
         // Entregar el componente encontrado.
         return $components[$component];
+    }
+
+    /**
+     * Entrega la configuración de un componente del paquete.
+     *
+     * @param string $component
+     * @return array|DataContainerInterface
+     */
+    protected function getComponentConfiguration(
+        string $component
+    ): array|DataContainerInterface {
+        $config = $this->getConfiguration()->get('components.' . $component);
+
+        return $config ?? [];
     }
 }

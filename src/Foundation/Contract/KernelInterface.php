@@ -22,12 +22,35 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-use Derafu\Lib\Core\Foundation\Application;
+namespace Derafu\Lib\Core\Foundation\Contract;
 
-// Función global para el acceso al contenedor de servicios de la biblioteca.
-if (!function_exists('derafu_lib')) {
-    function derafu_lib(string|array|null $config = null): Application
-    {
-        return Application::getInstance($config);
-    }
+use Derafu\Lib\Core\Foundation\Configuration;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+/**
+ * Interfaz del núcleo de la aplicación.
+ */
+interface KernelInterface
+{
+    /**
+     * Inicializa el kernel.
+     *
+     * @param Configuration $configuration
+     * @return void
+     */
+    public function initialize(Configuration $configuration): void;
+
+    /**
+     * Entrega el contenedor de dependencias.
+     *
+     * @return ContainerBuilder
+     */
+    public function getContainer(): ContainerBuilder;
+
+    /**
+     * Entrega el servicio de configuración de la aplicación.
+     *
+     * @return ConfigurationInterface
+     */
+    public function getConfiguration(): ConfigurationInterface;
 }

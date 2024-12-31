@@ -25,14 +25,13 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
 use Derafu\Lib\Core\Foundation\Adapter\ServiceAdapter;
-use Derafu\Lib\Core\Foundation\CompilerPass;
+use Derafu\Lib\Core\Foundation\Configuration;
 use Derafu\Lib\Core\Foundation\Contract\ApplicationInterface;
+use Derafu\Lib\Core\Foundation\Contract\ConfigurationInterface;
+use Derafu\Lib\Core\Foundation\Contract\KernelInterface;
 use Derafu\Lib\Core\Foundation\Contract\PackageInterface;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
-use Derafu\Lib\Core\Foundation\Contract\ServiceRegistryInterface;
-use Derafu\Lib\Core\Foundation\ServiceRegistry;
 use LogicException;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
@@ -41,31 +40,11 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 abstract class AbstractApplication implements ApplicationInterface
 {
     /**
-     * Clase para el registro de los servicios de la aplicación.
+     * Instancia del núcleo de la aplicación.
+     *
+     * @var KernelInterface
      */
-    protected string $serviceRegistry = ServiceRegistry::class;
-
-    /**
-     * Prefijo con el que deben ser nombrados todos los servicios asociados a la
-     * aplicación.
-     *
-     * Esto se utiliza especialmente al nombrar paquetes.
-     *
-     * @var string
-     */
-    protected string $servicesPrefix = 'derafu.lib.';
-
-    /**
-     * Indica si se deben procesar automáticamente los servicios después de
-     * haber sido registrados durante el tiempo de compilación.
-     *
-     * Esto permite autoconfigurar opciones que no se asignaron en services.yaml
-     * o ejecutar cualquier otra lógica una vez que el servicio ya fue
-     * registrado en el contenedor de servicios.
-     *
-     * @var boolean
-     */
-    protected bool $processServices = true;
+    private KernelInterface $kernel;
 
     /**
      * Instancia de la clase para el patrón singleton.
@@ -75,44 +54,84 @@ abstract class AbstractApplication implements ApplicationInterface
     private static self $instance;
 
     /**
-     * Contenedor de servicios de la aplicación.
-     *
-     * @var ContainerBuilder
-     */
-    private ContainerBuilder $container;
-
-    /**
      * Constructor de la aplicación.
      *
      * Debe ser privado para respetar el patrón singleton.
+     *
+     * @param string|array|null $config Configuración de la aplicación.
+     * Puede ser la clase que implementa la configuración, una ruta al archivo
+     * de configuración o un arreglo con la configuración.
      */
-    private function __construct(?string $serviceRegistry)
+    private function __construct(string|array|null $config)
     {
-        $this->container = new ContainerBuilder();
-        $this->getServiceRegistry($serviceRegistry)->register($this->container);
+        $this->initialize($config);
+    }
 
-        if ($this->processServices) {
-            $this->container->addCompilerPass(
-                new CompilerPass($this->servicesPrefix)
-            );
+    /**
+     * Inicializa la aplicación.
+     *
+     * @param string|array|null $config
+     */
+    protected function initialize(string|array|null $config)
+    {
+        // Cargar configuración.
+        $configuration = $this->resolveConfiguration($config);
+
+        // Iniciar el kernel.
+        $kernelClass = $configuration->getKernelClass();
+        $this->kernel = new $kernelClass();
+        $this->kernel->initialize($configuration);
+    }
+
+    /**
+     * Resuelve y carga la configuración de la aplicación.
+     *
+     * @param string|array|null $config
+     * @return ConfigurationInterface
+     */
+    protected function resolveConfiguration(
+        string|array|null $config
+    ): ConfigurationInterface {
+        if ($config === null) {
+            return new Configuration();
         }
 
-        $this->container->compile();
+        if (is_array($config)) {
+            return new Configuration($config);
+        }
+
+        if (class_exists($config)) {
+            return new $config();
+        }
+
+        return new Configuration($config);
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getInstance(?string $serviceRegistry = null): static
+    public function path(?string $path = null): string
     {
-        if (!isset(self::$instance)) {
-            $class = static::class;
-            self::$instance = new $class($serviceRegistry);
-        }
+        return $this->kernel->getConfiguration()->resolvePath($path);
+    }
 
-        assert(self::$instance instanceof static);
+    /**
+     * {@inheritdoc}
+     */
+    public function config(string $name, mixed $default = null): mixed
+    {
+        return $this->kernel->getConfiguration()->get($name, $default);
+    }
 
-        return self::$instance;
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPackage(string $package): bool
+    {
+        $servicesPrefix = $this->kernel->getConfiguration()->getServicesPrefix();
+        $service = $servicesPrefix . $package;
+
+        return $this->kernel->getContainer()->has($service);
     }
 
     /**
@@ -120,10 +139,11 @@ abstract class AbstractApplication implements ApplicationInterface
      */
     public function getPackage(string $package): PackageInterface
     {
-        $service = $this->servicesPrefix . $package;
+        $servicesPrefix = $this->kernel->getConfiguration()->getServicesPrefix();
+        $service = $servicesPrefix . $package;
 
         try {
-            $instance = $this->container->get($service);
+            $instance = $this->kernel->getContainer()->get($service);
         } catch (ServiceNotFoundException $e) {
             $instance = null;
         }
@@ -135,6 +155,11 @@ abstract class AbstractApplication implements ApplicationInterface
             ));
         }
 
+        $config = $this->kernel->getConfiguration()->getPackageConfiguration(
+            $package
+        );
+        $instance->setConfiguration($config);
+
         return $instance;
     }
 
@@ -144,9 +169,11 @@ abstract class AbstractApplication implements ApplicationInterface
     public function getPackages(): array
     {
         $packages = [];
-        foreach ($this->container->findTaggedServiceIds('package') as $id => $tags) {
-            $packages[str_replace($this->servicesPrefix, '', $id)] =
-                $this->container->get($id)
+        $ids = $this->kernel->getContainer()->findTaggedServiceIds('package');
+        $servicesPrefix = $this->kernel->getConfiguration()->getServicesPrefix();
+        foreach ($ids as $id => $tags) {
+            $packages[str_replace($servicesPrefix, '', $id)] =
+                $this->kernel->getContainer()->get($id)
             ;
         }
 
@@ -156,10 +183,17 @@ abstract class AbstractApplication implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
+    public function hasService(string $service): bool
+    {
+        return $this->kernel->getContainer()->has($service);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getService(string $service): ServiceInterface
     {
-        $service = $this->normalizeServiceName($service);
-        $instance = $this->container->get($service);
+        $instance = $this->kernel->getContainer()->get($service);
 
         if ($instance instanceof ServiceInterface) {
             return $instance;
@@ -171,55 +205,15 @@ abstract class AbstractApplication implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function hasPackage(string $package): bool
+    public static function getInstance(string|array|null $config = null): static
     {
-        $service = $this->servicesPrefix . $package;
-
-        return $this->container->has($service);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasService(string $service): bool
-    {
-        $service = $this->normalizeServiceName($service);
-
-        return $this->container->has($service);
-    }
-
-    /**
-     * Obtiene el registry de servicios.
-     */
-    private function getServiceRegistry(
-        ?string $class = null
-    ): ServiceRegistryInterface {
-        $class = $class ?? $this->serviceRegistry;
-        $serviceRegistry = new $class();
-
-        return $serviceRegistry;
-    }
-
-    /**
-     * Normaliza el nombre del servicio.
-     *
-     * Solo se normaliza si el nombre es el código del servicio y no tiene el
-     * prefijo requerido. Si se solicita el servicio a través del nombre de una
-     * clase (FQCN) no se normalizará.
-     *
-     * @param string $service
-     * @return string
-     */
-    private function normalizeServiceName(string $service): string
-    {
-        if (str_contains($service, '\\')) {
-            return $service;
+        if (!isset(self::$instance)) {
+            $class = static::class;
+            self::$instance = new $class($config);
         }
 
-        if (str_starts_with($service, $this->servicesPrefix)) {
-            return $service;
-        }
+        assert(self::$instance instanceof static);
 
-        return $this->servicesPrefix . $service;
+        return self::$instance;
     }
 }

@@ -67,6 +67,10 @@ trait OptionsAwareTrait
      */
     public function getOptions(): DataContainerInterface
     {
+        if (!isset($this->options)) {
+            $this->setOptions([]);
+        }
+
         $this->options->validate();
 
         return $this->options;
