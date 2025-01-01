@@ -24,8 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Helper;
 
-use Error;
-use LogicException;
 use ReflectionClass;
 use stdClass;
 
@@ -46,40 +44,16 @@ class Factory
     {
         $class = $class ?? stdClass::class;
 
-        // Si no se indicó una clase se retorna como objeto stdClass.
+        // Si no se indicó una clase, retorna un stdClass.
         if ($class === stdClass::class) {
             return (object) $data;
         }
 
-        // Crear la instancia de la clase y asignar los datos.
+        // Crear la instancia sin constructor.
         $reflectionClass = new ReflectionClass($class);
         $instance = $reflectionClass->newInstanceWithoutConstructor();
-        foreach ($data as $column => $value) {
-            // Si la propiedad existe se configura.
-            if ($reflectionClass->hasProperty($column)) {
-                $property = $reflectionClass->getProperty($column);
-                $property->setAccessible(true);
-                $property->setValue($instance, $value);
-            }
-            // Si la propiedad no existe se tratará de asignar mediante el
-            // método setAttribute(). Si este método no está disponible se
-            // generará inmediatamente un error.
-            else {
-                try {
-                    $instance->setAttribute($column, $value);
-                } catch (Error $e) {
-                    throw new LogicException(sprintf(
-                        'No fue posible asignar el atributo %s de la clase %s. Probablemente no existe el método %s::setAttribute() requerido cuando la propiedad %s no está definida explícitamente en la clase.',
-                        $column,
-                        $class,
-                        $class,
-                        $column
-                    ));
-                }
-            }
-        }
 
-        // Entregar la instancia de la clase.
-        return $instance;
+        // Hidratar la instancia con los datos.
+        return Hydrator::hydrate($instance, $data);
     }
 }
