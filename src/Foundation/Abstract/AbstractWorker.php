@@ -185,20 +185,23 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
      */
     public function getStrategy(string $strategy): StrategyInterface
     {
+        $strategies = [$strategy];
         if (!str_contains($strategy, '.')) {
-            $strategy = 'default.' . $strategy;
+            $strategies[] = 'default.' . $strategy;
         }
 
-        if (!isset($this->strategies[$strategy])) {
-            throw new StrategyException(sprintf(
-                'No se encontró la estrategia %s en el worker %s (%s).',
-                $strategy,
-                $this->getName(),
-                $this->getId(),
-            ));
+        foreach ($strategies as $strategy) {
+            if (isset($this->strategies[$strategy])) {
+                return $this->strategies[$strategy];
+            }
         }
 
-        return $this->strategies[$strategy];
+        throw new StrategyException(sprintf(
+            'No se encontró la estrategia %s en el worker %s (%s).',
+            $strategy,
+            $this->getName(),
+            $this->getId(),
+        ));
     }
 
     /**
