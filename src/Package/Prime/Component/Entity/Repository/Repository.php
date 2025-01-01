@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Repository;
 
+use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
+use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\RepositoryInterface;
 use Derafu\Lib\Core\Support\Store\Repository as StoreRepository;
 use LogicException;
@@ -45,8 +47,21 @@ class Repository extends StoreRepository implements RepositoryInterface
     /**
      * Nombre por defecto del índice del nombre cuando los datos de la entidad
      * no están normalizados y se debe crear el atributo.
+     *
+     * @var string
      */
     protected string $normalizationName = 'name';
+
+    /**
+     * Instancia de la fábrica de las entidades del repositorio.
+     *
+     * Esta fábrica no es obligatoria, se puede pasar la clase directamente.
+     *
+     * Solo es necesaria la fábrica si se desea algún tipo de personalización.
+     *
+     * @var FactoryInterface|null
+     */
+    protected ?FactoryInterface $factory = null;
 
     /**
      * Constructor del repositorio.
@@ -57,9 +72,11 @@ class Repository extends StoreRepository implements RepositoryInterface
     public function __construct(
         string $entityClass,
         string|array $source,
-        ?string $normalizationName = null
+        ?string $normalizationName = null,
+        ?FactoryInterface $factory = null
     ) {
         $this->entityClass = $entityClass;
+        $this->factory = $factory;
 
         if (!is_array($source)) {
             $source = $this->loadSource($source);
@@ -128,5 +145,20 @@ class Repository extends StoreRepository implements RepositoryInterface
             }
             return $entity;
         }, $data);
+    }
+
+    /**
+     * Crea una entidad a partir de los datos.
+     *
+     * @param array $data Datos que se asignarán a la entidad.
+     * @return object Instancia de la entidad con los datos cargados.
+     */
+    protected function createEntity(array $data): object
+    {
+        if (isset($this->factory)) {
+            return $this->factory->create($data);
+        }
+
+        return Factory::create($data, $this->entityClass);
     }
 }

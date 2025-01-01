@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Tests\Unit\Support\Store;
 
+use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Repository;
 use Derafu\Lib\Tests\TestCase;
 use InvalidArgumentException;
@@ -31,6 +32,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 #[CoversClass(Repository::class)]
+#[CoversClass(Factory::class)]
 class RepositoryTest extends TestCase
 {
     public static function provideTestCases(): array

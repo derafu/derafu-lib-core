@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
+use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\ManagerWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\RepositoryInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Entity\Entity;
@@ -82,8 +83,10 @@ class ManagerWorker extends AbstractWorker implements ManagerWorkerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRepository(string $source): RepositoryInterface
-    {
+    public function getRepository(
+        string $source,
+        ?FactoryInterface $factory = null
+    ): RepositoryInterface {
         // Si el repositorio no está cargado se trata de cargar.
         if (!isset($this->repositories[$source])) {
             // Si no hay fuente de datos para el repositorio se genera un error.
@@ -97,13 +100,30 @@ class ManagerWorker extends AbstractWorker implements ManagerWorkerInterface
             // Se tratará de crear el repositorio a partir de la fuente de datos
             // asignada.
             $this->repositories[$source] = new Repository(
-                class_exists($source) ? $source : Entity::class,
+                $this->resolveEntityClass($source),
                 $this->sources[$source],
-                $this->getConfiguration()->get('entity.normalizationName')
+                $this->getConfiguration()->get('entity.normalizationName'),
+                $factory
             );
         }
 
         // Retornar el repositorio solicitado.
         return $this->repositories[$source];
+    }
+
+    /**
+     * Determina la entidad que se debe utilizar a partir del ID del origen del
+     * repositorio.
+     *
+     * @param string $source
+     * @return string
+     */
+    private function resolveEntityClass(string $source): string
+    {
+        if (class_exists($source)) {
+            return $source;
+        }
+
+        return Entity::class;
     }
 }

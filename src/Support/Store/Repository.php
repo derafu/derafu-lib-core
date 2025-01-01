@@ -24,11 +24,9 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
-use Error;
-use LogicException;
-use ReflectionClass;
 use stdClass;
 
 /**
@@ -196,40 +194,6 @@ class Repository extends AbstractStore implements RepositoryInterface
      */
     protected function createEntity(array $data): object
     {
-        // Si es la entidad por defecto solo se castea.
-        if ($this->entityClass === stdClass::class) {
-            return (object) $data;
-        }
-
-        // Crear la instancia de la entidad y asignar los datos.
-        $reflectionClass = new ReflectionClass($this->entityClass);
-        $entity = $reflectionClass->newInstanceWithoutConstructor();
-        foreach ($data as $column => $value) {
-            // Si la propiedad existe se configura.
-            if ($reflectionClass->hasProperty($column)) {
-                $property = $reflectionClass->getProperty($column);
-                $property->setAccessible(true);
-                $property->setValue($entity, $value);
-            }
-            // Si la propiedad no existe se tratará de asignar mediante el
-            // método setAttribute(). Si este método no está disponible se
-            // generará inmediatamente un error.
-            else {
-                try {
-                    $entity->setAttribute($column, $value);
-                } catch (Error $e) {
-                    throw new LogicException(sprintf(
-                        'No fue posible asignar la columna %s de la entidad %s. Probablemente no existe el método %s::setAttribute() requerido cuando la propiedad %s no está definida explícitamente en la entidad.',
-                        $column,
-                        $this->entityClass,
-                        $this->entityClass,
-                        $column
-                    ));
-                }
-            }
-        }
-
-        // Entregar la instancia de la entidad.
-        return $entity;
+        return Factory::create($data, $this->entityClass);
     }
 }

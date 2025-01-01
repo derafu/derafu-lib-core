@@ -22,34 +22,15 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
+namespace Derafu\Lib\Core\Foundation\Abstract;
 
-use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
+use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
 
 /**
- * Interfaz para la clase de entidades.
+ * Clase base para las fáricas de la aplicación.
  */
-interface EntityComponentInterface extends ComponentInterface
+abstract class AbstractFactory extends AbstractService implements FactoryInterface
 {
-    /**
-     * Entrega la instancia del administrador de entidades.
-     *
-     * @return ManagerWorkerInterface
-     */
-    public function getManagerWorker(): ManagerWorkerInterface;
-
-    /**
-     * Entrega el repositorio asociado a una clase o identificador de origen.
-     *
-     * @param string $source
-     * @param FactoryInterface|null $factory
-     * @return RepositoryInterface Repositorio solicitado.
-     * @throws ManagerException
-     */
-    public function getRepository(
-        string $source,
-        ?FactoryInterface $factory = null
-    ): RepositoryInterface;
+    use OptionsAwareTrait;
 }

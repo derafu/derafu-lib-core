@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Derafu: Biblioteca PHP (Núcleo).
+ * Derafu: aplicación PHP (Núcleo).
  * Copyright (C) Derafu <https://www.derafu.org>
  *
  * Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -22,27 +22,20 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
+namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
-use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
+use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
 
 /**
- * Interfaz para el administrador de entidades.
+ * Interfaz para las fábricas.
  */
-interface ManagerWorkerInterface extends WorkerInterface
+interface FactoryInterface extends ServiceInterface, OptionsAwareInterface
 {
     /**
-     * Entrega el repositorio asociado a una clase o identificador de origen.
+     * Crea una nueva instancia a partir de los datos pasados.
      *
-     * @param string $source
-     * @param FactoryInterface|null $factory
-     * @return RepositoryInterface Repositorio solicitado.
-     * @throws ManagerException
+     * @param array $data
+     * @return object
      */
-    public function getRepository(
-        string $source,
-        ?FactoryInterface $factory = null
-    ): RepositoryInterface;
+    public function create(array $data): object;
 }

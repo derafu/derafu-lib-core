@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractComponent;
+use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\ManagerWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\RepositoryInterface;
@@ -64,8 +65,10 @@ class EntityComponent extends AbstractComponent implements EntityComponentInterf
     /**
      * {@inheritdoc}
      */
-    public function getRepository(string $class): RepositoryInterface
-    {
-        return $this->manager->getRepository($class);
+    public function getRepository(
+        string $source,
+        ?FactoryInterface $factory = null
+    ): RepositoryInterface {
+        return $this->manager->getRepository($source, $factory);
     }
 }
