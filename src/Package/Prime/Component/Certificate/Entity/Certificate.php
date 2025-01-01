@@ -77,11 +77,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega la clave pública (certificado) de la firma.
-     *
-     * @param bool $clean Si se limpia el contenido del certificado.
-     * @return string Contenido del certificado, clave pública del certificado
-     * digital, en base64.
+     * {@inheritdoc}
      */
     public function getPublicKey(bool $clean = false): string
     {
@@ -97,11 +93,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega la clave pública (certificado) de la firma.
-     *
-     * @param bool $clean Si se limpia el contenido del certificado.
-     * @return string Contenido del certificado, clave pública del certificado
-     * digital, en base64.
+     * {@inheritdoc}
      */
     public function getCertificate(bool $clean = false): string
     {
@@ -109,11 +101,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega la clave privada de la firma.
-     *
-     * @param bool $clean Si se limpia el contenido de la clave privada.
-     * @return string Contenido de la clave privada del certificado digital
-     * en base64.
+     * {@inheritdoc}
      */
     public function getPrivateKey(bool $clean = false): string
     {
@@ -129,9 +117,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega los detalles de la llave privada.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getPrivateKeyDetails(): array
     {
@@ -145,11 +131,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega los datos del certificado.
-     *
-     * Alias de getCertX509().
-     *
-     * @return array Arreglo con todos los datos del certificado.
+     * {@inheritdoc}
      */
     public function getData(): array
     {
@@ -161,22 +143,15 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega el ID asociado al certificado.
-     *
-     * El ID es el RUN que debe estar en una extensión, esto es lo estándar.
-     * También podría estar en el campo `serialNumber`, algunos proveedores lo
-     * colocan en este campo, también es más fácil para pruebas
-     *
-     * @param bool $force_upper Si se fuerza a mayúsculas.
-     * @return string ID asociado al certificado en formato: 11222333-4.
+     * {@inheritdoc}
      */
-    public function getID(bool $force_upper = true): string
+    public function getId(bool $forceUpper = true): string
     {
         // Verificar el serialNumber en el subject del certificado.
         $serialNumber = $this->getData()['subject']['serialNumber'] ?? null;
         if ($serialNumber !== null) {
             $serialNumber = ltrim(trim($serialNumber), '0');
-            return $force_upper ? strtoupper($serialNumber) : $serialNumber;
+            return $forceUpper ? strtoupper($serialNumber) : $serialNumber;
         }
 
         // Obtener las extensiones del certificado.
@@ -192,7 +167,7 @@ class Certificate implements CertificateInterface
                         trim($extension['extnValue'][0]['otherName']['value']['ia5String']),
                         '0'
                     );
-                    return $force_upper ? strtoupper($id) : $id;
+                    return $forceUpper ? strtoupper($id) : $id;
                 }
             }
         }
@@ -204,9 +179,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega el CN del subject.
-     *
-     * @return string CN del subject.
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -221,9 +194,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega el emailAddress del subject.
-     *
-     * @return string EmailAddress del subject.
+     * {@inheritdoc}
      */
     public function getEmail(): string
     {
@@ -238,9 +209,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega desde cuando es válida la firma.
-     *
-     * @return string Fecha y hora desde cuando es válida la firma.
+     * {@inheritdoc}
      */
     public function getFrom(): string
     {
@@ -248,9 +217,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega hasta cuando es válida la firma.
-     *
-     * @return string Fecha y hora hasta cuando es válida la firma.
+     * {@inheritdoc}
      */
     public function getTo(): string
     {
@@ -258,9 +225,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega los días totales que la firma es válida.
-     *
-     * @return int Días totales en que la firma es válida.
+     * {@inheritdoc}
      */
     public function getTotalDays(): int
     {
@@ -271,31 +236,21 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega los días que faltan para que la firma expire.
-     *
-     * @param string|null $desde Fecha desde la que se calcula.
-     * @return int Días que faltan para que la firma expire.
+     * {@inheritdoc}
      */
-    public function getExpirationDays(?string $desde = null): int
+    public function getExpirationDays(?string $from = null): int
     {
-        if ($desde === null) {
-            $desde = date('Y-m-d\TH:i:s');
+        if ($from === null) {
+            $from = date('Y-m-d\TH:i:s');
         }
-        $start = new DateTime($desde);
+        $start = new DateTime($from);
         $end = new DateTime($this->getTo());
         $diff = $start->diff($end);
         return (int) $diff->format('%a');
     }
 
     /**
-     * Indica si la firma está vigente o vencida.
-     *
-     * NOTE: Este método también validará que la firma no esté vigente en el
-     * futuro. O sea, que la fecha desde cuándo está vigente debe estar en el
-     * pasado.
-     *
-     * @param string|null $when Fecha de referencia para validar la vigencia.
-     * @return bool `true` si la firma está vigente, `false` si está vencida.
+     * {@inheritdoc}
      */
     public function isActive(?string $when = null): bool
     {
@@ -311,9 +266,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Entrega el nombre del emisor de la firma.
-     *
-     * @return string CN del issuer.
+     * {@inheritdoc}
      */
     public function getIssuer(): string
     {
@@ -321,9 +274,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Obtiene el módulo de la clave privada.
-     *
-     * @return string Módulo en base64.
+     * {@inheritdoc}
      */
     public function getModulus(int $wordwrap = Str::WORDWRAP): string
     {
@@ -339,9 +290,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * Obtiene el exponente público de la clave privada.
-     *
-     * @return string Exponente público en base64.
+     * {@inheritdoc}
      */
     public function getExponent(int $wordwrap = Str::WORDWRAP): string
     {
