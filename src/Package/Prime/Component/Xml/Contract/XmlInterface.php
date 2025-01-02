@@ -135,4 +135,12 @@ interface XmlInterface extends DOMParentNode
      * @return string|null String XML de la firma si existe.
      */
     public function getSignatureNodeXml(): ?string;
+
+    /**
+     * Ejecuta una consulta XPath sobre el documento XML.
+     *
+     * @param string $query
+     * @return string|array|null
+     */
+    public function query(string $query): string|array|null;
 }

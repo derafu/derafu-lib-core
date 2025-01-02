@@ -28,6 +28,7 @@ use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
+use Derafu\Lib\Core\Support\Xml\XPathQuery;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -37,6 +38,13 @@ use DOMNode;
  */
 class Xml extends DOMDocument implements XmlInterface
 {
+    /**
+     * Instancia para facilitar el manejo de XML usando XPath.
+     *
+     * @var XPathQuery
+     */
+    private XPathQuery $xPathQuery;
+
     /**
      * Constructor del documento XML.
      *
@@ -227,5 +235,17 @@ class Xml extends DOMDocument implements XmlInterface
         $signatureElement = XmlUtil::xpath($this, $xpath)->item(0);
 
         return $signatureElement?->C14N();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function query(string $query): string|array|null
+    {
+        if (!isset($this->xPathQuery)) {
+            $this->xPathQuery = new XPathQuery($this);
+        }
+
+        return $this->xPathQuery->get($query);
     }
 }
