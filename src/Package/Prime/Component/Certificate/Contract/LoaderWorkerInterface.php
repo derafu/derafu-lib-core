@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
 
 /**
@@ -41,12 +40,15 @@ interface LoaderWorkerInterface extends WorkerInterface
      * digital.
      * @param string $password Contraseña para acceder al contenido del
      * certificado.
-     * @return Certificate Instancia de la clase Certificate que contiene la
-     * clave privada y el certificado público.
+     * @return CertificateInterface Instancia de la clase Certificate que
+     * contiene la clave privada y el certificado público.
      * @throws CertificateException Si no se puede leer el archivo o cargar el
      * certificado.
      */
-    public function createFromFile(string $filepath, string $password): Certificate;
+    public function createFromFile(
+        string $filepath,
+        string $password
+    ): CertificateInterface;
 
     /**
      * Crea una instancia de Certificate desde un string que contiene los datos
@@ -56,12 +58,15 @@ interface LoaderWorkerInterface extends WorkerInterface
      * digital.
      * @param string $password Contraseña para acceder al contenido del
      * certificado.
-     * @return Certificate Instancia de la clase Certificate que contiene la
-     * clave privada y el certificado público.
+     * @return CertificateInterface Instancia de la clase Certificate que
+     * contiene la clave privada y el certificado público.
      * @throws CertificateException Si no se puede cargar el certificado desde
      * los datos.
      */
-    public function createFromData(string $data, string $password): Certificate;
+    public function createFromData(
+        string $data,
+        string $password
+    ): CertificateInterface;
 
     /**
      * Crea una instancia de Certificate desde un arreglo que contiene las
@@ -69,10 +74,10 @@ interface LoaderWorkerInterface extends WorkerInterface
      *
      * @param array $data Arreglo que contiene las claves 'publicKey'
      * (o 'cert') y 'privateKey' (o 'pkey').
-     * @return Certificate Instancia de la clase Certificate que contiene la
-     * clave privada y el certificado público.
+     * @return CertificateInterface Instancia de la clase Certificate que
+     * contiene la clave privada y el certificado público.
      */
-    public function createFromArray(array $data): Certificate;
+    public function createFromArray(array $data): CertificateInterface;
 
     /**
      * Crea una instancia de Certificate a partir de una clave pública y una
@@ -80,8 +85,11 @@ interface LoaderWorkerInterface extends WorkerInterface
      *
      * @param string $publicKey Clave pública del certificado.
      * @param string $privateKey Clave privada asociada al certificado.
-     * @return Certificate Instancia de la clase Certificate que contiene la
-     * clave privada y el certificado público.
+     * @return CertificateInterface Instancia de la clase Certificate que
+     * contiene la clave privada y el certificado público.
      */
-    public function createFromKeys(string $publicKey, string $privateKey): Certificate;
+    public function createFromKeys(
+        string $publicKey,
+        string $privateKey
+    ): CertificateInterface;
 }

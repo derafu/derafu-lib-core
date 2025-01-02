@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Entity;
 
+use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityInterface;
 use LogicException;
 
 /**
@@ -33,7 +34,7 @@ use LogicException;
  * entidad. Sin embargo, es desaconsejado su uso y se recomienda crear clases
  * para cada entidad que se requiera.
  */
-class Entity
+class Entity implements EntityInterface
 {
     /**
      * Atributos de la entidad.
@@ -43,11 +44,7 @@ class Entity
     private array $attributes = [];
 
     /**
-     * Asignar un atributo a la entidad.
-     *
-     * @param string $name
-     * @param int|float|string|bool|null $value
-     * @return static
+     * {@inheritdoc}
      */
     public function setAttribute(string $name, int|float|string|bool|null $value): static
     {
@@ -57,10 +54,7 @@ class Entity
     }
 
     /**
-     * Obtener un atributo de la entidad.
-     *
-     * @param string $name
-     * @return int|float|string|bool|null
+     * {@inheritdoc}
      */
     public function getAttribute(string $name): int|float|string|bool|null
     {
@@ -76,9 +70,7 @@ class Entity
     }
 
     /**
-     * Permite saber si existe o no un atributo definido para la entidad.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasAttribute(string $name): bool
     {

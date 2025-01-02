@@ -52,18 +52,4 @@ interface CertificateComponentInterface extends ComponentInterface
      * @return ValidatorWorkerInterface
      */
     public function getValidatorWorker(): ValidatorWorkerInterface;
-
-    /**
-     * Crea un certificado digital autofirmado (falso) para pruebas.
-     *
-     * @param string $id Identificador del usuario (RUN).
-     * @param string $name Nombre del usuario del certificado.
-     * @param string $email Correo electrónico del usuario del certificado.
-     * @return Certificate
-     */
-    public function createFake(
-        string $id,
-        string $name,
-        string $email
-    ): Certificate;
 }

@@ -26,14 +26,16 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Entity;
 
 use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
-use DomDocument;
+use DOMDocument;
+use DOMElement;
 use DOMNode;
 
 /**
  * Clase que representa un documento XML.
  */
-class Xml extends DomDocument
+class Xml extends DOMDocument implements XmlInterface
 {
     /**
      * Constructor del documento XML.
@@ -52,9 +54,15 @@ class Xml extends DomDocument
     }
 
     /**
-     * Entrega el nombre del tag raíz del XML.
-     *
-     * @return string Nombre del tag raíz.
+     * {@inheritdoc}
+     */
+    public function getDocumentElement(): DOMElement
+    {
+        return $this->documentElement;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -62,11 +70,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Obtiene el espacio de nombres (namespace) del elemento raíz del
-     * documento XML.
-     *
-     * @return string|null Espacio de nombres del documento XML o `null` si no
-     * está presente.
+     * {@inheritdoc}
      */
     public function getNamespace(): ?string
     {
@@ -76,9 +80,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Entrega el nombre del archivo del schema del XML.
-     *
-     * @return string|null Nombre del schema o `null` si no se encontró.
+     * {@inheritdoc}
      */
     public function getSchema(): ?string
     {
@@ -94,12 +96,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Carga un string XML en la instancia del documento XML.
-     *
-     * @param string $source String con el documento XML a cargar.
-     * @param int $options Opciones para la carga del XML.
-     * @return bool `true` si el XML se cargó correctamente.
-     * @throws XmlException Si no es posible cargar el XML.
+     * {@inheritdoc}
      */
     public function loadXml(string $source, int $options = 0): bool
     {
@@ -149,15 +146,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Genera el documento XML como string.
-     *
-     * Wrapper de parent::saveXml() para poder corregir XML entities.
-     *
-     * Incluye encabezado del XML con versión y codificación.
-     *
-     * @param DOMNode|null $node Nodo a serializar.
-     * @param int $options Opciones de serialización.
-     * @return string XML serializado y corregido.
+     * {@inheritdoc}
      */
     public function saveXml(?DOMNode $node = null, int $options = 0): string
     {
@@ -167,12 +156,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Genera el documento XML como string.
-     *
-     * Wrapper de saveXml() para generar un string sin el encabezado del XML y
-     * sin salto de línea inicial o final.
-     *
-     * @return string XML serializado y corregido.
+     * {@inheritdoc}
      */
     public function getXml(): string
     {
@@ -187,18 +171,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Entrega el string XML canonicalizado y con la codificación que
-     * corresponde (ISO-8859-1).
-     *
-     * Esto básicamente usa C14N(), sin embargo, C14N() siempre entrega el XML
-     * en codificación UTF-8. Por lo que este método permite obtenerlo con C14N
-     * pero con la codificación correcta de ISO-8859-1. Además se corrigen las
-     * XML entities.
-     *
-     * @param string|null $xpath XPath para consulta al XML y extraer solo una
-     * parte, desde un tag/nodo específico.
-     * @return string String XML canonicalizado.
-     * @throws XmlException En caso de ser pasado un XPath y no encontrarlo.
+     * {@inheritdoc}
      */
     public function C14NWithIsoEncoding(?string $xpath = null): string
     {
@@ -230,15 +203,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Entrega el string XML canonicalizado, con la codificación que
-     * corresponde (ISO-8859-1) y aplanado.
-     *
-     * Es un wrapper de C14NWithIsoEncoding() que aplana el XML resultante.
-     *
-     * @param string|null $xpath XPath para consulta al XML y extraer solo una
-     * parte, desde un tag/nodo específico.
-     * @return string String XML canonicalizado y aplanado.
-     * @throws XmlException En caso de ser pasado un XPath y no encontrarlo.
+     * {@inheritdoc}
      */
     public function C14NWithIsoEncodingFlattened(?string $xpath = null): string
     {
@@ -253,9 +218,7 @@ class Xml extends DomDocument
     }
 
     /**
-     * Obtiene el string del nodo de la firma electrónica del XML.
-     *
-     * @return string|null String XML de la firma si existe.
+     * {@inheritdoc}
      */
     public function getSignatureNodeXml(): ?string
     {

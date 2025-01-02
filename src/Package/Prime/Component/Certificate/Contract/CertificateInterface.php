@@ -32,6 +32,14 @@ use Derafu\Lib\Core\Helper\Str;
 interface CertificateInterface
 {
     /**
+     * Entrega la llave pública y privada.
+     *
+     * @param boolean $clean Si se limpia el contenido del certificado.
+     * @return array Arreglo con los índices: cert y pkey.
+     */
+    public function getKeys(bool $clean = false): array;
+
+    /**
      * Entrega la clave pública (certificado) de la firma.
      *
      * @param bool $clean Si se limpia el contenido del certificado.
@@ -66,13 +74,21 @@ interface CertificateInterface
     public function getPrivateKeyDetails(): array;
 
     /**
-     * Entrega los datos del certificado.
+     * Entrega los datos del certificado como arreglo.
      *
      * Alias de getCertX509().
      *
      * @return array Arreglo con todos los datos del certificado.
      */
     public function getData(): array;
+
+    /**
+     * Entrega los datos del certificado como string en formato PKCS #12.
+     *
+     * @param string $password
+     * @return string
+     */
+    public function getPkcs12(string $password): string;
 
     /**
      * Entrega el ID asociado al certificado.

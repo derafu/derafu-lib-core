@@ -28,7 +28,7 @@ use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
 use Derafu\Lib\Core\Helper\AsymmetricKey;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\GeneratorWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\ValidatorWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\XmlSignatureNode;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\Signature;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Exception\SignatureException;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
@@ -128,40 +128,40 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
         // Iterar cada firma encontrada.
         foreach ($signaturesElements as $signatureElement) {
             // Armar instancia del nodo de la firma.
-            $xmlSignatureNode = new XmlSignatureNode();
+            $signature = new Signature();
             $this->loadXmlOnSignatureNode(
-                $xmlSignatureNode,
+                $signature,
                 $signatureElement->C14N()
             );
 
             // Validar el nodo de la firma electrónica.
-            $this->validateXmlSignatureNode($doc, $xmlSignatureNode);
+            $this->validateSignature($doc, $signature);
         }
     }
 
     /**
-     * Crea la instancia `Xml` de `XmlSignatureNode` a partir de un
+     * Crea la instancia `Xml` de `Signature` a partir de un
      * string XML con el nodo de la firma.
      *
-     * @param XmlSignatureNode $signatureNode
+     * @param Signature $signatureNode
      * @param string $xml String con el XML del nodo `Signature'.
      */
     private function loadXmlOnSignatureNode(
-        XmlSignatureNode $signatureNode,
+        Signature $signatureNode,
         string $xml
     ): void {
-        $xmlSignatureNode = new Xml();
-        $xmlSignatureNode->formatOutput = false;
-        $xmlSignatureNode->loadXml($xml);
+        $signature = new Xml();
+        $signature->formatOutput = false;
+        $signature->loadXml($xml);
 
         $data = $this->xmlComponent->getDecoderWorker()->decode(
-            $xmlSignatureNode
+            $signature
         );
 
         // El orden es importante, pues setData() invalida el Xml si
         // estaba previamente asignado.
         $signatureNode->setData($data);
-        $signatureNode->setXml($xmlSignatureNode);
+        $signatureNode->setXml($signature);
     }
 
     /**
@@ -170,29 +170,29 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
      * Valida el DigestValue y la firma de dicho DigestValue.
      *
      * @param Xml $xml Documento XML que se desea validar.
-     * @param XmlSignatureNode $signatureNode Nodo de firma que se validará.
+     * @param Signature $signatureNode Nodo de firma que se validará.
      * @return void
      * @throws SignatureException En caso de error de DigestValue o firma.
      */
-    private function validateXmlSignatureNode(
+    private function validateSignature(
         Xml $xml,
-        XmlSignatureNode $signatureNode
+        Signature $signatureNode
     ): void {
-        $this->validateXmlSignatureNodeDigestValue($xml, $signatureNode);
-        $this->validateXmlSignatureNodeSignatureValue($signatureNode);
+        $this->validateSignatureDigestValue($xml, $signatureNode);
+        $this->validateSignatureSignatureValue($signatureNode);
     }
 
     /**
      * Validar DigestValue de los datos firmados.
      *
      * @param Xml|string $xml Documento XML que se desea validar.
-     * @param XmlSignatureNode $signatureNode Nodo de firma que se validará.
+     * @param Signature $signatureNode Nodo de firma que se validará.
      * @return void
      * @throws SignatureException Si el DigestValue no es válido.
      */
-    private function validateXmlSignatureNodeDigestValue(
+    private function validateSignatureDigestValue(
         Xml|string $xml,
-        XmlSignatureNode $signatureNode
+        Signature $signatureNode
     ): void {
         // Si se pasó un objeto Xml se convierte a string.
         if (!is_string($xml)) {
@@ -232,11 +232,11 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
      * Valida la firma del nodo `SignedInfo` del XML utilizando el certificado
      * X509.
      *
-     * @param XmlSignatureNode $signatureNode Nodo de firma que se validará.
+     * @param Signature $signatureNode Nodo de firma que se validará.
      * @throws SignatureException Si la firma electrónica del XML no es válida.
      */
-    private function validateXmlSignatureNodeSignatureValue(
-        XmlSignatureNode $signatureNode
+    private function validateSignatureSignatureValue(
+        Signature $signatureNode
     ): void {
         // Generar el string XML de los datos que se validará su firma.
         $xpath = "//*[local-name()='Signature']/*[local-name()='SignedInfo']";

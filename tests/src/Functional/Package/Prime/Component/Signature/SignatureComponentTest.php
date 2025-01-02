@@ -27,11 +27,13 @@ namespace Derafu\Lib\Tests\Functional\Foundation\Signature;
 use Derafu\Lib\Core\Helper\AsymmetricKey;
 use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Support\CertificateFaker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\FakerWorker as CertificateFakerWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker as CertificateLoaderWorker;
-use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\XmlSignatureNode;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\Signature;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Exception\SignatureException;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\SignatureComponent;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Worker\GeneratorWorker;
@@ -47,9 +49,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Certificate::class)]
 #[CoversClass(CertificateException::class)]
+#[CoversClass(CertificateFaker::class)]
 #[CoversClass(CertificateFakerWorker::class)]
 #[CoversClass(CertificateLoaderWorker::class)]
-#[CoversClass(XmlSignatureNode::class)]
+#[CoversClass(Signature::class)]
 #[CoversClass(SignatureComponent::class)]
 #[CoversClass(GeneratorWorker::class)]
 #[CoversClass(ValidatorWorker::class)]
@@ -68,7 +71,7 @@ class SignatureComponentTest extends TestCase
 
     private SignatureComponent $signatureComponent;
 
-    private Certificate $certificate;
+    private CertificateInterface $certificate;
 
     protected function setUp(): void
     {
@@ -84,8 +87,8 @@ class SignatureComponentTest extends TestCase
         $this->signatureComponent = new SignatureComponent($generator, $validator);
 
         $certificateLoader = new CertificateLoaderWorker();
-        $certficateFaker = new CertificateFakerWorker($certificateLoader);
-        $this->certificate = $certficateFaker->create();
+        $certificateFaker = new CertificateFakerWorker($certificateLoader);
+        $this->certificate = $certificateFaker->create();
     }
 
     public function testSignatureComponentSignXmlString(): void

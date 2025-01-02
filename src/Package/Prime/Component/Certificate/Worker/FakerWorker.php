@@ -25,251 +25,46 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\FakerWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\LoaderWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
-use OpenSSLAsymmetricKey;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Support\CertificateFaker;
 
 /**
- * Clase que se encarga de generar certificados autofirmados y retornarlos como
- * un string de datos, un arreglo o una instancia de Certificate.
+ * Clase que se encarga de generar certificados autofirmados (para pruebas).
  */
 class FakerWorker extends AbstractWorker implements FakerWorkerInterface
 {
-    /**
-     * Datos del sujeto del certificado.
-     *
-     * @var array
-     */
-    private array $subject;
+    protected string $certificateFakerClass = CertificateFaker::class;
 
-    /**
-     * Datos del emisor del certificado.
-     *
-     * @var array
-     */
-    private array $issuer;
-
-    /**
-     * Validez del certificado en formato UNIX timestamp.
-     *
-     * @var array
-     */
-    private array $validity;
-
-    /**
-     * Contraseña para proteger la clave privada en el certificado.
-     *
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * Instancia que permite cargar (crear) certificados a partir de sus datos.
-     *
-     * @var LoaderWorkerInterface
-     */
-    private LoaderWorkerInterface $loader;
-
-    /**
-     * Constructor de la clase.
-     *
-     * Establece valores por defecto para el sujeto, emisor, validez y
-     * contraseña.
-     *
-     * @param LoaderWorkerInterface $loader
-     */
-    public function __construct(LoaderWorkerInterface $loader)
-    {
-        $this->loader = $loader;
-
-        $this->setSubject();
-        $this->setIssuer();
-        $this->setValidity();
-        $this->setPassword();
+    public function __construct(
+        private LoaderWorkerInterface $loader
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSubject(
-        string $C = 'CL',
-        string $ST = 'Colchagua',
-        string $L = 'Santa Cruz',
-        string $O = 'Organización Intergaláctica de Robots',
-        string $OU = 'Tecnología',
-        string $CN = 'Daniel',
-        string $emailAddress = 'daniel.bot@example.com',
-        string $serialNumber = '11222333-9',
-        string $title = 'Bot',
-    ): static {
-        if (empty($CN) || empty($emailAddress) || empty($serialNumber)) {
-            throw new CertificateException(
-                'El CN, emailAddress y serialNumber son obligatorios.'
-            );
-        }
+    public function create(
+        ?string $id = null,
+        ?string $name = null,
+        ?string $email = null,
+        ?string $password = null
+    ): CertificateInterface {
+        $class = $this->certificateFakerClass;
+        $faker = new $class();
 
-        $this->subject = [
-            'C' => $C,
-            'ST' => $ST,
-            'L' => $L,
-            'O' => $O,
-            'OU' => $OU,
-            'CN' => $CN,
-            'emailAddress' => $emailAddress,
-            'serialNumber' => strtoupper($serialNumber),
-            'title' => $title,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setIssuer(
-        string $C = 'CL',
-        string $ST = 'Colchagua',
-        string $L = 'Santa Cruz',
-        string $O = 'Derafu',
-        string $OU = 'Tecnología',
-        string $CN = 'Derafu Autoridad Certificadora de Pruebas',
-        string $emailAddress = 'fakes-certificates@derafu.org',
-        string $serialNumber = '76192083-9',
-    ): static {
-        $this->issuer = [
-            'C' => $C,
-            'ST' => $ST,
-            'L' => $L,
-            'O' => $O,
-            'OU' => $OU,
-            'CN' => $CN,
-            'emailAddress' => $emailAddress,
-            'serialNumber' => strtoupper($serialNumber),
-        ];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setValidity(int $days = 365): static
-    {
-        $this->validity = [
-            'days' => $days,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPassword(string $password = 'i_love_derafu')
-    {
-        $this->password = $password;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createAsString(): string
-    {
-        // Días de validez del certificado (emisor y sujeto).
-        $days = $this->validity['days'];
-
-        // Crear clave privada y CSR para el emisor.
-        $issuerPrivateKey = openssl_pkey_new();
-        if (!$issuerPrivateKey instanceof OpenSSLAsymmetricKey) {
-            throw new CertificateException(
-                'No fue posible generar la llave privada del emisor del certificado.'
-            );
-        }
-        $issuerCsr = openssl_csr_new($this->issuer, $issuerPrivateKey);
-
-        // Crear certificado autofirmado para el emisor (CA).
-        $issuerCert = openssl_csr_sign(
-            $issuerCsr,         // CSR del emisor.
-            null,               // Certificado emisor (null indica que es autofirmado).
-            $issuerPrivateKey,  // Clave privada del emisor.
-            $days,              // Número de días de validez (misma sujeto).
-            [],                 // Opciones adicionales.
-            666                 // Número de serie del certificado.
+        $faker->setSubject(
+            serialNumber: $id ?? '11222333-9',
+            CN: $name ?? 'Daniel',
+            emailAddress: $email ?? 'daniel.bot@example.com'
         );
 
-        // Validar que se haya podido crear el certificado del emisor (CA).
-        if ($issuerCert === false) {
-            throw new CertificateException(
-                'No fue posible generar el certificado del emisor (CA).'
-            );
+        if ($password !== null) {
+            $faker->setPassword($password);
         }
 
-        // Crear clave privada y CSR para el sujeto.
-        $subjectPrivateKey = openssl_pkey_new();
-        if (!$subjectPrivateKey instanceof OpenSSLAsymmetricKey) {
-            throw new CertificateException(
-                'No fue posible generar la llave privada del certificado.'
-            );
-        }
-        $subjectCsr = openssl_csr_new($this->subject, $subjectPrivateKey);
-
-        // Usar el certificado del emisor para firmar el CSR del sujeto.
-        $subjectCert = openssl_csr_sign(
-            $subjectCsr,        // La solicitud de firma del certificado (CSR).
-            $issuerCert,        // Certificado emisor.
-            $issuerPrivateKey,  // Clave privada del emisor.
-            $days,              // Número de días de validez.
-            [],                 // Opciones adicionales.
-            69                  // Número de serie del certificado.
-        );
-
-        // Validar que se haya podido crear el certificado del usuario.
-        if ($subjectCert === false) {
-            throw new CertificateException(
-                'No fue posible generar el certificado del usuario.'
-            );
-        }
-
-        // Exportar el certificado final en formato PKCS#12.
-        openssl_pkcs12_export(
-            $subjectCert,
-            $data,
-            $subjectPrivateKey,
-            $this->password
-        );
-
-        // Entregar los datos del certificado digital.
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createAsArray(): array
-    {
-        $data = $this->createAsString();
-        $array = [];
-        openssl_pkcs12_read($data, $array, $this->password);
-
-        return $array;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function create(): Certificate
-    {
-        $array = $this->createAsArray();
+        $array = $faker->toArray();
 
         return $this->loader->createFromArray($array);
     }

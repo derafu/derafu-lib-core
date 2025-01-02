@@ -22,21 +22,11 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract;
-
-use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+namespace Derafu\Lib\Core\Package\Prime\Component\Log\Contract;
 
 /**
- * Interfaz para la clase que valida un certificado digital.
+ * Interfaz para la entidad que representa un registro de la bitácora.
  */
-interface ValidatorWorkerInterface extends WorkerInterface
+interface LogInterface
 {
-    /**
-     * Realiza diferentes validaciones de la firma electrónica.
-     *
-     * @return void
-     * @throws CertificateException
-     */
-    public function validate(CertificateInterface $certificate): void;
 }

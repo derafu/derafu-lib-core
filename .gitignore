@@ -6,3 +6,5 @@
 /var/
 /vendor/
 /ast.dump
+
+.codegpt

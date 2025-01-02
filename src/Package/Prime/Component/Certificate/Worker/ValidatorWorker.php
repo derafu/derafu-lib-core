@@ -25,8 +25,8 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\ValidatorWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
 
 /**
@@ -39,7 +39,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     /**
      * {@inheritdoc}
      */
-    public function validate(Certificate $certificate): void
+    public function validate(CertificateInterface $certificate): void
     {
         // Validar que venga el ID (RUN) de la firma.
         $id = $certificate->getID(false);

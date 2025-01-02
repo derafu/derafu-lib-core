@@ -40,8 +40,8 @@ class HydratorTest extends TestCase
 
         Hydrator::hydrate($instance, $data);
 
-        $this->assertEquals('Alice', $instance->name);
-        $this->assertEquals(28, $instance->age);
+        $this->assertSame('Alice', $instance->name);
+        $this->assertSame(28, $instance->age);
     }
 
     public function testHydrateWithSetAttributeMethod(): void
@@ -51,8 +51,8 @@ class HydratorTest extends TestCase
 
         Hydrator::hydrate($instance, $data);
 
-        $this->assertEquals('Bob', $instance->getAttribute('name'));
-        $this->assertEquals(35, $instance->getAttribute('age'));
+        $this->assertSame('Bob', $instance->getAttribute('name'));
+        $this->assertSame(35, $instance->getAttribute('age'));
     }
 
     public function testHydrateWithSetterMethods(): void
@@ -62,14 +62,15 @@ class HydratorTest extends TestCase
 
         Hydrator::hydrate($instance, $data);
 
-        $this->assertEquals('Charlie', $instance->getName());
-        $this->assertEquals(40, $instance->getAge());
+        $this->assertSame('Charlie', $instance->getName());
+        $this->assertSame(40, $instance->getAge());
     }
 }
 
 class HydratableClass
 {
     public string $name;
+
     public int $age;
 }
 
@@ -91,6 +92,7 @@ class HydratorHelperFallbackClass
 class HydratorHelperSetterClass
 {
     private string $name;
+
     private int $age;
 
     public function setName(string $name): void

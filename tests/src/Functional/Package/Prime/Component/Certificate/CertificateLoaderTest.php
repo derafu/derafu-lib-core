@@ -25,8 +25,10 @@ declare(strict_types=1);
 namespace Derafu\Lib\Tests\Functional\Foundation\Certificate;
 
 use Derafu\Lib\Core\Helper\AsymmetricKey;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Support\CertificateFaker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\FakerWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker;
 use Derafu\Lib\Tests\TestCase;
@@ -34,6 +36,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Certificate::class)]
 #[CoversClass(CertificateException::class)]
+#[CoversClass(CertificateFaker::class)]
 #[CoversClass(FakerWorker::class)]
 #[CoversClass(LoaderWorker::class)]
 #[CoversClass(AsymmetricKey::class)]
@@ -51,32 +54,33 @@ class CertificateLoaderTest extends TestCase
 
     public function testCreateFromFile(): void
     {
-        $data = $this->faker->createAsString();
+        $password = 'hola_mundo';
+
+        $data = $this->faker->create()->getPkcs12($password);
         $tempFile = tempnam(sys_get_temp_dir(), 'cert');
         file_put_contents($tempFile, $data);
-        $certificate = $this->loader->createFromFile(
-            $tempFile,
-            $this->faker->getPassword()
-        );
-        $this->assertInstanceOf(Certificate::class, $certificate);
+
+        $certificate = $this->loader->createFromFile($tempFile, $password);
+
+        $this->assertInstanceOf(CertificateInterface::class, $certificate);
         unlink($tempFile);
     }
 
     public function testCreateFromData(): void
     {
-        $data = $this->faker->createAsString();
-        $certificate = $this->loader->createFromData(
-            $data,
-            $this->faker->getPassword()
-        );
-        $this->assertInstanceOf(Certificate::class, $certificate);
+        $password = 'hola_mundo';
+
+        $data = $this->faker->create()->getPkcs12($password);
+        $certificate = $this->loader->createFromData($data, $password);
+
+        $this->assertInstanceOf(CertificateInterface::class, $certificate);
     }
 
     public function testCreateFromArray(): void
     {
-        $certs = $this->faker->createAsArray();
+        $certs = $this->faker->create()->getKeys();
         $certificate = $this->loader->createFromArray($certs);
-        $this->assertInstanceOf(Certificate::class, $certificate);
+        $this->assertInstanceOf(CertificateInterface::class, $certificate);
     }
 
     /**
@@ -110,7 +114,7 @@ class CertificateLoaderTest extends TestCase
     {
         $this->expectException(CertificateException::class);
         $this->expectExceptionMessage('La clave pública del certificado no fue encontrada.');
-        $certs = $this->faker->createAsArray();
+        $certs = $this->faker->create()->getKeys();
         unset($certs['cert']); // Eliminar la clave pública para simular un array inválido.
         $this->loader->createFromArray($certs);
     }
@@ -123,7 +127,7 @@ class CertificateLoaderTest extends TestCase
     {
         $this->expectException(CertificateException::class);
         $this->expectExceptionMessage('La clave privada del certificado no fue encontrada.');
-        $certs = $this->faker->createAsArray();
+        $certs = $this->faker->create()->getKeys();
         unset($certs['pkey']); // Eliminar la clave privada para simular un array inválido.
         $this->loader->createFromArray($certs);
     }

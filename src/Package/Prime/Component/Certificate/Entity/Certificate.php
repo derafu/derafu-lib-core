@@ -79,6 +79,17 @@ class Certificate implements CertificateInterface
     /**
      * {@inheritdoc}
      */
+    public function getKeys(bool $clean = false): array
+    {
+        return [
+            'cert' => $this->getPublicKey($clean),
+            'pkey' => $this->getPrivateKey($clean),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPublicKey(bool $clean = false): string
     {
         if ($clean) {
@@ -140,6 +151,23 @@ class Certificate implements CertificateInterface
         }
 
         return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPkcs12(string $password): string
+    {
+        // Exportar el certificado final en formato PKCS#12.
+        openssl_pkcs12_export(
+            $this->getPublicKey(),
+            $data,
+            $this->getPrivateKey(),
+            $password
+        );
+
+        // Entregar los datos del certificado digital.
+        return $data;
     }
 
     /**

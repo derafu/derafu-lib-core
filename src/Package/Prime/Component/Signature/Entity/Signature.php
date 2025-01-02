@@ -25,22 +25,23 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Signature\Entity;
 
 use Derafu\Lib\Core\Helper\Str;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use LogicException;
 
 /**
  * Clase que representa el nodo `Signature` en un XML firmado electrónicamente
  * utilizando el estándar de firma digital de XML (XML DSIG).
  */
-class XmlSignatureNode
+class Signature implements SignatureInterface
 {
     /**
      * Documento XML que representa el nodo de la firma electrónica.
      *
-     * @var Xml
+     * @var XmlInterface
      */
-    private Xml $xml;
+    private XmlInterface $xml;
 
     /**
      * Datos del nodo Signature.
@@ -117,10 +118,7 @@ class XmlSignatureNode
     ];
 
     /**
-     * Asigna los datos del nodo de la firma.
-     *
-     * @param array $data
-     * @return static
+     * {@inheritdoc}
      */
     public function setData(array $data): static
     {
@@ -135,11 +133,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Entrega los datos del nodo Signature.
-     *
-     * Esta es la estructura de datos que permite crear el nodo como XML.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData(): array
     {
@@ -147,18 +141,11 @@ class XmlSignatureNode
     }
 
     /**
-     * Agrega los datos necesarios al nodo de la firma para poder calcular la
-     * firma sobre estos datos.
-     *
-     * @param string $digestValue El DigestValue calculado.
-     * @param Certificate $certificate El certificado digital a asignar.
-     * @param string|null $reference La referencia URI, la cual debe incluir el
-     * prefijo "#"
-     * @return static La instancia actual para encadenamiento de métodos.
+     * {@inheritdoc}
      */
     public function configureSignatureData(
         string $digestValue,
-        Certificate $certificate,
+        CertificateInterface $certificate,
         ?string $reference = null
     ): static {
         return $this
@@ -169,13 +156,9 @@ class XmlSignatureNode
     }
 
     /**
-     * Asigna la instancia de Xml construida con los datos del nodo de
-     * la firma electrónica.
-     *
-     * @param Xml $xml
-     * @return static
+     * {@inheritdoc}
      */
-    public function setXml(Xml $xml): static
+    public function setXml(XmlInterface $xml): static
     {
         $this->xml = $xml;
 
@@ -183,19 +166,15 @@ class XmlSignatureNode
     }
 
     /**
-     * Obtiene el objeto `Xml` que representa el nodo `Signature`.
-     *
-     * @return Xml El objeto `Xml` con los datos del nodo
-     * `Signature`.
-     * @throws LogicException Cuando no está disponible el Xml del nodo.
+     * {@inheritdoc}
      */
-    public function getXml(): Xml
+    public function getXml(): XmlInterface
     {
         // Si la instancia no ha sido asignada previamente se lanza una
         // excepción.
         if (!isset($this->xml)) {
             throw new LogicException(
-                'La instancia de Xml no está disponible en XmlSignatureNode.'
+                'La instancia de Xml no está disponible en Signature.'
             );
         }
 
@@ -229,10 +208,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Obtiene la referencia asociada a la firma electrónica, si existe.
-     *
-     * @return string|null La referencia asociada al nodo `Signature`, o `null`.
-     * si no tiene.
+     * {@inheritdoc}
      */
     public function getReference(): ?string
     {
@@ -260,9 +236,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Obtiene el valor del DigestValue del nodo `Reference`.
-     *
-     * @return string|null El valor de DigestValue o `null` si no está definido.
+     * {@inheritdoc}
      */
     public function getDigestValue(): ?string
     {
@@ -276,10 +250,10 @@ class XmlSignatureNode
      * valores correspondientes en el nodo `KeyInfo` (módulo, exponente y
      * certificado en formato X509).
      *
-     * @param Certificate $certificate El certificado digital a asignar.
+     * @param CertificateInterface $certificate El certificado digital a asignar.
      * @return static La instancia actual para encadenamiento de métodos.
      */
-    private function setCertificate(Certificate $certificate): static
+    private function setCertificate(CertificateInterface $certificate): static
     {
         // Agregar módulo, exponente y certificado. Este último contiene la
         // clave pública que permitirá a otros validar la firma del XML.
@@ -301,10 +275,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Obtiene el certificado X509 asociado al nodo `KeyInfo`.
-     *
-     * @return string|null El certificado X509 en base64 o `null` si no está
-     * definido.
+     * {@inheritdoc}
      */
     public function getX509Certificate(): ?string
     {
@@ -314,10 +285,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Establece el valor de la firma calculada para el nodo `SignedInfo`.
-     *
-     * @param string $signatureValue El valor de la firma en base64.
-     * @return static La instancia actual para encadenamiento de métodos.
+     * {@inheritdoc}
      */
     public function setSignatureValue(string $signatureValue): static
     {
@@ -334,10 +302,7 @@ class XmlSignatureNode
     }
 
     /**
-     * Obtiene la firma calculada para el nodo `SignedInfo`.
-     *
-     * @return string|null El valor de la firma calculada en base64 o `null` si
-     * no está definido.
+     * {@inheritdoc}
      */
     public function getSignatureValue(): ?string
     {

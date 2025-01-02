@@ -25,11 +25,13 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Signature\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\GeneratorWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\XmlSignatureNode;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Signature\Entity\Signature;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Exception\SignatureException;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use LogicException;
 
@@ -86,8 +88,8 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
      * {@inheritdoc}
      */
     public function signXml(
-        Xml|string $xml,
-        Certificate $certificate,
+        XmlInterface|string $xml,
+        CertificateInterface $certificate,
         ?string $reference = null
     ): string {
         // Si se pasó un objeto Xml se convierte a string. Esto es
@@ -110,7 +112,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
         $digestValue = $this->digestXmlReference($doc, $reference);
 
         // Crear la instancia que representa el nodo de la firma con sus datos.
-        $signatureNode = (new XmlSignatureNode())->configureSignatureData(
+        $signatureNode = (new Signature())->configureSignatureData(
             reference: $reference,
             digestValue: $digestValue,
             certificate: $certificate
@@ -118,7 +120,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
 
         // Firmar el documento calculando el valor de la firma del nodo
         // `Signature`.
-        $signatureNode = $this->signXmlSignatureNode(
+        $signatureNode = $this->signSignature(
             $signatureNode,
             $certificate
         );
@@ -137,7 +139,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
      * {@inheritdoc}
      */
     public function digestXmlReference(
-        Xml $doc,
+        XmlInterface $doc,
         ?string $reference = null
     ): string {
         // Se hará la digestión de una referencia (ID) específico en el XML.
@@ -150,7 +152,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
         // eliminar ese nodo del XML antes de obtener su C14N.
         else {
             $docClone = clone $doc;
-            $rootElement = $docClone->documentElement;
+            $rootElement = $docClone->getDocumentElement();
             $signatureElement = $rootElement
                 ->getElementsByTagName('Signature')
                 ->item(0)
@@ -173,15 +175,15 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
      * digital. Si no se ha proporcionado previamente un certificado, este
      * puede ser pasado como argumento en la firma.
      *
-     * @return XmlSignatureNode El nodo de la firma que se firmará.
-     * @param Certificate $certificate Certificado digital a usar para firmar.
-     * @return XmlSignatureNode El nodo de la firma firmado.
+     * @return SignatureInterface El nodo de la firma que se firmará.
+     * @param CertificateInterface $certificate Certificado digital a usar para firmar.
+     * @return SignatureInterface El nodo de la firma firmado.
      * @throws LogicException Si no están las condiciones para firmar.
      */
-    private function signXmlSignatureNode(
-        XmlSignatureNode $signatureNode,
-        Certificate $certificate
-    ): XmlSignatureNode {
+    private function signSignature(
+        SignatureInterface $signatureNode,
+        CertificateInterface $certificate
+    ): SignatureInterface {
         // Validar que esté asignado el DigestValue.
         if ($signatureNode->getDigestValue() === null) {
             throw new LogicException(
@@ -222,14 +224,14 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
     }
 
     /**
-     * Crea la instancia Xml de XmlSignatureNode y la asigna a esta.
+     * Crea la instancia Xml de Signature y la asigna a esta.
      *
-     * @param XmlSignatureNode $signatureNode
-     * @return Xml
+     * @param SignatureInterface $signatureNode
+     * @return XmlInterface
      */
     private function createSignatureNodeXml(
-        XmlSignatureNode $signatureNode
-    ): Xml {
+        SignatureInterface $signatureNode
+    ): XmlInterface {
         $xml = new Xml();
         $xml->formatOutput = false;
         $xml = $this->xmlComponent->getEncoderWorker()->encode(

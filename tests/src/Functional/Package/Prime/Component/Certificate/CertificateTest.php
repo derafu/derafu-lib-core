@@ -28,6 +28,7 @@ use Derafu\Lib\Core\Helper\AsymmetricKey;
 use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Support\CertificateFaker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\FakerWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker;
 use Derafu\Lib\Tests\TestCase;
@@ -36,6 +37,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(FakerWorker::class)]
 #[CoversClass(Certificate::class)]
 #[CoversClass(CertificateException::class)]
+#[CoversClass(CertificateFaker::class)]
 #[CoversClass(LoaderWorker::class)]
 #[CoversClass(AsymmetricKey::class)]
 #[CoversClass(Str::class)]
@@ -71,22 +73,19 @@ class CertificateTest extends TestCase
 
     public function testCertificateCreationWithValidSerialNumber(): void
     {
-        $this->faker->setSubject(serialNumber: '1-9');
-        $certificate = $this->faker->create();
-        $this->assertSame('1-9', $certificate->getID());
+        $certificate = $this->faker->create(id: '1-9');
+        $this->assertSame('1-9', $certificate->getId());
     }
 
     public function testCertificateCreationWithInvalidSerialNumber(): void
     {
-        $this->faker->setSubject(serialNumber: '1-2');
-        $certificate = $this->faker->create();
+        $certificate = $this->faker->create(id: '1-2');
         $this->assertNotSame('1-9', $certificate->getID());
     }
 
     public function testCertificateCreationWithKSerialNumber(): void
     {
-        $this->faker->setSubject(serialNumber: '10-k');
-        $certificate = $this->faker->create();
+        $certificate = $this->faker->create(id: '10-k');
         $this->assertSame('10-K', $certificate->getID());
     }
 
@@ -112,8 +111,7 @@ class CertificateTest extends TestCase
     {
         $this->expectException(CertificateException::class);
 
-        $this->faker->setSubject(CN: '');
-        $certificate = $this->faker->create();
+        $certificate = $this->faker->create(name: '');
         $certificate->getName();
     }
 
@@ -121,8 +119,7 @@ class CertificateTest extends TestCase
     {
         $this->expectException(CertificateException::class);
 
-        $this->faker->setSubject(emailAddress: '');
-        $certificate = $this->faker->create();
+        $certificate = $this->faker->create(email: '');
         $certificate->getEmail();
     }
 

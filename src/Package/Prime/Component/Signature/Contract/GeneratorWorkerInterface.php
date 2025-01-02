@@ -25,9 +25,9 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Signature\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Exception\SignatureException;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
 
 /**
@@ -53,8 +53,8 @@ interface GeneratorWorkerInterface extends WorkerInterface
     /**
      * Firma un documento XML utilizando RSA y SHA1.
      *
-     * @param Xml|string $xml Documento XML que se desea firmar.
-     * @param Certificate $certificate Certificado digital para firmar.
+     * @param XmlInterface|string $xml Documento XML que se desea firmar.
+     * @param CertificateInterface $certificate Certificado digital para firmar.
      * @param ?string $reference Referencia a la que se hace la firma. Si no se
      * especifica se firmará el digest de todo el documento XML.
      * @return string String XML con la firma generada incluída en el tag
@@ -62,8 +62,8 @@ interface GeneratorWorkerInterface extends WorkerInterface
      * @throws SignatureException Si ocurre algún problema al firmar.
      */
     public function signXml(
-        Xml|string $xml,
-        Certificate $certificate,
+        XmlInterface|string $xml,
+        CertificateInterface $certificate,
         ?string $reference = null
     ): string;
 
@@ -74,13 +74,13 @@ interface GeneratorWorkerInterface extends WorkerInterface
      * Si no se indica una referencia se calculará el "DigestValue" sobre todo
      * el XML (nodo raíz).
      *
-     * @param Xml $doc Documento XML que se desea firmar.
+     * @param XmlInterface $doc Documento XML que se desea firmar.
      * @param ?string $reference Referencia a la que se hace la firma.
      * @return string Datos del XML que deben ser digeridos.
      * @throws XmlException En caso de no encontrar la referencia en el XML.
      */
     public function digestXmlReference(
-        Xml $doc,
+        XmlInterface $doc,
         ?string $reference = null
     ): string;
 }

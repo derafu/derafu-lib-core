@@ -42,8 +42,8 @@ class FactoryTest extends TestCase
         $instance = Factory::create($data);
 
         $this->assertInstanceOf(stdClass::class, $instance);
-        $this->assertEquals('John', $instance->name);
-        $this->assertEquals(30, $instance->age);
+        $this->assertSame('John', $instance->name);
+        $this->assertSame(30, $instance->age);
     }
 
     public function testCreateFactoryHelperCustomClass(): void
@@ -53,8 +53,8 @@ class FactoryTest extends TestCase
         $instance = Factory::create($data, FactoryHelperCustomClass::class);
 
         $this->assertInstanceOf(FactoryHelperCustomClass::class, $instance);
-        $this->assertEquals('Jane', $instance->name);
-        $this->assertEquals(25, $instance->age);
+        $this->assertSame('Jane', $instance->name);
+        $this->assertSame(25, $instance->age);
     }
 
     public function testSetAttributeFallback(): void
@@ -64,14 +64,15 @@ class FactoryTest extends TestCase
         $instance = Factory::create($data, FactoryHelperFallbackClass::class);
 
         $this->assertInstanceOf(FactoryHelperFallbackClass::class, $instance);
-        $this->assertEquals('John', $instance->getAttribute('name'));
-        $this->assertEquals(30, $instance->getAttribute('age'));
+        $this->assertSame('John', $instance->getAttribute('name'));
+        $this->assertSame(30, $instance->getAttribute('age'));
     }
 }
 
 class FactoryHelperCustomClass
 {
     public string $name;
+
     public int $age;
 }
 

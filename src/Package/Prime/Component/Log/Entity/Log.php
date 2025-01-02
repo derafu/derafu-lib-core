@@ -24,12 +24,13 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Log\Entity;
 
+use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogInterface;
 use Monolog\LogRecord as MonologLogRecord;
 
 /**
  * Clase que representa un mensaje del Log.
  */
-class Log extends MonologLogRecord
+class Log extends MonologLogRecord implements LogInterface
 {
     /**
      * Código del registro.

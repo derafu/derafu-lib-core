@@ -27,6 +27,7 @@ namespace Derafu\Lib\Tests\Functional\Foundation\Certificate;
 use Derafu\Lib\Core\Helper\AsymmetricKey;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+use Derafu\Lib\Core\Package\Prime\Component\Certificate\Support\CertificateFaker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\FakerWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\LoaderWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\ValidatorWorker;
@@ -36,6 +37,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ValidatorWorker::class)]
 #[CoversClass(Certificate::class)]
 #[CoversClass(CertificateException::class)]
+#[CoversClass(CertificateFaker::class)]
 #[CoversClass(FakerWorker::class)]
 #[CoversClass(LoaderWorker::class)]
 #[CoversClass(AsymmetricKey::class)]
@@ -62,8 +64,7 @@ class CertificateValidatorTest extends TestCase
     public function testInvalidCertificate(): void
     {
         $this->expectException(CertificateException::class);
-        $this->faker->setSubject(serialNumber: '123');
-        $certificate = $this->faker->create();
+        $certificate = $this->faker->create(id: '123');
         $this->validator->validate($certificate);
     }
 }

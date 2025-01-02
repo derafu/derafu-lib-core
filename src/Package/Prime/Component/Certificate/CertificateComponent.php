@@ -29,7 +29,6 @@ use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComp
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\FakerWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\LoaderWorkerInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\ValidatorWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 
 /**
  * Servicio que gestiona todo lo asociado a certificados digitales (aka: firmas
@@ -109,24 +108,5 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
     public function getValidatorWorker(): ValidatorWorkerInterface
     {
         return $this->validator;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createFake(
-        string $id,
-        string $name,
-        string $email
-    ): Certificate {
-        $faker = clone $this->getFakerWorker();
-
-        $faker->setSubject(
-            serialNumber: $id,
-            CN: $name,
-            emailAddress: $email
-        );
-
-        return $faker->create();
     }
 }

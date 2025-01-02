@@ -22,21 +22,34 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract;
-
-use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateException;
+namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
 
 /**
- * Interfaz para la clase que valida un certificado digital.
+ * Interfaz para las entidades de repositorios.
  */
-interface ValidatorWorkerInterface extends WorkerInterface
+interface EntityInterface
 {
     /**
-     * Realiza diferentes validaciones de la firma electrónica.
+     * Asignar un atributo a la entidad.
      *
-     * @return void
-     * @throws CertificateException
+     * @param string $name
+     * @param int|float|string|bool|null $value
+     * @return static
      */
-    public function validate(CertificateInterface $certificate): void;
+    public function setAttribute(string $name, int|float|string|bool|null $value): static;
+
+    /**
+     * Obtener un atributo de la entidad.
+     *
+     * @param string $name
+     * @return int|float|string|bool|null
+     */
+    public function getAttribute(string $name): int|float|string|bool|null;
+
+    /**
+     * Permite saber si existe o no un atributo definido para la entidad.
+     *
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool;
 }
