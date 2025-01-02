@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Support\Xml;
 
 use DOMDocument;
+use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use InvalidArgumentException;
@@ -101,7 +102,7 @@ class XPathQuery
     }
 
     /**
-     * Ejecuta una consulta XPath y devuelve el resultado.
+     * Ejecuta una consulta XPath y devuelve el resultado procesado.
      *
      * El resultado dependerá de o que se encuentre:
      *
@@ -109,10 +110,61 @@ class XPathQuery
      *   - string: si hubo una coincidencia.
      *   - string[]: si hubo más de una coincidencia.
      *
+     * Si el nodo tiene hijos, devuelve un arreglo recursivo representando
+     * toda la estructura de los nodos.
+     *
      * @param string $query Consulta XPath.
-     * @return string|string[]|null
+     * @return string|string[]|null El valor procesado: string, arreglo o null.
      */
     public function get(string $query): string|array|null
+    {
+        $nodes = $this->getNodes($query);
+
+        // Sin coincidencias.
+        if ($nodes->length === 0) {
+            return null;
+        }
+
+        // Un solo nodo.
+        if ($nodes->length === 1) {
+            return $this->processNode($nodes->item(0));
+        }
+
+        // Varios nodos.
+        $results = [];
+        foreach ($nodes as $node) {
+            $results[] = $this->processNode($node);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Procesa un nodo DOM y sus hijos recursivamente.
+     *
+     * @param DOMNode $node Nodo DOM a procesar.
+     * @return string|array Valor del nodo o estructura de hijos como arreglo.
+     */
+    private function processNode(DOMNode $node): string|array
+    {
+        if ($node->hasChildNodes()) {
+            $children = [];
+            foreach ($node->childNodes as $child) {
+                if ($child->nodeType === XML_ELEMENT_NODE) {
+                    $children[$child->nodeName] = $this->processNode($child);
+                }
+            }
+
+            // Si tiene hijos procesados, devolver la estructura.
+            return count($children) > 0 ? $children : $node->nodeValue;
+        }
+
+        // Si no tiene hijos, devolver el valor.
+        return $node->nodeValue;
+    }
+
+
+    /*public function get(string $query): string|array|null
     {
         // Ejecutar consulta.
         $results = $this->getValues($query);
@@ -129,7 +181,7 @@ class XPathQuery
 
         // Más de un resultado, arreglo.
         return $results;
-    }
+    }*/
 
     /**
      * Ejecuta una consulta XPath y devuelve un arreglo de valores.

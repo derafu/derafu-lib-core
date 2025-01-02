@@ -37,6 +37,8 @@ class XPathQueryTest extends TestCase
 
     private string $invalidXml;
 
+    private string $nestedXml;
+
     protected function setUp(): void
     {
         $this->validXml = <<<XML
@@ -52,6 +54,20 @@ class XPathQueryTest extends TestCase
                 <item id="1">First</item>
                 <item id="2">Second</item>
                 <!-- Missing closing tag for root -->
+        XML;
+        $this->nestedXml = <<<XML
+            <AUTORIZACION>
+                <CAF>
+                    <FRMA>firma_base64</FRMA>
+                    <DA>
+                        <TD>33</TD>
+                        <RNG>
+                            <D>1</D>
+                            <H>100</H>
+                        </RNG>
+                    </DA>
+                </CAF>
+            </AUTORIZACION>
         XML;
     }
 
@@ -128,5 +144,82 @@ class XPathQueryTest extends TestCase
 
         $this->assertInstanceOf(DOMDocument::class, $dom);
         $this->assertSame('root', $dom->documentElement->nodeName);
+    }
+
+    public function testGetSingleNode(): void
+    {
+        $query = new XPathQuery($this->nestedXml);
+        $result = $query->get('//CAF/FRMA');
+
+        $this->assertSame(
+            'firma_base64',
+            $result,
+            'Debe devolver el valor del nodo FRMA.'
+        );
+    }
+
+    public function testGetComplexStructure(): void
+    {
+        $query = new XPathQuery($this->nestedXml);
+        $result = $query->get('/AUTORIZACION/CAF');
+
+        $expected = [
+            'FRMA' => 'firma_base64',
+            'DA' => [
+                'TD' => '33',
+                'RNG' => [
+                    'D' => '1',
+                    'H' => '100',
+                ],
+            ],
+        ];
+
+        $this->assertSame(
+            $expected,
+            $result,
+            'Debe devolver la estructura jerárquica completa de CAF.'
+        );
+    }
+
+    public function testGetArrayOfNodes(): void
+    {
+        $xml = <<<XML
+            <ROOT>
+                <ITEM>Value1</ITEM>
+                <ITEM>Value2</ITEM>
+                <ITEM>Value3</ITEM>
+            </ROOT>
+        XML;
+
+        $query = new XPathQuery($xml);
+        $result = $query->get('//ITEM');
+
+        $expected = ['Value1', 'Value2', 'Value3'];
+
+        $this->assertSame(
+            $expected,
+            $result,
+            'Debe devolver un arreglo de valores para nodos repetidos.'
+        );
+    }
+
+    public function testGetWithInvalidXPath(): void
+    {
+        $query = new XPathQuery($this->nestedXml);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Ocurrió un error al ejecutar la expresión XPath'
+        );
+
+        $query->get('//Invalid@[XPath]');
+    }
+
+    public function testGetNonexistentNode(): void
+    {
+        $query = new XPathQuery($this->nestedXml);
+        $result = $query->get('//NonexistentNode');
+
+        $this->assertNull($result, 'Debe devolver null si el nodo no existe.');
     }
 }
