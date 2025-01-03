@@ -29,6 +29,7 @@ use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 use InvalidArgumentException;
+use LogicException;
 
 /**
  * Clase para facilitar el manejo de XML usando XPath.
@@ -198,26 +199,22 @@ class XPathQuery
         array $params = [],
         ?DOMNode $contextNode = null
     ): DOMNodeList {
-        $use_errors = libxml_use_internal_errors(true);
-
-        $query = $this->resolveQuery($query, $params);
-
-        $nodes = $this->xpath->query(
-            $query,
-            $contextNode,
-            $this->registerNodeNS
-        );
-
-        $error = libxml_get_last_error();
-        if ($nodes === false || $error) {
+        try {
+            $query = $this->resolveQuery($query, $params);
+            $nodes = $this->execute(function() use ($query, $contextNode) {
+                return $this->xpath->query(
+                    $query,
+                    $contextNode,
+                    $this->registerNodeNS
+                );
+            });
+        } catch (LogicException $e) {
             throw new InvalidArgumentException(sprintf(
-                'Ocurrió un error al ejecutar la expresión XPath: %s.',
-                $query
+                'Ocurrió un error al ejecutar la expresión XPath: %s. %s',
+                $query,
+                $e->getMessage()
             ));
         }
-
-        libxml_clear_errors();
-        libxml_use_internal_errors($use_errors);
 
         return $nodes;
     }
@@ -230,19 +227,16 @@ class XPathQuery
      */
     private function loadXml(string $xml): static
     {
-        $use_errors = libxml_use_internal_errors(true);
-
-        $this->dom->loadXml($xml);
-
-        if ($error = libxml_get_last_error()) {
+        try {
+            $this->execute(function() use ($xml) {
+                return $this->dom->loadXml($xml);
+            });
+        } catch (LogicException $e) {
             throw new InvalidArgumentException(sprintf(
-                'El XML proporcionado no es válido: %s.',
-                $error->message
+                'El XML proporcionado no es válido: %s',
+                $e->getMessage()
             ));
         }
-
-        libxml_clear_errors();
-        libxml_use_internal_errors($use_errors);
 
         return $this;
     }
@@ -329,5 +323,49 @@ class XPathQuery
 
         // Si contiene comillas simples y dobles, combinarlas con concat().
         return "concat('" . str_replace("'", "',\"'\",'", $value) . "')";
+    }
+
+    /**
+     * Envoltura para ejecutar capturando los errores los métodos asociados a
+     * la instnacia de XPath.
+     *
+     * @param callable $function
+     * @return mixed
+     */
+    private function execute(callable $function): mixed
+    {
+        $use_errors = libxml_use_internal_errors(true);
+
+        $result = $function();
+
+        $error = $this->getLastError();
+        if ($result === false || $error) {
+            libxml_clear_errors();
+            libxml_use_internal_errors($use_errors);
+
+            $message = $error ?: 'Ocurrió un error en XPathQuery.';
+            throw new LogicException($message);
+        }
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+
+        return $result;
+    }
+
+    /**
+     * Entrega, si existe, el último error generado de XML.
+     *
+     * @return string|null
+     */
+    private function getLastError(): ?string
+    {
+        $error = libxml_get_last_error();
+
+        if (!$error) {
+            return null;
+        }
+
+        return trim($error->message) . '.';
     }
 }
