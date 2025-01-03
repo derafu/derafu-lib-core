@@ -25,7 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Support\Store;
 
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
-use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
+use Derafu\Lib\Core\Support\Store\Contract\JsonContainerInterface;
 use InvalidArgumentException;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Helper;
@@ -35,7 +35,7 @@ use stdClass;
 /**
  * Clase para contenedor de datos estructurados con JSON Schema.
  */
-class JsonContainer extends AbstractStore implements DataContainerInterface
+class JsonContainer extends AbstractStore implements JsonContainerInterface
 {
     /**
      * Configuración del schema de datos.

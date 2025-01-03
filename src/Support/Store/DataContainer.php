@@ -46,11 +46,15 @@ class DataContainer extends AbstractStore implements DataContainerInterface
      *
      * @param array $data Datos iniciales.
      * @param array $schema Schema inicial.
+     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
      */
-    public function __construct(array $data = [], array $schema = [])
-    {
+    public function __construct(
+        array $data = [],
+        array $schema = [],
+        bool $allowUndefinedKeys = false
+    ) {
         $this->setSchema($schema);
-        $this->data = $this->resolve($data, $this->schema);
+        $this->data = $this->resolve($data, $this->schema, $allowUndefinedKeys);
     }
 
     /**
@@ -74,9 +78,9 @@ class DataContainer extends AbstractStore implements DataContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function validate(): void
+    public function validate(bool $allowUndefinedKeys = false): void
     {
-        $this->resolve($this->data, $this->schema);
+        $this->resolve($this->data, $this->schema, $allowUndefinedKeys);
     }
 
     /**
@@ -84,16 +88,27 @@ class DataContainer extends AbstractStore implements DataContainerInterface
      *
      * @param array $data Datos a validar.
      * @param array $schema Esquema a usar.
+     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
      * @return array Datos validados y normalizados.
      */
-    private function resolve(array $data, array $schema): array
-    {
+    private function resolve(
+        array $data,
+        array $schema,
+        bool $allowUndefinedKeys = false
+    ): array {
+        // Si no hay esquema los datos son válidos como vienen.
         if (empty($schema)) {
             return $data;
         }
 
-        $resolver = new OptionsResolver();
+        // Determinar si se permitirán opciones no definidas en el esquema.
+        $allowUndefinedKeys = $schema['__allowUndefinedKeys']
+            ?? $allowUndefinedKeys
+        ;
+        unset($schema['__allowUndefinedKeys']);
 
+        // Crear resolver y configurar.
+        $resolver = new OptionsResolver();
         foreach ($schema as $key => $config) {
             // Configurar el nivel actual.
             if (!empty($config['types'])) {
@@ -121,13 +136,23 @@ class DataContainer extends AbstractStore implements DataContainerInterface
                 $resolver->setNormalizer(
                     $key,
                     fn (Options $options, $value) =>
-                        $this->resolve($value ?? [], $config['schema'])
+                        $this->resolve(
+                            $value ?? [],
+                            $config['schema'],
+                            $allowUndefinedKeys
+                        )
                 );
             } elseif (!empty($config['normalizer'])) {
                 $resolver->setNormalizer($key, $config['normalizer']);
             }
         }
 
+        // Permitir opciones adicionales no definidas.
+        if ($allowUndefinedKeys) {
+            $resolver->setDefined(array_keys($data));
+        }
+
+        // Resolver las opciones.
         return $resolver->resolve($data);
     }
 }

@@ -201,13 +201,11 @@ class XPathQuery
     ): DOMNodeList {
         try {
             $query = $this->resolveQuery($query, $params);
-            $nodes = $this->execute(function() use ($query, $contextNode) {
-                return $this->xpath->query(
-                    $query,
-                    $contextNode,
-                    $this->registerNodeNS
-                );
-            });
+            $nodes = $this->execute(fn () => $this->xpath->query(
+                $query,
+                $contextNode,
+                $this->registerNodeNS
+            ));
         } catch (LogicException $e) {
             throw new InvalidArgumentException(sprintf(
                 'Ocurrió un error al ejecutar la expresión XPath: %s. %s',
@@ -228,9 +226,7 @@ class XPathQuery
     private function loadXml(string $xml): static
     {
         try {
-            $this->execute(function() use ($xml) {
-                return $this->dom->loadXml($xml);
-            });
+            $this->execute(fn () => $this->dom->loadXml($xml));
         } catch (LogicException $e) {
             throw new InvalidArgumentException(sprintf(
                 'El XML proporcionado no es válido: %s',

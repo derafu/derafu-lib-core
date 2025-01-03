@@ -22,36 +22,45 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Support\Store\Contract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Template;
 
-use Exception;
+use Derafu\Lib\Core\Foundation\Abstract\AbstractComponent;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\TemplateComponentInterface;
 
 /**
- * Interfaz para contenedor de datos estructurados con schema.
+ * Servicio para trabajar con plantillas para renderizado.
  */
-interface DataContainerInterface extends StoreInterface
+class TemplateComponent extends AbstractComponent implements TemplateComponentInterface
 {
-    /**
-     * Asigna el schema que se usará para validar los datos.
-     *
-     * @param array $schema Nuevo schema a utilizar.
-     * @return static Permite encadenar métodos.
-     */
-    public function setSchema(array $schema): static;
+    public function __construct(
+        private RendererWorkerInterface $renderer
+    ) {
+    }
 
     /**
-     * Obtiene el schema de datos definido.
-     *
-     * @return array Schema actual.
+     * {@inheritdoc}
      */
-    public function getSchema(): array;
+    public function getWorkers(): array
+    {
+        return [
+            'renderer' => $this->renderer,
+        ];
+    }
 
     /**
-     * Valida que los datos almacenados cumplan con el schema.
-     *
-     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
-     * @return void
-     * @throws Exception Lanzará una excepción si ocurre algún error.
+     * {@inheritdoc}
      */
-    public function validate(bool $allowUndefinedKeys = false): void;
+    public function getRendererWorker(): RendererWorkerInterface
+    {
+        return $this->renderer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render(string $template, array $data = []): string
+    {
+        return $this->renderer->render($template, $data);
+    }
 }

@@ -22,36 +22,13 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Support\Store\Contract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Template\Exception;
 
-use Exception;
+use Derafu\Lib\Core\Common\Exception\Exception;
 
 /**
- * Interfaz para contenedor de datos estructurados con schema.
+ * Excepción personalizada para errores asociados al renderizado de plantillas.
  */
-interface DataContainerInterface extends StoreInterface
+class TemplateException extends Exception
 {
-    /**
-     * Asigna el schema que se usará para validar los datos.
-     *
-     * @param array $schema Nuevo schema a utilizar.
-     * @return static Permite encadenar métodos.
-     */
-    public function setSchema(array $schema): static;
-
-    /**
-     * Obtiene el schema de datos definido.
-     *
-     * @return array Schema actual.
-     */
-    public function getSchema(): array;
-
-    /**
-     * Valida que los datos almacenados cumplan con el schema.
-     *
-     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
-     * @return void
-     * @throws Exception Lanzará una excepción si ocurre algún error.
-     */
-    public function validate(bool $allowUndefinedKeys = false): void;
 }

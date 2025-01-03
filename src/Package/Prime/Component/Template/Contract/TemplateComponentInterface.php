@@ -22,36 +22,30 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Support\Store\Contract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Template\Contract;
 
-use Exception;
+use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Exception\TemplateException;
 
 /**
- * Interfaz para contenedor de datos estructurados con schema.
+ * Interfaz para el servicio que trabaja con plantillas para su renderizado.
  */
-interface DataContainerInterface extends StoreInterface
+interface TemplateComponentInterface extends ComponentInterface
 {
     /**
-     * Asigna el schema que se usará para validar los datos.
+     * Entrega el worker "prime.template.renderer".
      *
-     * @param array $schema Nuevo schema a utilizar.
-     * @return static Permite encadenar métodos.
+     * @return RendererWorkerInterface
      */
-    public function setSchema(array $schema): static;
+    public function getRendererWorker(): RendererWorkerInterface;
 
     /**
-     * Obtiene el schema de datos definido.
+     * Realiza el renderizado de una plantilla.
      *
-     * @return array Schema actual.
+     * @param string $template Plantilla a renderizar.
+     * @param array $data Datos que se pararán a la plantilla al renderizarla.
+     * @return string Datos binarios del renderizado.
+     * @throws TemplateException
      */
-    public function getSchema(): array;
-
-    /**
-     * Valida que los datos almacenados cumplan con el schema.
-     *
-     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
-     * @return void
-     * @throws Exception Lanzará una excepción si ocurre algún error.
-     */
-    public function validate(bool $allowUndefinedKeys = false): void;
+    public function render(string $template, array $data = []): string;
 }

@@ -45,7 +45,9 @@
         "symfony/yaml": "^7.2",
         "symfony/options-resolver": "^7.2",
         "symfony/property-access": "^7.2",
-        "opis/json-schema": "^2.3"
+        "opis/json-schema": "^2.3",
+        "mpdf/mpdf": "^8.2",
+        "twig/twig": "^3.18"
     },
     "require-dev": {
         "ext-xdebug": "*",

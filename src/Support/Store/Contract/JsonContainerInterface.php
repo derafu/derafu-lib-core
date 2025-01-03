@@ -27,9 +27,9 @@ namespace Derafu\Lib\Core\Support\Store\Contract;
 use Exception;
 
 /**
- * Interfaz para contenedor de datos estructurados con schema.
+ * Interfaz para contenedor de datos estructurados en JSON con schema.
  */
-interface DataContainerInterface extends StoreInterface
+interface JsonContainerInterface extends StoreInterface
 {
     /**
      * Asigna el schema que se usará para validar los datos.
@@ -49,9 +49,8 @@ interface DataContainerInterface extends StoreInterface
     /**
      * Valida que los datos almacenados cumplan con el schema.
      *
-     * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
      * @return void
      * @throws Exception Lanzará una excepción si ocurre algún error.
      */
-    public function validate(bool $allowUndefinedKeys = false): void;
+    public function validate(): void;
 }

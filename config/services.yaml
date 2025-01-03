@@ -20,6 +20,8 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Log\LogComponent
     Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Signature\SignatureComponent
+    Derafu\Lib\Core\Package\Prime\Component\Template\Contract\TemplateComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Template\TemplateComponent
     Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Xml\XmlComponent
 
@@ -44,6 +46,10 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Signature\Worker\GeneratorWorker
     Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\ValidatorWorkerInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Signature\Worker\ValidatorWorker
+
+    # Workers del componente "prime.template".
+    Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker
 
     # Workers del componente "prime.xml".
     Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\EncoderWorkerInterface:
