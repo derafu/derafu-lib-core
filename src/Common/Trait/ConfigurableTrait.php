@@ -84,7 +84,7 @@ trait ConfigurableTrait
      * {@inheritdoc}
      */
     public function resolveConfiguration(
-        array $configuration
+        array $configuration = []
     ): DataContainerInterface {
         if (isset($this->configuration)) {
             $configuration = array_merge(

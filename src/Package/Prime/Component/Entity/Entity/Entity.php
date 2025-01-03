@@ -46,6 +46,14 @@ class Entity implements EntityInterface
     /**
      * {@inheritdoc}
      */
+    public function __toString(): string
+    {
+        return static::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setAttribute(string $name, int|float|string|bool|null $value): static
     {
         $this->attributes[$name] = $value;

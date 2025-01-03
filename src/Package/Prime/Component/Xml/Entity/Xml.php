@@ -240,12 +240,12 @@ class Xml extends DOMDocument implements XmlInterface
     /**
      * {@inheritdoc}
      */
-    public function query(string $query): string|array|null
+    public function query(string $query, array $params = []): string|array|null
     {
         if (!isset($this->xPathQuery)) {
             $this->xPathQuery = new XPathQuery($this);
         }
 
-        return $this->xPathQuery->get($query);
+        return $this->xPathQuery->get($query, $params);
     }
 }

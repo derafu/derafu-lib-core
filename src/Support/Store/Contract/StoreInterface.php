@@ -24,10 +24,12 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Contract;
 
+use ArrayAccess;
+
 /**
  * Interfaz base para todos los almacenamientos.
  */
-interface StoreInterface
+interface StoreInterface extends ArrayAccess
 {
     /**
      * Obtiene todos los valores almacenados.
@@ -63,7 +65,9 @@ interface StoreInterface
     public function has(string $key): bool;
 
     /**
-     * Elimina todos los valores almacenados.
+     * Elimina todos los valores almacenados o uno en particular.
+     *
+     * @param string|null $key Llave que se desea eliminar.
      */
-    public function clear(): void;
+    public function clear(string $key = null): void;
 }

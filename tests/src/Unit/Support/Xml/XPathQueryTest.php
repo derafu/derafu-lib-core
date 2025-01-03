@@ -39,6 +39,8 @@ class XPathQueryTest extends TestCase
 
     private string $nestedXml;
 
+    private string $xmlNamespaceAndParams;
+
     protected function setUp(): void
     {
         $this->validXml = <<<XML
@@ -68,6 +70,24 @@ class XPathQueryTest extends TestCase
                     </DA>
                 </CAF>
             </AUTORIZACION>
+        XML;
+
+        $this->xmlNamespaceAndParams = <<<XML
+        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+          <Documento ID="LibreDTE_76192083-9_T33F1">
+            <Encabezado>
+              <IdDoc>
+                <TipoDTE>33</TipoDTE>
+                <Folio>1</Folio>
+                <FchEmis>2025-01-03</FchEmis>
+              </IdDoc>
+              <Emisor>
+                <RUTEmisor>76192083-9</RUTEmisor>
+                <RznSoc>SASCO SpA</RznSoc>
+              </Emisor>
+            </Encabezado>
+          </Documento>
+        </DTE>
         XML;
     }
 
@@ -221,5 +241,255 @@ class XPathQueryTest extends TestCase
         $result = $query->get('//NonexistentNode');
 
         $this->assertNull($result, 'Debe devolver null si el nodo no existe.');
+    }
+
+    public function testNamespaceHandling(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        $result = $query->get('//ns:Encabezado/ns:Emisor/ns:RUTEmisor');
+        $this->assertSame('76192083-9', $result);
+
+        $result = $query->get('//ns:Encabezado/ns:IdDoc/ns:TipoDTE');
+        $this->assertSame('33', $result);
+    }
+
+    public function testQueryWithParameters(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        $params = ['tipo' => '33', 'folio' => '1'];
+        $result = $query->get('//ns:IdDoc[ns:TipoDTE=:tipo and ns:Folio=:folio]', $params);
+
+        $this->assertNotNull($result);
+        $expected = ['TipoDTE' => '33', 'Folio' => '1', 'FchEmis' => '2025-01-03'];
+        $this->assertSame($expected, $result);
+    }
+
+    public function testInvalidQueryThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $query->get('//invalid[');
+    }
+
+    public function testComplexStructureWithNamespaces(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        $result = $query->get('//ns:Encabezado');
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('IdDoc', $result);
+        $this->assertArrayHasKey('Emisor', $result);
+    }
+
+    public function testComplexStructureWithNamespacesDisabledAbsoluteNode(): void
+    {
+        $query = new XPathQuery($this->xmlNamespaceAndParams);
+
+        $result = $query->get('/DTE/Documento/Encabezado');
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('IdDoc', $result);
+        $this->assertArrayHasKey('Emisor', $result);
+    }
+
+    public function testComplexStructureWithNamespacesDisabledRelativeNode(): void
+    {
+        $query = new XPathQuery($this->xmlNamespaceAndParams);
+
+        $result = $query->get('//Encabezado');
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('IdDoc', $result);
+        $this->assertArrayHasKey('Emisor', $result);
+    }
+
+    public function testInvalidXmlThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new XPathQuery('<invalid><xml>', ['ns' => 'http://www.sii.cl/SiiDte']);
+    }
+
+    public function testGetDomDocumentWithNamespace(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $dom = $query->getDomDocument();
+
+        $this->assertInstanceOf(DOMDocument::class, $dom);
+        $this->assertStringContainsString('DTE', $dom->saveXml());
+    }
+
+    // Caso con comillas simples en el valor (valor coincide con el nodo XML).
+    public function testResolveQueryWithEscapedValuesSimpleQuotes(): void
+    {
+        $xmlContent = <<<XML
+        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+        <Documento ID="LibreDTE_76192083-9_T33F1">
+            <Encabezado>
+            <Emisor>
+                <RUTEmisor>76192083-9</RUTEmisor>
+                <RznSoc>SASCO 'Testing' SpA</RznSoc>
+            </Emisor>
+            </Encabezado>
+        </Documento>
+        </DTE>
+        XML;
+
+        $query = new XPathQuery(
+            $xmlContent,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $result = $query->get(
+            '//ns:Emisor/ns:RznSoc[text()=:value]',
+            ['value' => "SASCO 'Testing' SpA"]
+        );
+        $this->assertSame("SASCO 'Testing' SpA", $result);
+    }
+
+    // Caso con comillas dobles en el valor.
+    public function testResolveQueryWithEscapedValuesDobuleQuotes(): void
+    {
+        $xmlContent = <<<XML
+        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+        <Documento ID="LibreDTE_76192083-9_T33F1">
+            <Encabezado>
+            <Emisor>
+                <RUTEmisor>76192083-9</RUTEmisor>
+                <RznSoc>SASCO "Testing" SpA</RznSoc>
+            </Emisor>
+            </Encabezado>
+        </Documento>
+        </DTE>
+        XML;
+
+        $query = new XPathQuery(
+            $xmlContent,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $result = $query->get(
+            '//ns:Emisor/ns:RznSoc[text()=:value]',
+            ['value' => 'SASCO "Testing" SpA']
+        );
+        $this->assertSame('SASCO "Testing" SpA', $result);
+    }
+
+    // Caso con comillas simples y dobles mezcladas.
+    public function testResolveQueryWithEscapedValuesMixedQuotes(): void
+    {
+        $xmlContent = <<<XML
+        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+        <Documento ID="LibreDTE_76192083-9_T33F1">
+            <Encabezado>
+            <Emisor>
+                <RUTEmisor>76192083-9</RUTEmisor>
+                <RznSoc>SASCO 'Mixed' "Testing" SpA</RznSoc>
+            </Emisor>
+            </Encabezado>
+        </Documento>
+        </DTE>
+        XML;
+
+        $query = new XPathQuery(
+            $xmlContent,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $result = $query->get(
+            '//ns:Emisor/ns:RznSoc[text()=:value]',
+            ['value' => 'SASCO \'Mixed\' "Testing" SpA']
+        );
+        $this->assertSame('SASCO \'Mixed\' "Testing" SpA', $result);
+    }
+
+    // Caso sin comillas (valor básico).
+    public function testResolveQueryWithEscapedValuesWithoutQuotes(): void
+    {
+        $xmlContent = <<<XML
+        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+        <Documento ID="LibreDTE_76192083-9_T33F1">
+            <Encabezado>
+            <Emisor>
+                <RUTEmisor>76192083-9</RUTEmisor>
+                <RznSoc>SASCO Testing SpA</RznSoc>
+            </Emisor>
+            </Encabezado>
+        </Documento>
+        </DTE>
+        XML;
+
+        $query = new XPathQuery(
+            $xmlContent,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+        $result = $query->get(
+            '//ns:Emisor/ns:RznSoc[text()=:value]',
+            ['value' => 'SASCO Testing SpA']
+        );
+        $this->assertSame('SASCO Testing SpA', $result);
+    }
+
+    public function testQueryWithContextNode(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        // Obtener el nodo 'Encabezado' como contexto
+        $contextNode = $query->getNodes('//ns:Encabezado')->item(0);
+
+        // Consultar desde el contexto del nodo 'Encabezado'
+        $result = $query->get('ns:IdDoc/ns:TipoDTE', contextNode: $contextNode);
+        $this->assertSame('33', $result);
+
+        $result = $query->get('ns:IdDoc/ns:Folio', contextNode: $contextNode);
+        $this->assertSame('1', $result);
+    }
+
+    public function testQueryWithContextNodeNoResult(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        // Obtener el nodo 'Encabezado' como contexto
+        $contextNode = $query->getNodes('//ns:Encabezado')->item(0);
+
+        // Intentar consultar un nodo que no existe desde el contexto
+        $result = $query->get('ns:NonExistentNode', contextNode: $contextNode);
+        $this->assertNull($result);
+    }
+
+    public function testQueryWithContextNodeOnMultipleMatches(): void
+    {
+        $query = new XPathQuery(
+            $this->xmlNamespaceAndParams,
+            ['ns' => 'http://www.sii.cl/SiiDte']
+        );
+
+        // Obtener el nodo 'Encabezado' como contexto
+        $contextNode = $query->getNodes('//ns:Encabezado')->item(0);
+
+        // Consultar varios nodos desde el contexto
+        $result = $query->getValues('ns:IdDoc/ns:*', contextNode: $contextNode);
+        $this->assertCount(3, $result); // Hay 3 nodos en 'IdDoc': TipoDTE, Folio y FchEmis.
+        $this->assertContains('33', $result);
+        $this->assertContains('1', $result);
     }
 }

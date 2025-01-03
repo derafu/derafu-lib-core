@@ -66,6 +66,36 @@ class Selector
     }
 
     /**
+     * Verifica si existe un valor para un selector.
+     *
+     * La validación será positiva siempre que existe el índice del selector y
+     * que no sea `null` el valor que tenga dicho índice.
+     *
+     * @param array $data Conjunto de datos.
+     * @param string $selector Selector que se desea verificar.
+     * @return bool True si la llave existe, false en caso contrario.
+     */
+    public static function has(array $data, string $selector): bool
+    {
+        return self::get($data, $selector) !== null;
+    }
+
+    /**
+     * Elimina el índice de los datos del selector.
+     *
+     * Esto elimina el índice del selector, no lo asigna a `null` pues en
+     * estricto rigor seguiría existiendo el índice en los datos.
+     *
+     * @param array $data Conjunto de datos.
+     * @param string $selector Selector que se desea eliminar.
+     */
+    public static function clear(array &$data, string $selector): void
+    {
+        // TODO: se debe hacer de forma recursiva resolviendo el selector.
+        unset($data[$selector]);
+    }
+
+    /**
      * Resuelve un selector y obtiene/establece el valor.
      *
      * @param array $data Datos donde buscar/escribir.

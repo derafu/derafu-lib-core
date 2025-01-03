@@ -79,7 +79,7 @@ trait OptionsAwareTrait
     /**
      * {@inheritdoc}
      */
-    public function resolveOptions(array $options): DataContainerInterface
+    public function resolveOptions(array $options = []): DataContainerInterface
     {
         if (isset($this->options)) {
             $options = array_merge($this->options->all(), $options);

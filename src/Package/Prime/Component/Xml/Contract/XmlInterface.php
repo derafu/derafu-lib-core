@@ -139,8 +139,12 @@ interface XmlInterface extends DOMParentNode
     /**
      * Ejecuta una consulta XPath sobre el documento XML.
      *
-     * @param string $query
+     * La consulta que se realiza es sencilla, sin namespaces. Si se requiere el
+     * uso de namespace se debe usar directamente la clase XPathQuery.
+     *
+     * @param string $query Consulta XPath con marcadores nombrados (ej.: ":param").
+     * @param array $params Arreglo de parámetros en formato ['param' => 'value'].
      * @return string|array|null
      */
-    public function query(string $query): string|array|null;
+    public function query(string $query, array $params = []): string|array|null;
 }

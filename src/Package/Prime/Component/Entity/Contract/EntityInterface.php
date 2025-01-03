@@ -24,10 +24,12 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
 
+use Derafu\Lib\Core\Common\Contract\StringableInterface;
+
 /**
  * Interfaz para las entidades de repositorios.
  */
-interface EntityInterface
+interface EntityInterface extends StringableInterface
 {
     /**
      * Asignar un atributo a la entidad.

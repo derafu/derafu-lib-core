@@ -70,14 +70,50 @@ abstract class AbstractStore implements StoreInterface
      */
     public function has(string $key): bool
     {
-        return $this->get($key) !== null;
+        return Selector::has($this->data, $key);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function clear(): void
+    public function clear(string $key = null): void
     {
-        $this->data = [];
+        if ($key === null) {
+            $this->data = [];
+        } else {
+            Selector::clear($this->data, $key);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->set((string) $offset, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->get((string) $offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return $this->has((string) $offset);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        $this->clear((string) $offset);
     }
 }

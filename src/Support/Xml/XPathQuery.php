@@ -50,12 +50,23 @@ class XPathQuery
     private readonly DOMXPath $xpath;
 
     /**
+     * Si se deben usar los prefijos de namespaces o si deben ser ignorados.
+     *
+     * @var boolean
+     */
+    private readonly bool $registerNodeNS;
+
+    /**
      * Constructor que recibe el documento XML y prepara XPath.
      *
      * @param string|DOMDocument $xml Documento XML.
+     * @param array $namespaces Arreglo asociativo con prefijo y URI.
      */
-    public function __construct(string|DOMDocument $xml)
-    {
+    public function __construct(
+        string|DOMDocument $xml,
+        array $namespaces = []
+    ) {
+        // Asignar instancia del documento DOM.
         if ($xml instanceof DOMDocument) {
             $this->dom = $xml;
         } else {
@@ -63,7 +74,152 @@ class XPathQuery
             $this->loadXml($xml);
         }
 
+        // Crear instancia de consultas XPath sobre el documento DOM.
         $this->xpath = new DOMXPath($this->dom);
+
+        // Asignar o desactivar uso de namespaces.
+        if ($namespaces) {
+            foreach ($namespaces as $prefix => $namespace) {
+                $this->xpath->registerNamespace($prefix, $namespace);
+            }
+            $this->registerNodeNS = true;
+        } else {
+            $this->registerNodeNS = false;
+        }
+    }
+
+    /**
+     * Devuelve el DOMDocument usado internamente.
+     *
+     * @return DOMDocument
+     */
+    public function getDomDocument(): DOMDocument
+    {
+        return $this->dom;
+    }
+
+    /**
+     * Ejecuta una consulta XPath y devuelve el resultado procesado.
+     *
+     * El resultado dependerá de o que se encuentre:
+     *
+     *   - `null`: si no hubo coincidencias.
+     *   - string: si hubo una coincidencia.
+     *   - string[]: si hubo más de una coincidencia.
+     *
+     * Si el nodo tiene hijos, devuelve un arreglo recursivo representando
+     * toda la estructura de los nodos.
+     *
+     * @param string $query Consulta XPath.
+     * @param array $params Arreglo de parámetros.
+     * @param DOMNode|null $contextNode Desde qué nodo evaluar la expresión.
+     * @return string|string[]|null El valor procesado: string, arreglo o null.
+     */
+    public function get(
+        string $query,
+        array $params = [],
+        ?DOMNode $contextNode = null
+    ): string|array|null {
+        $nodes = $this->getNodes($query, $params, $contextNode);
+
+        // Sin coincidencias.
+        if ($nodes->length === 0) {
+            return null;
+        }
+
+        // Un solo nodo.
+        if ($nodes->length === 1) {
+            return $this->processNode($nodes->item(0));
+        }
+
+        // Varios nodos.
+        $results = [];
+        foreach ($nodes as $node) {
+            $results[] = $this->processNode($node);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Ejecuta una consulta XPath y devuelve un arreglo de valores.
+     *
+     * @param string $query Consulta XPath.
+     * @param array $params Arreglo de parámetros.
+     * @param DOMNode|null $contextNode Desde qué nodo evaluar la expresión.
+     * @return string[] Arreglo de valores encontrados.
+     */
+    public function getValues(
+        string $query,
+        array $params = [],
+        ?DOMNode $contextNode = null
+    ): array {
+        $nodes = $this->getNodes($query, $params, $contextNode);
+
+        $results = [];
+        foreach ($nodes as $node) {
+            $results[] = $node->nodeValue;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Ejecuta una consulta XPath y devuelve el primer resultado como string.
+     *
+     * @param string $query Consulta XPath.
+     * @param array $params Arreglo de parámetros.
+     * @param DOMNode|null $contextNode Desde qué nodo evaluar la expresión.
+     * @return string|null El valor del nodo, o `null` si no existe.
+     */
+    public function getValue(
+        string $query,
+        array $params = [],
+        ?DOMNode $contextNode = null
+    ): ?string {
+        $nodes = $this->getNodes($query, $params, $contextNode);
+
+        return $nodes->length > 0
+            ? $nodes->item(0)->nodeValue
+            : null
+        ;
+    }
+
+    /**
+     * Ejecuta una consulta XPath y devuelve los nodos resultantes.
+     *
+     * @param string $query Consulta XPath.
+     * @param array $params Arreglo de parámetros.
+     * @param DOMNode|null $contextNode Desde qué nodo evaluar la expresión.
+     * @return DOMNodeList Nodos resultantes de la consulta XPath.
+     */
+    public function getNodes(
+        string $query,
+        array $params = [],
+        ?DOMNode $contextNode = null
+    ): DOMNodeList {
+        $use_errors = libxml_use_internal_errors(true);
+
+        $query = $this->resolveQuery($query, $params);
+
+        $nodes = $this->xpath->query(
+            $query,
+            $contextNode,
+            $this->registerNodeNS
+        );
+
+        $error = libxml_get_last_error();
+        if ($nodes === false || $error) {
+            throw new InvalidArgumentException(sprintf(
+                'Ocurrió un error al ejecutar la expresión XPath: %s.',
+                $query
+            ));
+        }
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($use_errors);
+
+        return $nodes;
     }
 
     /**
@@ -92,54 +248,6 @@ class XPathQuery
     }
 
     /**
-     * Devuelve el DOMDocument usado internamente.
-     *
-     * @return DOMDocument
-     */
-    public function getDomDocument(): DOMDocument
-    {
-        return $this->dom;
-    }
-
-    /**
-     * Ejecuta una consulta XPath y devuelve el resultado procesado.
-     *
-     * El resultado dependerá de o que se encuentre:
-     *
-     *   - `null`: si no hubo coincidencias.
-     *   - string: si hubo una coincidencia.
-     *   - string[]: si hubo más de una coincidencia.
-     *
-     * Si el nodo tiene hijos, devuelve un arreglo recursivo representando
-     * toda la estructura de los nodos.
-     *
-     * @param string $query Consulta XPath.
-     * @return string|string[]|null El valor procesado: string, arreglo o null.
-     */
-    public function get(string $query): string|array|null
-    {
-        $nodes = $this->getNodes($query);
-
-        // Sin coincidencias.
-        if ($nodes->length === 0) {
-            return null;
-        }
-
-        // Un solo nodo.
-        if ($nodes->length === 1) {
-            return $this->processNode($nodes->item(0));
-        }
-
-        // Varios nodos.
-        $results = [];
-        foreach ($nodes as $node) {
-            $results[] = $this->processNode($node);
-        }
-
-        return $results;
-    }
-
-    /**
      * Procesa un nodo DOM y sus hijos recursivamente.
      *
      * @param DOMNode $node Nodo DOM a procesar.
@@ -163,82 +271,63 @@ class XPathQuery
         return $node->nodeValue;
     }
 
-
-    /*public function get(string $query): string|array|null
-    {
-        // Ejecutar consulta.
-        $results = $this->getValues($query);
-
-        // Si no hay resultados null.
-        if (!isset($results[0])) {
-            return null;
-        }
-
-        // Si solo hay un resultado un string.
-        if (!isset($results[1])) {
-            return $results[0];
-        }
-
-        // Más de un resultado, arreglo.
-        return $results;
-    }*/
-
     /**
-     * Ejecuta una consulta XPath y devuelve un arreglo de valores.
+     * Resuelve los parámetros de una consulta XPath.
      *
-     * @param string $query Consulta XPath.
-     * @return string[] Arreglo de valores encontrados.
-     */
-    public function getValues(string $query): array
-    {
-        $nodes = $this->getNodes($query);
-
-        $results = [];
-        foreach ($nodes as $node) {
-            $results[] = $node->nodeValue;
-        }
-
-        return $results;
-    }
-
-    /**
-     * Ejecuta una consulta XPath y devuelve el primer resultado como string.
+     * Este método reemplaza los marcadores nombrados (como `:param`) en la
+     * consulta con las comillas en los valores escapadas.
      *
-     * @param string $query Consulta XPath.
-     * @return string|null El valor del nodo, o `null` si no existe.
+     * @param string $query Consulta XPath con marcadores nombrados (ej.: ":param").
+     * @param array $params Arreglo de parámetros en formato ['param' => 'value'].
+     * @return string Consulta XPath con los valores reemplazados.
      */
-    public function getValue(string $query): ?string
+    private function resolveQuery(string $query, array $params = []): string
     {
-        $nodes = $this->getNodes($query);
-
-        return $nodes->length > 0
-            ? $nodes->item(0)->nodeValue
-            : null
-        ;
-    }
-
-    /**
-     * Ejecuta una consulta XPath y devuelve los nodos resultantes.
-     *
-     * @param string $query Consulta XPath.
-     * @return DOMNodeList Nodos resultantes de la consulta XPath.
-     */
-    public function getNodes(string $query): DOMNodeList
-    {
-        $use_errors = libxml_use_internal_errors(true);
-
-        $nodes = $this->xpath->query($query);
-
-        if ($nodes === false || $error = libxml_get_last_error()) {
-            throw new InvalidArgumentException(sprintf(
-                'Ocurrió un error al ejecutar la expresión XPath: %s.',
+        // Si los namespaces están desactivados, se adapta la consulta XPath.
+        if (!$this->registerNodeNS) {
+            $query = preg_replace_callback(
+                '/(?<=\/|^)(\w+)/',
+                fn ($matches) => '*[local-name()="' . $matches[1] . '"]',
                 $query
-            ));
+            );
         }
 
-        libxml_clear_errors();
-        libxml_use_internal_errors($use_errors);
+        // Reemplazar parámetros.
+        foreach ($params as $key => $value) {
+            $placeholder = ':' . ltrim($key, ':');
+            $quotedValue = $this->quoteValue($value);
+            $query = str_replace($placeholder, $quotedValue, $query);
+        }
 
-        return $nodes;
+        // Entregar la consulta resuelta.
+        return $query;
+    }
+
+    /**
+     * Escapa un valor para usarlo en una consulta XPath.
+     *
+     * Si la versión es PHP 8.4 o superior se utiliza DOMXPath::quote().
+     * De lo contrario, se usa una implementación manual.
+     *
+     * @param string $value Valor a escapar.
+     * @return string Valor escapado como literal XPath.
+     */
+    private function quoteValue(string $value): string
+    {
+        // Disponible solo desde PHP 8.4.
+        if (method_exists(DOMXPath::class, 'quote')) {
+            return DOMXPath::quote($value);
+        }
+
+        // Implementación manual para versiones anteriores a PHP 8.4.
+        if (!str_contains($value, "'")) {
+            return "'" . $value . "'";
+        }
+        if (!str_contains($value, '"')) {
+            return '"' . $value . '"';
+        }
+
+        // Si contiene comillas simples y dobles, combinarlas con concat().
+        return "concat('" . str_replace("'", "',\"'\",'", $value) . "')";
     }
 }
