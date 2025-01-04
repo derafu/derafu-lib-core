@@ -22,7 +22,7 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Tests\Unit\Support\Store;
+namespace Derafu\Lib\Tests\Unit\Helper;
 
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Tests\TestCase;

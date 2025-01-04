@@ -22,7 +22,7 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Tests\Functional\Foundation\Certificate;
+namespace Derafu\Lib\Tests\Functional\Package\Prime\Component\Certificate;
 
 use Derafu\Lib\Core\Helper\AsymmetricKey;
 use Derafu\Lib\Core\Helper\Str;

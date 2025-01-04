@@ -49,7 +49,7 @@ abstract class TestCase extends PHPUnitTestCase
      */
     protected static function getFixturesPath(string $path = null): string
     {
-        $fixturesPath = realpath(self::$fixturesPath);
+        $fixturesPath = realpath(static::$fixturesPath);
 
         if ($path === null) {
             return $fixturesPath;

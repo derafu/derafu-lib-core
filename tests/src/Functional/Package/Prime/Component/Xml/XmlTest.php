@@ -22,7 +22,7 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Tests\Functional\Foundation\Xml;
+namespace Derafu\Lib\Tests\Functional\Package\Prime\Component\Xml;
 
 use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;

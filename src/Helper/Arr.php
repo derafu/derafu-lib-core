@@ -59,4 +59,39 @@ class Arr extends IlluminateArr
         }
         return $merged;
     }
+
+    /**
+     * Casta recursivamente y de manera automática los datos de un arreglo.
+     *
+     * Aplica las siguientes reglas a los valores que sean strings:
+     *
+     *   - Limpia los strings con trim().
+     *   - Un string que representa un decimal es casteado como float.
+     *   - Un string que representa un entero es casteado como int.
+     *   - Un string vacío puede ser alterado con otro valor (por defecto se
+     *     deja igual sin alterar).
+     *
+     * @param array $array Arreglo que se castearán sus strings según reglas.
+     * @param mixed $emptyValue Valor que se asignará a strings vacíos.
+     * @return array Arrego modificado.
+     */
+    public static function autoCastRecursive(array &$array, mixed $emptyValue = ''): array
+    {
+        array_walk_recursive($array, function (&$value, $key, $emptyValue) {
+            if (is_string($value)) {
+                $value = trim($value);
+                if (is_numeric($value)) {
+                    if ($value == (int) $value) {
+                        $value = (int) $value;
+                    } else {
+                        $value = (float) $value;
+                    }
+                } elseif ($value === '') {
+                    $value = $emptyValue;
+                }
+            }
+        }, $emptyValue);
+
+        return $array;
+    }
 }

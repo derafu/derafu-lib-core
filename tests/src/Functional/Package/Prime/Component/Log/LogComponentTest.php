@@ -22,7 +22,7 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Tests\Functional\Foundation\Log;
+namespace Derafu\Lib\Tests\Functional\Package\Prime\Component\Log;
 
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;

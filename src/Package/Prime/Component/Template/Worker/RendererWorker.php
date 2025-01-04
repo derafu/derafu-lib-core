@@ -111,11 +111,25 @@ class RendererWorker extends AbstractWorker implements RendererWorkerInterface
     private function getTwig(): Environment
     {
         if (!isset($this->twig)) {
-            $this->filesystemLoader = new FilesystemLoader($this->paths);
-            $this->twig = new Environment($this->filesystemLoader);
+            $this->twig = new Environment($this->getFilesystemLoader());
         }
 
         return $this->twig;
+    }
+
+    /**
+     * Entrega la instancia del cargador de plantillas desde el sistema de
+     * archivos.
+     *
+     * @return FilesystemLoader
+     */
+    private function getFilesystemLoader(): FilesystemLoader
+    {
+        if (!isset($this->filesystemLoader)) {
+            $this->filesystemLoader = new FilesystemLoader($this->paths);
+        }
+
+        return $this->filesystemLoader;
     }
 
     /**
@@ -174,7 +188,7 @@ class RendererWorker extends AbstractWorker implements RendererWorkerInterface
         // Agregar el directorio si se pasó una ruta absoluta.
         if ($template[0] === '/') {
             $dir = dirname($template);
-            $this->filesystemLoader->addPath($dir);
+            $this->getFilesystemLoader()->addPath($dir);
             $template = basename($template);
         }
 
