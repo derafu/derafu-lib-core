@@ -94,4 +94,29 @@ class Arr extends IlluminateArr
 
         return $array;
     }
+
+    /**
+     * Agrega el ID (índice del arreglo) a los datos del arreglo de dicho
+     * índice.
+     *
+     * Esto hará que el ID esté tanto el índice como en los datos del índice.
+     *
+     * @param array<int|string,array> $data
+     * @param string $idAttribute
+     * @return array
+     */
+    public static function addIdAttribute(array $data, string $idAttribute): array
+    {
+        return array_combine(
+            array_keys($data),
+            array_map(
+                fn ($id, $item) => array_merge(
+                    [$idAttribute => $id],
+                    $item
+                ),
+                array_keys($data),
+                array_values($data)
+            )
+        );
+    }
 }

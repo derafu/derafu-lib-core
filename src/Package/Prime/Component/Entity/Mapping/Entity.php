@@ -22,23 +22,16 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Mapping;
 
-use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
+use Attribute;
 
-/**
- * Interfaz para el administrador de entidades.
- */
-interface ManagerWorkerInterface extends WorkerInterface
+#[Attribute(Attribute::TARGET_CLASS)]
+class Entity
 {
-    /**
-     * Entrega el repositorio asociado a una clase de entidad o identificador
-     * del repositorio.
-     *
-     * @param string $repository Clase de entidad o identificador repositorio.
-     * @return RepositoryInterface Repositorio solicitado.
-     * @throws ManagerException
-     */
-    public function getRepository(string $repository): RepositoryInterface;
+    public function __construct(
+        public readonly string|null $repositoryClass = null,
+        public readonly bool $readOnly = false,
+    ) {
+    }
 }

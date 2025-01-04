@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use ArrayAccess;
+use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
@@ -48,31 +50,41 @@ class Repository extends AbstractStore implements RepositoryInterface
     /**
      * Constructor del repositorio.
      *
-     * @param array|string $source Arreglo de datos o ruta al archivo PHP.
+     * @param string|array|ArrayAccess $source Arreglo de datos o ruta al archivo PHP.
+     * @param string $entityClass Clase de la entidad que este repositorio usa.
+     * @param string|null $idAttribute Nombre del atributo ID que se debe
+     * agregar a los datos cuando se carga el repositorio.
      */
-    public function __construct(array|string $source)
-    {
-        $this->load($source);
+    public function __construct(
+        string|array|ArrayAccess $source,
+        string $entityClass = null,
+        ?string $idAttribute = null
+    ) {
+        if ($entityClass !== null) {
+            $this->entityClass = $entityClass;
+        }
+
+        $this->load($source, $idAttribute);
     }
 
     /**
      * Carga los datos del repositorio.
      *
-     * @param array|string $source
+     * @param string|array|ArrayAccess $source
+     * * @param string|null $idAttribute
      * @return void
      */
-    protected function load(array|string $source): void
-    {
+    protected function load(
+        string|array|ArrayAccess $source,
+        string $idAttribute = null
+    ): void {
         $data = is_string($source) ? require $source : $source;
 
-        $this->data = array_combine(
-            array_keys($data),
-            array_map(
-                fn ($id, $item) => array_merge(['id' => $id], $item),
-                array_keys($data),
-                array_values($data)
-            )
-        );
+        if ($idAttribute && is_array($data)) {
+            $data = Arr::addIdAttribute($source, $idAttribute);
+        }
+
+        $this->data = $data;
     }
 
     /**

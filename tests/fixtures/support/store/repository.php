@@ -25,6 +25,8 @@ declare(strict_types=1);
 return [
     'products' => [
         // Los datos.
+        // El 'id' es obligatorio en cada una de las entidades, se agregará
+        // automáticamente en el test.
         'data' => [
             'prod-001' => [
                 'name' => 'Laptop XPS',
@@ -56,7 +58,7 @@ return [
             'find_by_id' => [
                 'method' => 'find',
                 'args' => ['prod-001'],
-                'expected' => (object) [
+                'expected' => [
                     'id' => 'prod-001',
                     'name' => 'Laptop XPS',
                     'category' => 'computers',
@@ -73,28 +75,28 @@ return [
                 'method' => 'findAll',
                 'args' => [],
                 'expected' => [
-                    (object) [
+                    [
                         'id' => 'prod-001',
                         'name' => 'Laptop XPS',
                         'category' => 'computers',
                         'price' => 1299.99,
                         'active' => true,
                     ],
-                    (object) [
+                    [
                         'id' => 'prod-002',
                         'name' => 'Magic Mouse',
                         'category' => 'accessories',
                         'price' => 99.99,
                         'active' => true,
                     ],
-                    (object) [
+                    [
                         'id' => 'prod-003',
                         'name' => 'Old Keyboard',
                         'category' => 'accessories',
                         'price' => 29.99,
                         'active' => false,
                     ],
-                    (object) [
+                    [
                         'id' => 'prod-004',
                         'name' => 'Gaming Mouse',
                         'category' => 'accessories',
@@ -112,14 +114,14 @@ return [
                     null,                                            // offset
                 ],
                 'expected' => [
-                    (object) [
+                    [
                         'id' => 'prod-004',
                         'name' => 'Gaming Mouse',
                         'category' => 'accessories',
                         'price' => 149.99,
                         'active' => true,
                     ],
-                    (object) [
+                    [
                         'id' => 'prod-002',
                         'name' => 'Magic Mouse',
                         'category' => 'accessories',
@@ -137,14 +139,14 @@ return [
                     1,                             // offset
                 ],
                 'expected' => [
-                    (object) [
+                    [
                         'id' => 'prod-002',
                         'name' => 'Magic Mouse',
                         'category' => 'accessories',
                         'price' => 99.99,
                         'active' => true,
                     ],
-                    (object) [
+                    [
                         'id' => 'prod-004',
                         'name' => 'Gaming Mouse',
                         'category' => 'accessories',
@@ -159,7 +161,7 @@ return [
                     ['category' => 'computers'], // criteria
                     null,                        // orderBy
                 ],
-                'expected' => (object) [
+                'expected' => [
                     'id' => 'prod-001',
                     'name' => 'Laptop XPS',
                     'category' => 'computers',

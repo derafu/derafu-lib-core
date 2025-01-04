@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Tests\Unit\Support\Store;
 
+use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Repository;
 use Derafu\Lib\Tests\TestCase;
@@ -32,6 +33,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 #[CoversClass(Repository::class)]
+#[CoversClass(Arr::class)]
 #[CoversClass(Factory::class)]
 class RepositoryTest extends TestCase
 {
@@ -58,7 +60,7 @@ class RepositoryTest extends TestCase
     #[DataProvider('provideTestCases')]
     public function testRepositoryCase(array $data, array $case): void
     {
-        $repository = new Repository($data);
+        $repository = new Repository($data, idAttribute: 'id');
 
         $method = $case['method'];
         $args = $case['args'];
@@ -76,21 +78,9 @@ class RepositoryTest extends TestCase
             ))
         };
 
-        if (is_object($expected)) {
-            $expected = (array) $expected;
-        }
-
-        if (is_object($result)) {
-            $result = (array) $result;
-        }
-
-        if (is_array($result)) {
-            $result = array_map(fn ($obj) => (array) $obj, $result);
-        }
-
-        if (is_array($expected)) {
-            $expected = array_map(fn ($obj) => (array) $obj, $expected);
-        }
+        // Asegurar que el resultado sea arreglo, y si tiene objetos dentro que
+        // también sean arreglos.
+        $result = json_decode(json_encode($result), true);
 
         $this->assertSame($expected, $result);
     }

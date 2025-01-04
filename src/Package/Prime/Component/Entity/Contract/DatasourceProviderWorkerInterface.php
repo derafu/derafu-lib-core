@@ -24,21 +24,24 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
 
+use ArrayObject;
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
+use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\DatasourceProviderException;
 
 /**
  * Interfaz para el administrador de entidades.
  */
-interface ManagerWorkerInterface extends WorkerInterface
+interface DatasourceProviderWorkerInterface extends WorkerInterface
 {
     /**
-     * Entrega el repositorio asociado a una clase de entidad o identificador
-     * del repositorio.
+     * Busca y entrega los datos en un origen de datos.
      *
-     * @param string $repository Clase de entidad o identificador repositorio.
-     * @return RepositoryInterface Repositorio solicitado.
-     * @throws ManagerException
+     * Los datos se entregan como un ArrayObject para ser compartidos entre los
+     * diferentes consumidores de datos que podrían requerir el mismo origen.
+     *
+     * @param string $source Identificador del origen solicitado.
+     * @return ArrayObject
+     * @throws DatasourceProviderException
      */
-    public function getRepository(string $repository): RepositoryInterface;
+    public function fetch(string $source): ArrayObject;
 }

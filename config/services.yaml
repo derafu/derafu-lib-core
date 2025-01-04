@@ -34,6 +34,8 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Certificate\Worker\ValidatorWorker
 
     # Workers del componente "prime.entity".
+    Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\DatasourceProviderWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Entity\Worker\DatasourceProviderWorker
     Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\ManagerWorkerInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Entity\Worker\ManagerWorker
 

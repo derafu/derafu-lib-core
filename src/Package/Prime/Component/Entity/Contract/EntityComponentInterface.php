@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Entity\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
-use Derafu\Lib\Core\Foundation\Contract\FactoryInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Exception\ManagerException;
 
 /**
@@ -41,15 +40,18 @@ interface EntityComponentInterface extends ComponentInterface
     public function getManagerWorker(): ManagerWorkerInterface;
 
     /**
-     * Entrega el repositorio asociado a una clase o identificador de origen.
+     * Entrega la instancia del proveedor de datos para las entidades.
      *
-     * @param string $source
-     * @param FactoryInterface|null $factory
+     * @return DatasourceProviderWorkerInterface
+     */
+    public function getDatasourceProviderWorker(): DatasourceProviderWorkerInterface;
+
+    /**
+     * Entrega un repositorio de entidades.
+     *
+     * @param string $repository
      * @return RepositoryInterface Repositorio solicitado.
      * @throws ManagerException
      */
-    public function getRepository(
-        string $source,
-        ?FactoryInterface $factory = null
-    ): RepositoryInterface;
+    public function getRepository(string $repository): RepositoryInterface;
 }

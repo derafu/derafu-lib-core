@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Abstract;
 
+use ArrayAccess;
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Support\Store\Contract\StoreInterface;
 
@@ -35,9 +36,9 @@ abstract class AbstractStore implements StoreInterface
     /**
      * Datos almacenados.
      *
-     * @var array
+     * @var array|ArrayAccess
      */
-    protected array $data = [];
+    protected array|ArrayAccess $data = [];
 
     /**
      * {@inheritdoc}
