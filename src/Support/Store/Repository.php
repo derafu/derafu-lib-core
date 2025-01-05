@@ -119,7 +119,7 @@ class Repository extends AbstractStore implements RepositoryInterface
         ?int $offset = null
     ): array {
         $results = array_filter(
-            $this->data,
+            (array) $this->data,
             fn ($item) => $this->matchCriteria($item, $criteria)
         );
 
@@ -161,7 +161,10 @@ class Repository extends AbstractStore implements RepositoryInterface
     protected function matchCriteria(array $item, array $criteria): bool
     {
         foreach ($criteria as $field => $value) {
-            if (!isset($item[$field]) || $item[$field] !== $value) {
+            if (!is_array($value)) {
+                $value = [$value];
+            }
+            if (!isset($item[$field]) || !in_array($item[$field], $value)) {
                 return false;
             }
         }

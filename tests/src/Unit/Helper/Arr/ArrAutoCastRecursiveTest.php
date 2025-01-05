@@ -22,73 +22,15 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Tests\Unit\Helper;
+namespace Derafu\Lib\Tests\Unit\Helper\Arr;
 
 use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Arr::class)]
-class ArrTest extends TestCase
+class ArrAutoCastRecursiveTest extends TestCase
 {
-    public function testMergeRecursiveDistinctSimple(): void
-    {
-        $array1 = ['a' => 1, 'b' => 2];
-        $array2 = ['b' => 3, 'c' => 4];
-
-        $expected = ['a' => 1, 'b' => 3, 'c' => 4];
-        $this->assertSame($expected, Arr::mergeRecursiveDistinct($array1, $array2));
-    }
-
-    public function testMergeRecursiveDistinctNested(): void
-    {
-        $array1 = [
-            'a' => ['a1' => 1, 'a2' => 2],
-            'b' => 2,
-        ];
-        $array2 = [
-            'a' => ['a2' => 3, 'a3' => 4],
-            'c' => 5,
-        ];
-
-        $expected = [
-            'a' => ['a1' => 1, 'a2' => 3, 'a3' => 4],
-            'b' => 2,
-            'c' => 5,
-        ];
-        $this->assertSame($expected, Arr::mergeRecursiveDistinct($array1, $array2));
-    }
-
-    public function testMergeRecursiveDistinctOverwriting(): void
-    {
-        $array1 = ['a' => 1, 'b' => ['b1' => 2, 'b2' => 3]];
-        $array2 = ['b' => ['b2' => 4, 'b3' => 5]];
-
-        $expected = [
-            'a' => 1,
-            'b' => ['b1' => 2, 'b2' => 4, 'b3' => 5],
-        ];
-        $this->assertSame($expected, Arr::mergeRecursiveDistinct($array1, $array2));
-    }
-
-    public function testMergeRecursiveDistinctEmptyArray(): void
-    {
-        $array1 = ['a' => 1];
-        $array2 = [];
-
-        $expected = ['a' => 1];
-        $this->assertSame($expected, Arr::mergeRecursiveDistinct($array1, $array2));
-    }
-
-    public function testMergeRecursiveDistinctBothEmpty(): void
-    {
-        $array1 = [];
-        $array2 = [];
-
-        $expected = [];
-        $this->assertSame($expected, Arr::mergeRecursiveDistinct($array1, $array2));
-    }
-
     public function testAutoCastRecursive()
     {
         $array = [

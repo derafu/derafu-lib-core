@@ -34,9 +34,9 @@ interface StoreInterface extends ArrayAccess
     /**
      * Obtiene todos los valores almacenados.
      *
-     * @return array Arreglo con todos los valores almacenados.
+     * @return array|ArrayAccess Arreglo con todos los valores almacenados.
      */
-    public function all(): array;
+    public function all(): array|ArrayAccess;
 
     /**
      * Asigna un valor a una llave.

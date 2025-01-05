@@ -43,7 +43,7 @@ abstract class AbstractStore implements StoreInterface
     /**
      * {@inheritdoc}
      */
-    public function all(): array
+    public function all(): array|ArrayAccess
     {
         return $this->data;
     }

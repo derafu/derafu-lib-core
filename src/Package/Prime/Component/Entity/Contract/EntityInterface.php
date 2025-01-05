@@ -54,4 +54,12 @@ interface EntityInterface extends StringableInterface
      * @return bool
      */
     public function hasAttribute(string $name): bool;
+
+    /**
+     * Permite desasignar el valor de un atributo de la entidad.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function unsetAttribute(string $name): void;
 }

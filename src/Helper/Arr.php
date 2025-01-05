@@ -119,4 +119,34 @@ class Arr extends IlluminateArr
             )
         );
     }
+
+    /**
+     * Convierte el último nivel de un array, accedido por notación de puntos,
+     * en un arreglo con índice 0 si aún no es un arreglo con índice 0.
+     *
+     * @param array &$array Arreglo de entrada a procesar.
+     * @param string $path Notación de puntos para navegar en el array.
+     */
+    public static function ensureArrayAtPath(array &$array, string $path): void
+    {
+        // Dividir la notación de puntos en niveles.
+        $keys = explode('.', $path);
+        $current = &$array;
+
+        foreach ($keys as $key) {
+            // Si el nivel actual no existe, crear un arreglo vacío.
+            if (!isset($current[$key]) || !is_array($current[$key])) {
+                $current[$key] = [];
+            }
+
+            // Bajar al siguiente nivel.
+            $current = &$current[$key];
+        }
+
+        // Si el último nivel no tiene un índice 0, convertir su valor a un
+        // arreglo.
+        if (!isset($current[0])) {
+            $current = [$current];
+        }
+    }
 }
