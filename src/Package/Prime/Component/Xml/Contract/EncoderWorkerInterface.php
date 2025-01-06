@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use DOMElement;
 
 /**
@@ -42,13 +41,13 @@ interface EncoderWorkerInterface extends WorkerInterface
      * prefijo).
      * @param DOMElement|null $parent Elemento padre para los nodos, o null
      * para que sea la raíz.
-     * @param Xml $doc El documento raíz del XML que se genera.
-     * @return Xml
+     * @param XmlInterface $doc El documento raíz del XML que se genera.
+     * @return XmlInterface
      */
     public function encode(
         array $data,
         ?array $namespace = null,
         ?DOMElement $parent = null,
-        ?Xml $doc = null
-    ): Xml;
+        ?XmlInterface $doc = null
+    ): XmlInterface;
 }

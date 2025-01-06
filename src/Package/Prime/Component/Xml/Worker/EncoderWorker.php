@@ -27,6 +27,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Worker;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\EncoderWorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use DOMElement;
 use DOMNode;
@@ -59,8 +60,8 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
         array $data,
         ?array $namespace = null,
         ?DOMElement $parent = null,
-        ?Xml $doc = null
-    ): Xml {
+        ?XmlInterface $doc = null
+    ): XmlInterface {
         // Si no hay un documento XML completo (desde raíz, no vale un nodo),
         // entonces se crea, pues se necesitará para crear los futuros nodos.
         if ($doc === null) {
@@ -169,7 +170,7 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
     /**
      * Agrega nodos hijos a un nodo XML a partir de un arreglo.
      *
-     * @param Xml $doc Documento XML en el que se agregarán los nodos.
+     * @param XmlInterface $doc Documento XML en el que se agregarán los nodos.
      * @param DOMNode $parent Nodo padre al que se agregarán los
      * nodos hijos.
      * @param string $tagName Nombre del tag del nodo hijo.
@@ -180,7 +181,7 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
      * @throws InvalidArgumentException Si un nodo hijo no es un arreglo.
      */
     private function nodeAddChilds(
-        Xml $doc,
+        XmlInterface $doc,
         DOMNode $parent,
         string $tagName,
         array $childs,
@@ -241,7 +242,7 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
     /**
      * Agrega un nodo XML con un valor escalar a un nodo padre.
      *
-     * @param Xml $doc Documento XML en el que se agregarán los nodos.
+     * @param XmlInterface $doc Documento XML en el que se agregarán los nodos.
      * @param DOMNode $parent Nodo padre al que se agregará el nodo hijo.
      * @param string $tagName Nombre del tag del nodo hijo.
      * @param string $value Valor del nodo hijo.
@@ -250,7 +251,7 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
      * @return void
      */
     private function nodeAddValue(
-        Xml $doc,
+        XmlInterface $doc,
         DOMNode $parent,
         string $tagName,
         string $value,

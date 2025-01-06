@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\ComponentInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Certificate\Entity\Certificate;
 
 /**
  * Interfaz para el servicio de certificados digitales.

@@ -26,7 +26,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\ValidatorWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
 use LogicException;
 
@@ -89,7 +89,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
      * {@inheritdoc}
      */
     public function validateSchema(
-        Xml $xml,
+        XmlInterface $xml,
         ?string $schemaPath = null,
         array $translations = []
     ): void {
@@ -160,12 +160,12 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     /**
      * Busca la ruta del esquema XML para validar el documento XML.
      *
-     * @param Xml $xml Documento XML para el cual se busca su
+     * @param XmlInterface $xml Documento XML para el cual se busca su
      * esquema XML.
      * @return string Ruta hacia el archivo XSD con el esquema del XML.
      * @throws XmlException Si el esquema del XML no se encuentra.
      */
-    private function getSchemaPath(Xml $xml): string
+    private function getSchemaPath(XmlInterface $xml): string
     {
         // Si no hay servicio de almacenamiento se debe dar un error.
         if (!isset($this->storageService)) {

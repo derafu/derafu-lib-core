@@ -26,7 +26,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\DecoderWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
+use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
 use DOMElement;
 use DOMNodeList;
 use DOMText;
@@ -40,7 +40,7 @@ class DecoderWorker extends AbstractWorker implements DecoderWorkerInterface
      * {@inheritdoc}
      */
     public function decode(
-        Xml|DOMElement $documentElement,
+        XmlInterface|DOMElement $documentElement,
         ?array &$data = null,
         bool $twinsAsArray = false
     ): array {
@@ -48,7 +48,7 @@ class DecoderWorker extends AbstractWorker implements DecoderWorkerInterface
         // la generación.
         $tagElement = $documentElement instanceof DOMElement
             ? $documentElement
-            : $documentElement->documentElement
+            : $documentElement->getDocumentElement()
         ;
         if ($tagElement === null) {
             return [];

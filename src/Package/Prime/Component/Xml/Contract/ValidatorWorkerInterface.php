@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
 
 /**
@@ -36,7 +35,7 @@ interface ValidatorWorkerInterface extends WorkerInterface
     /**
      * Realiza la validación de esquema de un documento XML.
      *
-     * @param Xml $xml Documento XML que se desea validar.
+     * @param XmlInterface $xml Documento XML que se desea validar.
      * @param string|null $schemaPath Ruta hacia el archivo XSD del esquema
      * XML contra el que se validará. Si no se indica, se obtiene desde el
      * documento XML si está definido en "xsi:schemaLocation".
@@ -44,7 +43,7 @@ interface ValidatorWorkerInterface extends WorkerInterface
      * @throws XmlException Si el XML no es válido según su esquema.
      */
     public function validateSchema(
-        Xml $xml,
+        XmlInterface $xml,
         ?string $schemaPath = null,
         array $translations = []
     ): void;

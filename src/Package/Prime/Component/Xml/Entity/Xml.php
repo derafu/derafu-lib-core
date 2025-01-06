@@ -64,14 +64,6 @@ class Xml extends DOMDocument implements XmlInterface
     /**
      * {@inheritdoc}
      */
-    public function getDocumentElement(): DOMElement
-    {
-        return $this->documentElement;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->documentElement->tagName;
@@ -247,5 +239,13 @@ class Xml extends DOMDocument implements XmlInterface
         }
 
         return $this->xPathQuery->get($query, $params);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDocumentElement(): ?DOMElement
+    {
+        return $this->documentElement;
     }
 }

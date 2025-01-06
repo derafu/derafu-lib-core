@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Contract;
 
 use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use DOMElement;
 
 /**
@@ -36,7 +35,7 @@ interface DecoderWorkerInterface extends WorkerInterface
     /**
      * Convierte un documento XML a un arreglo PHP.
      *
-     * @param Xml|DOMElement $documentElement Documento XML que se
+     * @param XmlInterface|DOMElement $documentElement Documento XML que se
      * desea convertir a un arreglo de PHP o el elemento donde vamos a hacer la
      * conversión si no es el documento XML completo.
      * @param array|null $data Arreglo donde se almacenarán los resultados.
@@ -45,7 +44,7 @@ interface DecoderWorkerInterface extends WorkerInterface
      * @return array Arreglo con la representación del XML.
      */
     public function decode(
-        Xml|DOMElement $documentElement,
+        XmlInterface|DOMElement $documentElement,
         ?array &$data = null,
         bool $twinsAsArray = false
     ): array;
