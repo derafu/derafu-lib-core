@@ -17,10 +17,7 @@
     "autoload": {
         "psr-4": {
             "Derafu\\Lib\\Core\\": "src"
-        },
-        "files": [
-            "app/bootstrap.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

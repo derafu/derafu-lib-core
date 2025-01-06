@@ -81,14 +81,14 @@ class ApplicationTest extends TestCase
 
     public function testApplicationGlobalFunction(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
 
         $this->assertInstanceOf(Application::class, $app);
     }
 
     public function testApplicationGetPackages(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
 
         foreach ($this->testCases['packages'] as $name => $package) {
             $this->assertInstanceOf(
@@ -100,7 +100,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationServiceNotFoundWrongServiceName(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
 
         $this->expectException(ServiceNotFoundException::class);
 
@@ -109,7 +109,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationServiceNotFoundInterfaceServiceName(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
 
         $this->expectException(ServiceNotFoundException::class);
 
@@ -118,14 +118,14 @@ class ApplicationTest extends TestCase
 
     public function testApplicationServicePackagesCount(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
 
         $this->assertSame(1, count($app->getPackages()));
     }
 
     public function testApplicationServiceMagicHierarchyPrimeXmlEncoder(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
         $package = $app->getPackage('prime');
         $component = $package->getComponent('xml');
         $worker = $component->getWorker('encoder');
@@ -143,7 +143,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationServiceMethodsHierarchyPrimeXmlEncoder(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
         $package = $app->getPrimePackage();
         $component = $package->getXmlComponent();
         $worker = $component->getEncoderWorker();
@@ -159,7 +159,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationPackageIdentification(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
         $package = $app->getPrimePackage();
 
         $this->assertSame(PrimePackage::class, (string) $package);
@@ -169,7 +169,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationComponentIdentification(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
         $component = $app->getPrimePackage()->getXmlComponent();
 
         $this->assertSame(XmlComponent::class, (string) $component);
@@ -179,7 +179,7 @@ class ApplicationTest extends TestCase
 
     public function testApplicationWorkerIdentification(): void
     {
-        $app = derafu_lib();
+        $app = Application::getInstance();
         $worker = $app->getPrimePackage()->getXmlComponent()->getEncoderWorker();
 
         $this->assertSame(XmlEncoderWorker::class, (string) $worker);

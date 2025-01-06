@@ -103,9 +103,9 @@ class ApplicationTest extends TestCase
     }
 
     // Obtener servicio a través de la función global.
-    public function testApplicationGlobalFunction(): void
+    public function testApplicationGetSingleton(): void
     {
-        $app = derafu_lib($this->config);
+        $app = Application::getInstance($this->config);
 
         $service = $app->getService('public_service');
         $this->assertInstanceOf(TestService::class, $service);
