@@ -119,7 +119,10 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
                 : []
             ;
             throw new XmlException(
-                'La validación del XML falló.',
+                sprintf(
+                    'La validación del XML falló usando el esquema %s.',
+                    basename($schemaPath)
+                ),
                 $errors
             );
         }
