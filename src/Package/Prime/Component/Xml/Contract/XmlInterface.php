@@ -25,16 +25,12 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Contract;
 
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
-use DOMElement;
 use DOMNode;
-use DOMParentNode;
 
 /**
  * Interfaz para la clase que representa un documento XML.
- *
- * @see DOMDocument
  */
-interface XmlInterface extends DOMParentNode
+interface XmlInterface extends DOMDocumentInterface
 {
     /**
      * Entrega el nombre del tag raíz del XML.
@@ -139,93 +135,4 @@ interface XmlInterface extends DOMParentNode
      * @return string|array|null
      */
     public function query(string $query, array $params = []): string|array|null;
-
-    /**
-     * Entrega la instancia del elemento raíz del documento.
-     *
-     * Esta es una forma segura de acceder a $documentElement cuando se usa la
-     * referencia a esta interfaz como tipo de datos de la variable.
-     *
-     * Si no se usa esto, herramientas como phpstan reclamarán.
-     *
-     * @return DOMElement|null
-     */
-    public function getDocumentElement(): ?DOMElement;
-
-    /**
-     * Canonicaliza el XML de acuerdo con la especificación C14N.
-     *
-     * La implementación oficial de esta interfaz hereda de DOMDocument por lo
-     * que este método está disponible. Sin embargo se define en la interfaz
-     * para que herramientas como phpstan no reclamen cuando se usa la
-     * referencia a esta interfaz como tipo de datos de la variable.
-     *
-     * @param bool $exclusive Indica si se utiliza la canonicalización
-     * exclusiva.
-     * @param bool $withComments Incluye los comentarios en la salida si es
-     * `true`.
-     * @param array|null $xpath Lista opcional de nodos para incluir en la
-     * canonicalización.
-     * @param array|null $nsPrefixes Prefijos de namespaces a considerar en la
-     * canonicalización.
-     * @return string|false Una cadena con el XML canonicalizado o `false` en
-     * caso de error.
-     */
-    public function C14N(
-        bool $exclusive = false,
-        bool $withComments = false,
-        ?array $xpath = null,
-        ?array $nsPrefixes = null
-    ): string|false;
-
-    /**
-     * Crea un nuevo elemento en el documento XML.
-     *
-     * La implementación oficial de esta interfaz hereda de DOMDocument por lo
-     * que este método está disponible. Sin embargo se define en la interfaz
-     * para que herramientas como phpstan no reclamen cuando se usa la
-     * referencia a esta interfaz como tipo de datos de la variable.
-     *
-     * @param string $localName El nombre local del elemento.
-     * @param string $value El valor opcional del elemento.
-     * @return DOMElement|false El elemento creado o `false` en caso de error.
-     */
-    public function createElement(
-        string $localName,
-        string $value = ''
-    ); // Agregar tipo de retorno es incompatible con DOMDocument oficial de PHP.
-
-    /**
-     * Crea un nuevo elemento en un namespace específico.
-     *
-     * La implementación oficial de esta interfaz hereda de DOMDocument por lo
-     * que este método está disponible. Sin embargo se define en la interfaz
-     * para que herramientas como phpstan no reclamen cuando se usa la
-     * referencia a esta interfaz como tipo de datos de la variable.
-     *
-     * @param string|null $namespace URI del namespace (puede ser `null` para
-     * ninguno).
-     * @param string $qualifiedName Nombre calificado del elemento.
-     * @param string $value Valor opcional del elemento.
-     * @return DOMElement|false El elemento creado o `false` en caso de error.
-     */
-    public function createElementNS(
-        ?string $namespace,
-        string $qualifiedName,
-        string $value = ''
-    ); // Agregar tipo de retorno es incompatible con DOMDocument oficial de PHP.
-
-    /**
-     * Valida el documento XML actual contra un esquema XML.
-     *
-     * La implementación oficial de esta interfaz hereda de DOMDocument por lo
-     * que este método está disponible. Sin embargo se define en la interfaz
-     * para que herramientas como phpstan no reclamen cuando se usa la
-     * referencia a esta interfaz como tipo de datos de la variable.
-     *
-     * @param string $filename Ruta al archivo del esquema (.xsd).
-     * @param int $flags Opciones de validación (por defecto `0`).
-     * @return bool `true` si la validación es exitosa, `false` en caso de error.
-     */
-    public function schemaValidate(string $filename, int $flags = 0): bool;
 }
