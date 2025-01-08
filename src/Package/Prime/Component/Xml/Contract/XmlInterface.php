@@ -135,4 +135,19 @@ interface XmlInterface extends DOMDocumentInterface
      * @return string|array|null
      */
     public function query(string $query, array $params = []): string|array|null;
+
+    /**
+     * Realiza una consulta al arreglo del XML utilizando un selector.
+     *
+     * @param string $selector Selector para la consulta al arreglo del XML.
+     * @return mixed Resultado de la consulta del selector al arreglo.
+     */
+    public function get(string $selector): mixed;
+
+    /**
+     * Entrega los datos del XML en una estructura de arreglo.
+     *
+     * @return array
+     */
+    public function toArray(): array;
 }

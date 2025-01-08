@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Entity;
 
+use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlInterface;
@@ -44,6 +45,13 @@ class Xml extends DOMDocument implements XmlInterface
      * @var XPathQuery
      */
     private XPathQuery $xPathQuery;
+
+    /**
+     * Representación del XML como arreglo.
+     *
+     * @var array
+     */
+    private array $array;
 
     /**
      * Constructor del documento XML.
@@ -239,6 +247,26 @@ class Xml extends DOMDocument implements XmlInterface
         }
 
         return $this->xPathQuery->get($query, $params);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get(string $selector): mixed
+    {
+        return Selector::get($this->toArray(), $selector);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        if (!isset($this->array)) {
+            $this->array = $this->query('/');
+        }
+
+        return $this->array;
     }
 
     /**
