@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\BagInterface;
@@ -36,9 +38,9 @@ class Bag extends AbstractStore implements BagInterface
     /**
      * Constructor del contenedor.
      *
-     * @param array $data Datos iniciales
+     * @param array|ArrayAccess|ArrayObject $data Datos iniciales
      */
-    public function __construct(array $data = [])
+    public function __construct(array|ArrayAccess|ArrayObject $data = [])
     {
         $this->data = $this->createFrom($data);
     }
@@ -46,7 +48,7 @@ class Bag extends AbstractStore implements BagInterface
     /**
      * {@inheritdoc}
      */
-    public function replace(array $data): static
+    public function replace(array|ArrayAccess|ArrayObject $data): static
     {
         $this->data = $this->createFrom($data);
 
@@ -56,8 +58,12 @@ class Bag extends AbstractStore implements BagInterface
     /**
      * {@inheritdoc}
      */
-    public function merge(array $data): static
+    public function merge(array|ArrayAccess|ArrayObject $data): static
     {
+        if (!is_array($data)) {
+            $data = $this->createFrom($data)->toArray();
+        }
+
         $this->data = $this->createFrom(
             Arr::mergeRecursiveDistinct($this->toArray(), $data)
         );

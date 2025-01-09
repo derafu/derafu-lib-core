@@ -24,10 +24,14 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Abstract;
 
+use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Support\Store\Contract\StoreInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use InvalidArgumentException;
+use Traversable;
 
 /**
  * Clase base para todos los almacenamientos.
@@ -140,14 +144,28 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * Crea una nueva instancia del tipo de datos que utiliza la propieda $data.
+     * Crea una nueva instancia de ArrayCollection, para usar o asignar a la
+     * propiedad $data de la clase.
      *
-     * @param array $array
+     * @param array|ArrayAccess|ArrayObject $data
      * @return ArrayCollection
      */
-    protected function createFrom(array $array): ArrayCollection
-    {
-        return new ArrayCollection($array);
+    protected function createFrom(
+        array|ArrayAccess|ArrayObject $data
+    ): ArrayCollection {
+        if ($data instanceof ArrayObject) {
+            $data = (array) $data;
+        } elseif ($data instanceof ArrayAccess) {
+            if ($data instanceof Traversable) {
+                $data = iterator_to_array($data);
+            } else {
+                throw new InvalidArgumentException(
+                    'ArrayAccess debe implementar Traversable para ser convertible.'
+                );
+            }
+        }
+
+        return new ArrayCollection($data);
     }
 
     /**

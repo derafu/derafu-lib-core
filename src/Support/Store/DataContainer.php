@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -44,16 +46,19 @@ class DataContainer extends AbstractStore implements DataContainerInterface
     /**
      * Constructor del contenedor.
      *
-     * @param array $data Datos iniciales.
+     * @param array|ArrayAccess|ArrayObject $data Datos iniciales.
      * @param array $schema Schema inicial.
      * @param bool $allowUndefinedKeys Permitir o no índices no definidos.
      */
     public function __construct(
-        array $data = [],
+        array|ArrayAccess|ArrayObject $data = [],
         array $schema = [],
         bool $allowUndefinedKeys = false
     ) {
         $this->setSchema($schema);
+        if (!is_array($data)) {
+            $data = $this->createFrom($data)->toArray();
+        }
         $data = $this->resolve($data, $this->schema, $allowUndefinedKeys);
         $this->data = $this->createFrom($data);
     }

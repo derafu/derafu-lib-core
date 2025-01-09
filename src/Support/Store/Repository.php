@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Support\Store;
 
 use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
@@ -71,20 +72,21 @@ class Repository extends AbstractStore implements RepositoryInterface
     /**
      * Carga los datos del repositorio.
      *
-     * @param string|array|ArrayAccess $source
-     * * @param string|null $idAttribute
+     * @param string|array|ArrayAccess|ArrayObject $source
+     * @param string|null $idAttribute
      * @return void
      */
     protected function load(
-        string|array|ArrayAccess $source,
+        string|array|ArrayAccess|ArrayObject $source,
         string $idAttribute = null
     ): void {
         $data = is_string($source) ? require $source : $source;
-
+        if (!is_array($data)) {
+            $data = $this->createFrom($data)->toArray();
+        }
         if ($idAttribute && is_array($data)) {
             $data = Arr::addIdAttribute($source, $idAttribute);
         }
-
         $this->data = $this->createFrom($data);
     }
 

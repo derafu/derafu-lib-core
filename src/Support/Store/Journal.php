@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\JournalInterface;
 
@@ -35,9 +37,9 @@ class Journal extends AbstractStore implements JournalInterface
     /**
      * Constructor del Journal.
      *
-     * @param array $data Datos iniciales del journal.
+     * @param array|ArrayAccess|ArrayObject $data Datos iniciales del journal.
      */
-    public function __construct(array $data = [])
+    public function __construct(array|ArrayAccess|ArrayObject $data = [])
     {
         $this->data = $this->createFrom($data);
     }

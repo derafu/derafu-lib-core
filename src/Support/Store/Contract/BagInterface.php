@@ -24,6 +24,9 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Contract;
 
+use ArrayAccess;
+use ArrayObject;
+
 /**
  * Interfaz para contenedor simple de datos.
  */
@@ -32,18 +35,19 @@ interface BagInterface extends StoreInterface
     /**
      * Reemplaza todos los valores almacenados por nuevos valores.
      *
-     * @param array $data Nuevos valores a almacenar.
+     * @param array|ArrayAccess|ArrayObject $data Nuevos valores a almacenar.
      * @return static Permite encadenar métodos.
      */
-    public function replace(array $data): static;
+    public function replace(array|ArrayAccess|ArrayObject $data): static;
 
     /**
      * Combina los valores almacenados con nuevos valores.
      *
-     * @param array $data Valores a combinar con los existentes.
+     * @param array|ArrayAccess|ArrayObject $data Valores a combinar con los
+     * existentes.
      * @return static Permite encadenar métodos.
      */
-    public function merge(array $data): static;
+    public function merge(array|ArrayAccess|ArrayObject $data): static;
 
     /**
      * Elimina un valor almacenado.

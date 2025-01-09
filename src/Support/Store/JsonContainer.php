@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store;
 
+use ArrayAccess;
+use ArrayObject;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\JsonContainerInterface;
 use InvalidArgumentException;
@@ -54,13 +56,18 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
     /**
      * Constructor del contenedor.
      *
-     * @param array $data Datos iniciales.
+     * @param array|ArrayAccess|ArrayObject $data Datos iniciales.
      * @param array $schema Schema inicial.
      */
-    public function __construct(array $data = [], array $schema = [])
-    {
+    public function __construct(
+        array|ArrayAccess|ArrayObject $data = [],
+        array $schema = []
+    ) {
         $this->formatter = new ErrorFormatter();
         $this->setSchema($schema);
+        if (!is_array($data)) {
+            $data = $this->createFrom($data)->toArray();
+        }
         $data = $this->resolve($data, $this->schema);
         $this->data = $this->createFrom($data);
     }
