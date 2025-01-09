@@ -54,7 +54,8 @@ class DataContainer extends AbstractStore implements DataContainerInterface
         bool $allowUndefinedKeys = false
     ) {
         $this->setSchema($schema);
-        $this->data = $this->resolve($data, $this->schema, $allowUndefinedKeys);
+        $data = $this->resolve($data, $this->schema, $allowUndefinedKeys);
+        $this->data = $this->createFrom($data);
     }
 
     /**
@@ -80,7 +81,7 @@ class DataContainer extends AbstractStore implements DataContainerInterface
      */
     public function validate(bool $allowUndefinedKeys = false): void
     {
-        $this->resolve($this->data, $this->schema, $allowUndefinedKeys);
+        $this->resolve($this->toArray(), $this->schema, $allowUndefinedKeys);
     }
 
     /**

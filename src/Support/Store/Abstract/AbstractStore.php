@@ -24,9 +24,10 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Abstract;
 
-use ArrayAccess;
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Support\Store\Contract\StoreInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Clase base para todos los almacenamientos.
@@ -34,16 +35,16 @@ use Derafu\Lib\Core\Support\Store\Contract\StoreInterface;
 abstract class AbstractStore implements StoreInterface
 {
     /**
-     * Datos almacenados.
+     * Colección de datos almacenados.
      *
-     * @var array|ArrayAccess
+     * @var ArrayCollection
      */
-    protected array|ArrayAccess $data = [];
+    protected ArrayCollection $data;
 
     /**
      * {@inheritdoc}
      */
-    public function all(): array|ArrayAccess
+    public function collection(): ArrayCollection
     {
         return $this->data;
     }
@@ -51,9 +52,19 @@ abstract class AbstractStore implements StoreInterface
     /**
      * {@inheritdoc}
      */
+    public function all(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function set(string $key, mixed $value): static
     {
-        Selector::set($this->data, $key, $value);
+        $data = $this->toArray();
+        Selector::set($data, $key, $value);
+        $this->data = $this->createFrom($data);
 
         return $this;
     }
@@ -63,7 +74,7 @@ abstract class AbstractStore implements StoreInterface
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        return Selector::get($this->data, $key, $default);
+        return Selector::get($this->toArray(), $key, $default);
     }
 
     /**
@@ -71,7 +82,7 @@ abstract class AbstractStore implements StoreInterface
      */
     public function has(string $key): bool
     {
-        return Selector::has($this->data, $key);
+        return Selector::has($this->toArray(), $key);
     }
 
     /**
@@ -80,10 +91,20 @@ abstract class AbstractStore implements StoreInterface
     public function clear(string $key = null): void
     {
         if ($key === null) {
-            $this->data = [];
+            $this->data = $this->createFrom([]);
         } else {
-            Selector::clear($this->data, $key);
+            $data = $this->toArray();
+            Selector::clear($data, $key);
+            $this->data = $this->createFrom($data);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function matching(Criteria $criteria): ArrayCollection
+    {
+        return $this->createFrom($this->data->matching($criteria)->toArray());
     }
 
     /**
@@ -116,5 +137,26 @@ abstract class AbstractStore implements StoreInterface
     public function offsetUnset(mixed $offset): void
     {
         $this->clear((string) $offset);
+    }
+
+    /**
+     * Crea una nueva instancia del tipo de datos que utiliza la propieda $data.
+     *
+     * @param array $array
+     * @return ArrayCollection
+     */
+    protected function createFrom(array $array): ArrayCollection
+    {
+        return new ArrayCollection($array);
+    }
+
+    /**
+     * Entrega los elementos de $data como arreglo.
+     *
+     * @return array
+     */
+    protected function toArray(): array
+    {
+        return $this->data->toArray();
     }
 }

@@ -29,6 +29,7 @@ use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
+use Doctrine\Common\Collections\Criteria;
 use stdClass;
 
 /**
@@ -84,7 +85,7 @@ class Repository extends AbstractStore implements RepositoryInterface
             $data = Arr::addIdAttribute($source, $idAttribute);
         }
 
-        $this->data = $data;
+        $this->data = $this->createFrom($data);
     }
 
     /**
@@ -103,10 +104,9 @@ class Repository extends AbstractStore implements RepositoryInterface
      */
     public function findAll(): array
     {
-        return array_values(array_map(
-            fn ($item) => $this->createEntity($item),
-            $this->data
-        ));
+        return array_values($this->data->map(
+            fn ($item) => $this->createEntity($item)
+        )->toArray());
     }
 
     /**
@@ -118,10 +118,9 @@ class Repository extends AbstractStore implements RepositoryInterface
         ?int $limit = null,
         ?int $offset = null
     ): array {
-        $results = array_filter(
-            (array) $this->data,
+        $results = $this->data->filter(
             fn ($item) => $this->matchCriteria($item, $criteria)
-        );
+        )->toArray();
 
         if ($orderBy) {
             $results = $this->applyOrderBy($results, $orderBy);
@@ -150,9 +149,35 @@ class Repository extends AbstractStore implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function count(): int
+    public function count(array $criteria = []): int
     {
-        return count($this->data);
+        if (empty($criteria)) {
+            return count($this->data);
+        }
+
+        $results = $this->data->filter(
+            fn ($item) => $this->matchCriteria($item, $criteria)
+        );
+
+        return $results->count();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findByCriteria(Criteria $criteria): array
+    {
+        return parent::matching($criteria)->map(
+            fn ($item) => $this->createEntity($item)
+        )->getValues();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClassName(): string
+    {
+        return $this->entityClass;
     }
 
     /**

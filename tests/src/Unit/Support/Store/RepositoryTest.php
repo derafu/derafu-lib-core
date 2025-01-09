@@ -72,6 +72,7 @@ class RepositoryTest extends TestCase
             'findBy' => $repository->findBy(...$args),
             'findOneBy' => $repository->findOneBy(...$args),
             'count' => $repository->count(...$args),
+            'findByCriteria' => $repository->findByCriteria(...$args),
             default => throw new InvalidArgumentException(sprintf(
                 'Método %s no soportado.',
                 $method

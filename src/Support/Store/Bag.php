@@ -40,7 +40,7 @@ class Bag extends AbstractStore implements BagInterface
      */
     public function __construct(array $data = [])
     {
-        $this->data = $data;
+        $this->data = $this->createFrom($data);
     }
 
     /**
@@ -48,7 +48,7 @@ class Bag extends AbstractStore implements BagInterface
      */
     public function replace(array $data): static
     {
-        $this->data = $data;
+        $this->data = $this->createFrom($data);
 
         return $this;
     }
@@ -58,7 +58,9 @@ class Bag extends AbstractStore implements BagInterface
      */
     public function merge(array $data): static
     {
-        $this->data = Arr::mergeRecursiveDistinct($this->data, $data);
+        $this->data = $this->createFrom(
+            Arr::mergeRecursiveDistinct($this->toArray(), $data)
+        );
 
         return $this;
     }

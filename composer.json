@@ -44,7 +44,8 @@
         "symfony/property-access": "^7.2",
         "opis/json-schema": "^2.3",
         "mpdf/mpdf": "^8.2",
-        "twig/twig": "^3.18"
+        "twig/twig": "^3.18",
+        "doctrine/collections": "^2.2"
     },
     "require-dev": {
         "ext-xdebug": "*",

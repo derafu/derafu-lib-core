@@ -24,13 +24,15 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Support\Store\Contract;
 
+use Doctrine\Common\Collections\Criteria;
+
 /**
 * Interfaz para repositorios de objetos/entidades.
 *
 * Proporciona métodos estándar para acceder y buscar objetos/entidades desde
 * una fuente de datos.
 */
-interface RepositoryInterface
+interface RepositoryInterface extends StoreInterface
 {
     /**
      * Encuentra un objeto por su identificador.
@@ -77,7 +79,32 @@ interface RepositoryInterface
     /**
      * Retorna el número total de objetos en el repositorio.
      *
+     * @param array $criteria Criterios al contar en formato ['campo' => 'valor'].
      * @return int Cantidad de objetos.
      */
-    public function count(): int;
+    public function count(array $criteria = []): int;
+
+    /**
+     * Aplica un criterio para filtrar entidades almacenadas.
+     *
+     * Este método permite filtrar y ordenar las entidades en el almacenamiento
+     * de acuerdo a las condiciones definidas en un objeto `Criteria`.
+     *
+     * El resultado es un arrelgo que contiene únicamente las entidades que
+     * cumplen con las condiciones.
+     *
+     * @param Criteria $criteria El objeto `Criteria` que define las
+     * condiciones, el orden y los límites de los resultados.
+     * @return array Un arreglo con las entidades que cumplen el criterio.
+     * @see \Doctrine\Common\Collections\Criteria
+     * @see \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function findByCriteria(Criteria $criteria): array;
+
+    /**
+     * Entrega el nombre de la clase que el repositorio gestiona.
+     *
+     * @return string
+     */
+    public function getClassName(): string;
 }

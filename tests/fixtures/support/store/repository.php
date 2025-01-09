@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Doctrine\Common\Collections\Criteria;
+
 /**
  * Derafu: Biblioteca PHP (Núcleo).
  * Copyright (C) Derafu <https://www.derafu.org>
@@ -181,6 +183,30 @@ return [
                 'method' => 'count',
                 'args' => [],
                 'expected' => 4,
+            ],
+            'criteria' => [
+                'method' => 'findByCriteria',
+                'args' => [
+                    Criteria::create()
+                        ->where(Criteria::expr()->lte('price', 100))
+                    ,
+                ],
+                'expected' => [
+                    [
+                        'id' => 'prod-002',
+                        'name' => 'Magic Mouse',
+                        'category' => 'accessories',
+                        'price' => 99.99,
+                        'active' => true,
+                    ],
+                    [
+                        'id' => 'prod-003',
+                        'name' => 'Old Keyboard',
+                        'category' => 'accessories',
+                        'price' => 29.99,
+                        'active' => false,
+                    ],
+                ],
             ],
         ],
     ],

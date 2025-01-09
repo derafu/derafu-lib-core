@@ -25,6 +25,8 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Support\Store\Contract;
 
 use ArrayAccess;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Interfaz base para todos los almacenamientos.
@@ -32,11 +34,18 @@ use ArrayAccess;
 interface StoreInterface extends ArrayAccess
 {
     /**
+     * Obtiene la colección de los datos almacenados.
+     *
+     * @return ArrayCollection Colección con todos los valores almacenados.
+     */
+    public function collection(): ArrayCollection;
+
+    /**
      * Obtiene todos los valores almacenados.
      *
-     * @return array|ArrayAccess Arreglo con todos los valores almacenados.
+     * @return array Arreglo con todos los valores almacenados.
      */
-    public function all(): array|ArrayAccess;
+    public function all(): array;
 
     /**
      * Asigna un valor a una llave.
@@ -70,4 +79,22 @@ interface StoreInterface extends ArrayAccess
      * @param string|null $key Llave que se desea eliminar.
      */
     public function clear(string $key = null): void;
+
+    /**
+     * Aplica un criterio para filtrar los elementos almacenados.
+     *
+     * Este método permite filtrar y ordenar los elementos en la colección de
+     * acuerdo a las condiciones definidas en un objeto `Criteria`.
+     *
+     * El resultado es una nueva colección (`ArrayCollection`) que contiene
+     * únicamente los elementos que cumplen con las condiciones.
+     *
+     * @param Criteria $criteria El objeto `Criteria` que define las
+     * condiciones, el orden y los límites de los resultados.
+     * @return ArrayCollection Una nueva colección con los elementos que cumplen
+     * el criterio especificado.
+     * @see \Doctrine\Common\Collections\Criteria
+     * @see \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function matching(Criteria $criteria): ArrayCollection;
 }

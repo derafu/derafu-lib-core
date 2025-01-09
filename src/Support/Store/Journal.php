@@ -33,6 +33,16 @@ use Derafu\Lib\Core\Support\Store\Contract\JournalInterface;
 class Journal extends AbstractStore implements JournalInterface
 {
     /**
+     * Constructor del Journal.
+     *
+     * @param array $data Datos iniciales del journal.
+     */
+    public function __construct(array $data = [])
+    {
+        $this->data = $this->createFrom($data);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function add(mixed $item): static
@@ -47,6 +57,6 @@ class Journal extends AbstractStore implements JournalInterface
      */
     public function reverse(): array
     {
-        return array_reverse($this->data);
+        return array_reverse($this->toArray());
     }
 }

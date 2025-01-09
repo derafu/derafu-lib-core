@@ -61,7 +61,8 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
     {
         $this->formatter = new ErrorFormatter();
         $this->setSchema($schema);
-        $this->data = $this->resolve($data, $this->schema);
+        $data = $this->resolve($data, $this->schema);
+        $this->data = $this->createFrom($data);
     }
 
     /**
@@ -92,7 +93,7 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
      */
     public function validate(): void
     {
-        $this->resolve($this->data, $this->schema);
+        $this->resolve($this->toArray(), $this->schema);
     }
 
     /**
