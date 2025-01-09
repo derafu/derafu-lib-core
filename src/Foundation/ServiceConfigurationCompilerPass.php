@@ -83,6 +83,12 @@ class ServiceConfigurationCompilerPass implements CompilerPassInterface
             $worker = $tags['service:worker'][0]['name'];
             $config = $configuration->getPackageConfiguration($package);
             $config = $config['components'][$component]['workers'][$worker] ?? [];
+        } elseif (!empty($tags['service:command'])) {
+            $package = $tags['service:command'][0]['package'];
+            $component = $tags['service:command'][0]['component'];
+            $command = $tags['service:command'][0]['name'];
+            $config = $configuration->getPackageConfiguration($package);
+            $config = $config['components'][$component]['commands'][$command] ?? [];
         }
 
         return $config;

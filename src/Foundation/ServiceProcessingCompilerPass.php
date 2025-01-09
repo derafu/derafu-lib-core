@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation;
 
+use Derafu\Lib\Core\Foundation\Contract\CommandInterface;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
 use Derafu\Lib\Core\Helper\Str;
 use LogicException;
@@ -67,7 +68,12 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         // Workers.
         'worker' => [
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)WorkerInterface$/",
-            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\(?<worker>[A-Za-z0-9_]+)Worker$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)Worker$/",
+        ],
+        // Commands.
+        'command' => [
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<command>[A-Za-z0-9_]+)CommandInterface$/",
+            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Command\\\\(?<command>[A-Za-z0-9_]+)Command$/",
         ],
         // Jobs.
         'job' => [
@@ -155,7 +161,10 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         if (
             str_contains($id, '.')
             || !str_contains($id, '\\')
-            || !in_array(ServiceInterface::class, (array) class_implements($id))
+            || (
+                !in_array(ServiceInterface::class, (array) class_implements($id))
+                && !in_array(CommandInterface::class, (array) class_implements($id))
+            )
         ) {
             return;
         }
@@ -168,6 +177,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
                     $package = Str::snake($matches['package']);
                     $component = Str::snake($matches['component'] ?? '');
                     $worker = Str::snake($matches['worker'] ?? '');
+                    $command = Str::snake($matches['command'] ?? '');
                     $action = str_replace('\\_', '.', Str::snake($matches[4] ?? ''));
 
                     $aliasId = $this->processFoundationServiceType(
@@ -178,6 +188,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
                         $package,
                         $component,
                         $worker,
+                        $command,
                         $action
                     );
                 }
@@ -196,6 +207,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
      * @param string $package
      * @param string|null $component
      * @param string|null $worker
+     * @param string|null $command
      * @param string|null $action
      * @return string
      */
@@ -207,6 +219,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         string $package,
         ?string $component = null,
         ?string $worker = null,
+        ?string $command = null,
         ?string $action = null
     ): string {
         // Construir alias ID según el tipo.
@@ -216,6 +229,9 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         }
         if ($worker) {
             $aliasParts[] = $worker;
+        }
+        if ($command) {
+            $aliasParts[] = 'command:' . $command;
         }
         if ($action) {
             $aliasParts[] = $type . ':' . $action;
@@ -229,6 +245,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
             'package' => 'package',
             'component' => "{$package}.component",
             'worker' => "{$package}.{$component}.worker",
+            'command' => "{$package}.{$component}.command",
             'job' => "{$package}.{$component}.{$worker}.job",
             'handler' => "{$package}.{$component}.{$worker}.handler",
             'strategy' => "{$package}.{$component}.{$worker}.strategy",
@@ -243,6 +260,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
                 'package' => $package,
                 'component' => $component,
                 'worker' => $worker,
+                'command' => $command,
                 'job' => $action,
                 'handler' => $action,
                 'strategy' => $action,
@@ -254,7 +272,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
             $tagAttributes['package'] = $package;
         }
 
-        if ($type === 'worker') {
+        if ($type === 'worker' || $type === 'command') {
             $tagAttributes['package'] = $package;
             $tagAttributes['component'] = $component;
         }
@@ -264,7 +282,7 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         $definition->addTag('service:' . $type, $tagAttributes);
 
         // Si el tipo es 'package', hacemos el alias público.
-        if ($type === 'package') {
+        if ($type === 'package' || $type === 'command') {
             $alias->setPublic(true);
         }
 

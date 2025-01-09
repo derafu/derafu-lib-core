@@ -45,7 +45,8 @@
         "opis/json-schema": "^2.3",
         "mpdf/mpdf": "^8.2",
         "twig/twig": "^3.18",
-        "doctrine/collections": "^2.2"
+        "doctrine/collections": "^2.2",
+        "symfony/console": "^7.2"
     },
     "require-dev": {
         "ext-xdebug": "*",
