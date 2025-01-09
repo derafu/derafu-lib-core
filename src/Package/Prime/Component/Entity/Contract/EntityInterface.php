@@ -42,18 +42,18 @@ interface EntityInterface extends StringableInterface
      * Asignar un atributo a la entidad.
      *
      * @param string $name
-     * @param int|float|string|bool|null $value
+     * @param mixed $value
      * @return static
      */
-    public function setAttribute(string $name, int|float|string|bool|null $value): static;
+    public function setAttribute(string $name, mixed $value): static;
 
     /**
      * Obtener un atributo de la entidad.
      *
      * @param string $name
-     * @return int|float|string|bool|null
+     * @return mixed
      */
-    public function getAttribute(string $name): int|float|string|bool|null;
+    public function getAttribute(string $name): mixed;
 
     /**
      * Permite saber si existe o no un atributo definido para la entidad.

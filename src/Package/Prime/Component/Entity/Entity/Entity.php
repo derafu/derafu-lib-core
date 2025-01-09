@@ -62,7 +62,7 @@ class Entity implements EntityInterface
     /**
      * {@inheritdoc}
      */
-    public function setAttribute(string $name, int|float|string|bool|null $value): static
+    public function setAttribute(string $name, mixed $value): static
     {
         $this->attributes[$name] = $value;
 
@@ -72,7 +72,7 @@ class Entity implements EntityInterface
     /**
      * {@inheritdoc}
      */
-    public function getAttribute(string $name): int|float|string|bool|null
+    public function getAttribute(string $name): mixed
     {
         if (!$this->hasAttribute($name)) {
             throw new LogicException(sprintf(
@@ -109,10 +109,10 @@ class Entity implements EntityInterface
      * o privadas) o inexistentes.
      *
      * @param string $name
-     * @param int|float|string|bool|null $value
+     * @param mixed $value
      * @return void
      */
-    public function __set(string $name, int|float|string|bool|null $value): void
+    public function __set(string $name, mixed $value): void
     {
         $this->setAttribute($name, $value);
     }
@@ -125,9 +125,9 @@ class Entity implements EntityInterface
      * (protegidas o privadas) o inexistentes.
      *
      * @param string $name
-     * @return int|float|string|bool|null
+     * @return mixed
      */
-    public function __get(string $name): int|float|string|bool|null
+    public function __get(string $name): mixed
     {
         return $this->getAttribute($name);
     }
