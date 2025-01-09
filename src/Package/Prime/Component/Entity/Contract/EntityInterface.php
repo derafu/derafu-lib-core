@@ -32,6 +32,13 @@ use Derafu\Lib\Core\Common\Contract\StringableInterface;
 interface EntityInterface extends StringableInterface
 {
     /**
+     * Entrega las propiedades de la entidad como un arreglo.
+     *
+     * @return array
+     */
+    public function toArray(): array;
+
+    /**
      * Asignar un atributo a la entidad.
      *
      * @param string $name

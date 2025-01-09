@@ -54,6 +54,14 @@ class Entity implements EntityInterface
     /**
      * {@inheritdoc}
      */
+    public function toArray(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setAttribute(string $name, int|float|string|bool|null $value): static
     {
         $this->attributes[$name] = $value;
