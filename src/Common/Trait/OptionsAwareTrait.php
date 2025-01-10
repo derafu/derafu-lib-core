@@ -42,19 +42,12 @@ trait OptionsAwareTrait
     protected DataContainerInterface $options;
 
     /**
-     * Reglas de esquema de las opciones.
-     *
-     * @var array
-     */
-    protected array $optionsSchema = [];
-
-    /**
      * {@inheritdoc}
      */
     public function setOptions(array|DataContainerInterface $options): static
     {
         if (is_array($options)) {
-            $options = new DataContainer($options, $this->optionsSchema);
+            $options = new DataContainer($options, $this->optionsSchema ?? []);
         }
 
         $this->options = $options;
