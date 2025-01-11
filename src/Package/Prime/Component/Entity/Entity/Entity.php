@@ -44,7 +44,7 @@ class Entity implements EntityInterface
     private array $attributes = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __toString(): string
     {
@@ -52,7 +52,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -60,7 +60,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setAttribute(string $name, mixed $value): static
     {
@@ -70,7 +70,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getAttribute(string $name): mixed
     {
@@ -86,7 +86,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasAttribute(string $name): bool
     {
@@ -94,7 +94,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function unsetAttribute(string $name): void
     {

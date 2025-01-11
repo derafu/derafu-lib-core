@@ -86,7 +86,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validateSchema(
         XmlInterface $xml,

@@ -88,9 +88,9 @@ interface ApplicationInterface
      * Obtiene un servicio registrado en el contenedor.
      *
      * @param string $service
-     * @return ServiceInterface
+     * @return object
      */
-    public function getService(string $service): ServiceInterface;
+    public function getService(string $service): object;
 
     /**
      * Ejecuta la aplicación.

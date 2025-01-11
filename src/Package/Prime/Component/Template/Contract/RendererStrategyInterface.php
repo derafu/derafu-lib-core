@@ -22,28 +22,23 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Abstract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Template\Contract;
 
-use Derafu\Lib\Core\Common\Trait\IdentifiableTrait;
-use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
-use Symfony\Component\VarExporter\LazyObjectInterface;
+use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Exception\TemplateException;
 
 /**
- * Clase base para los servicios de la aplicación.
+ * Interfaz base de las estrategias de renderizado mediante plantillas.
  */
-abstract class AbstractService implements ServiceInterface
+interface RendererStrategyInterface extends StrategyInterface
 {
-    use IdentifiableTrait;
-
     /**
-     * {@inheritDoc}
+     * Realiza el renderizado de una plantilla.
+     *
+     * @param string $template Plantilla a renderizar.
+     * @param array $data Datos que se pararán a la plantilla al renderizarla.
+     * @return string Datos del renderizado.
+     * @throws TemplateException
      */
-    public function __toString(): string
-    {
-        if ($this instanceof LazyObjectInterface) {
-            return get_parent_class($this);
-        }
-
-        return static::class;
-    }
+    public function render(string $template, array &$data = []): string;
 }

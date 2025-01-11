@@ -22,28 +22,13 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Abstract;
+namespace Derafu\Lib\Core\Package\Prime\Component\Template\Contract\Renderer\Strategy;
 
-use Derafu\Lib\Core\Common\Trait\IdentifiableTrait;
-use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
-use Symfony\Component\VarExporter\LazyObjectInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererStrategyInterface;
 
 /**
- * Clase base para los servicios de la aplicación.
+ * Interfaz base de las estrategias de renderizado de HTML.
  */
-abstract class AbstractService implements ServiceInterface
+interface HtmlRendererStrategyInterface extends RendererStrategyInterface
 {
-    use IdentifiableTrait;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function __toString(): string
-    {
-        if ($this instanceof LazyObjectInterface) {
-            return get_parent_class($this);
-        }
-
-        return static::class;
-    }
 }

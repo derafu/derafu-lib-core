@@ -42,7 +42,7 @@ class EntityComponent extends AbstractComponent implements EntityComponentInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -53,7 +53,7 @@ class EntityComponent extends AbstractComponent implements EntityComponentInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getManagerWorker(): ManagerWorkerInterface
     {
@@ -61,7 +61,7 @@ class EntityComponent extends AbstractComponent implements EntityComponentInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDatasourceProviderWorker(): DatasourceProviderWorkerInterface
     {
@@ -69,7 +69,7 @@ class EntityComponent extends AbstractComponent implements EntityComponentInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getRepository(string $source): RepositoryInterface
     {

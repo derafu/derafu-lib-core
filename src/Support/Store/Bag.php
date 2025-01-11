@@ -46,7 +46,7 @@ class Bag extends AbstractStore implements BagInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function replace(array|ArrayAccess|ArrayObject $data): static
     {
@@ -56,7 +56,7 @@ class Bag extends AbstractStore implements BagInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function merge(array|ArrayAccess|ArrayObject $data): static
     {
@@ -72,7 +72,7 @@ class Bag extends AbstractStore implements BagInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function remove(string $key): static
     {

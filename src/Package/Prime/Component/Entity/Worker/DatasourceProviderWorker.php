@@ -103,7 +103,7 @@ class DatasourceProviderWorker extends AbstractWorker implements DatasourceProvi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetch(string $source): ArrayObject
     {

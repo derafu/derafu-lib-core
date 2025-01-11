@@ -74,7 +74,7 @@ class XmlComponent extends AbstractComponent implements XmlComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -86,7 +86,7 @@ class XmlComponent extends AbstractComponent implements XmlComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getEncoderWorker(): EncoderWorkerInterface
     {
@@ -94,7 +94,7 @@ class XmlComponent extends AbstractComponent implements XmlComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDecoderWorker(): DecoderWorkerInterface
     {
@@ -102,7 +102,7 @@ class XmlComponent extends AbstractComponent implements XmlComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getValidatorWorker(): ValidatorWorkerInterface
     {

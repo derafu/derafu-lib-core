@@ -39,7 +39,7 @@ use Derafu\Lib\Core\Helper\Str;
 trait IdentifiableTrait
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __toString(): string
     {
@@ -47,7 +47,7 @@ trait IdentifiableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getId(): int|string
     {
@@ -61,7 +61,7 @@ trait IdentifiableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {

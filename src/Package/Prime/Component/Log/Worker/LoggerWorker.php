@@ -93,7 +93,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getJournal(): JournalInterface
     {
@@ -101,7 +101,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function log($level, $message, array $context = []): void
     {
@@ -111,7 +111,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function debug($message, array $context = []): void
     {
@@ -120,7 +120,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function info($message, array $context = []): void
     {
@@ -129,7 +129,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function notice($message, array $context = []): void
     {
@@ -138,7 +138,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function warning($message, array $context = []): void
     {
@@ -147,7 +147,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function error($message, array $context = []): void
     {
@@ -156,7 +156,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function critical($message, array $context = []): void
     {
@@ -165,7 +165,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function alert($message, array $context = []): void
     {
@@ -174,7 +174,7 @@ class LoggerWorker extends AbstractWorker implements LoggerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function emergency($message, array $context = []): void
     {

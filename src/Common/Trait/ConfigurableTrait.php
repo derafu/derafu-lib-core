@@ -49,7 +49,7 @@ trait ConfigurableTrait
     protected array $configurationSchema = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setConfiguration(
         array|DataContainerInterface $configuration
@@ -67,7 +67,7 @@ trait ConfigurableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getConfiguration(): DataContainerInterface
     {
@@ -81,7 +81,7 @@ trait ConfigurableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function resolveConfiguration(
         array $configuration = []

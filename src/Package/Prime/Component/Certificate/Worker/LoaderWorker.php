@@ -36,7 +36,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateExc
 class LoaderWorker extends AbstractWorker implements LoaderWorkerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createFromFile(string $filepath, string $password): Certificate
     {
@@ -53,7 +53,7 @@ class LoaderWorker extends AbstractWorker implements LoaderWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createFromData(string $data, string $password): Certificate
     {
@@ -69,7 +69,7 @@ class LoaderWorker extends AbstractWorker implements LoaderWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createFromArray(array $data): Certificate
     {
@@ -92,7 +92,7 @@ class LoaderWorker extends AbstractWorker implements LoaderWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createFromKeys(string $publicKey, string $privateKey): Certificate
     {

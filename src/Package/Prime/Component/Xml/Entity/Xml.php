@@ -70,7 +70,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -78,7 +78,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getNamespace(): ?string
     {
@@ -88,7 +88,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSchema(): ?string
     {
@@ -104,7 +104,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function loadXml(string $source, int $options = 0): bool
     {
@@ -154,7 +154,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function saveXml(?DOMNode $node = null, int $options = 0): string
     {
@@ -164,7 +164,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getXml(): string
     {
@@ -179,7 +179,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function C14NWithIsoEncoding(?string $xpath = null): string
     {
@@ -211,7 +211,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function C14NWithIsoEncodingFlattened(?string $xpath = null): string
     {
@@ -226,7 +226,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSignatureNodeXml(): ?string
     {
@@ -238,7 +238,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function query(string $query, array $params = []): string|array|null
     {
@@ -250,7 +250,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(string $selector): mixed
     {
@@ -258,7 +258,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -270,7 +270,7 @@ class Xml extends DOMDocument implements XmlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDocumentElement(): ?DOMElement
     {

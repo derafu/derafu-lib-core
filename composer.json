@@ -46,7 +46,11 @@
         "mpdf/mpdf": "^8.2",
         "twig/twig": "^3.18",
         "doctrine/collections": "^2.2",
-        "symfony/console": "^7.2"
+        "symfony/console": "^7.2",
+        "league/commonmark": "^2.6",
+        "embed/embed": "^4.4",
+        "psr/http-factory": "^1.1",
+        "nyholm/psr7": "^1.8"
     },
     "require-dev": {
         "ext-xdebug": "*",

@@ -37,7 +37,7 @@ use DOMText;
 class DecoderWorker extends AbstractWorker implements DecoderWorkerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function decode(
         XmlInterface|DOMElement $documentElement,

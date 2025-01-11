@@ -37,7 +37,7 @@ interface RendererWorkerInterface extends WorkerInterface
      *
      * @param string $template Plantilla a renderizar.
      * @param array $data Datos que se pararán a la plantilla al renderizarla.
-     * @return string Datos binarios del renderizado.
+     * @return string Datos del renderizado.
      * @throws TemplateException
      */
     public function render(string $template, array $data = []): string;

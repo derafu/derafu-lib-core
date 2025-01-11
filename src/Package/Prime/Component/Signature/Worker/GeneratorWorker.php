@@ -59,7 +59,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sign(
         string $data,
@@ -85,7 +85,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function signXml(
         XmlInterface|string $xml,
@@ -136,7 +136,7 @@ class GeneratorWorker extends AbstractWorker implements GeneratorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function digestXmlReference(
         XmlInterface $doc,

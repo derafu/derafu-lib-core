@@ -37,7 +37,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Certificate\Exception\CertificateExc
 class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate(CertificateInterface $certificate): void
     {

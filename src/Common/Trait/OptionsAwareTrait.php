@@ -42,7 +42,7 @@ trait OptionsAwareTrait
     protected DataContainerInterface $options;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setOptions(array|DataContainerInterface $options): static
     {
@@ -56,7 +56,7 @@ trait OptionsAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptions(): DataContainerInterface
     {
@@ -70,7 +70,7 @@ trait OptionsAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function resolveOptions(array $options = []): DataContainerInterface
     {

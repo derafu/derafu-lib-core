@@ -52,7 +52,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -62,7 +62,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLoggerWorker(): LoggerWorkerInterface
     {
@@ -70,7 +70,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLogs(
         int|string|null $level = null,
@@ -97,7 +97,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function clearLogs(int|string|null $level = null): void
     {
@@ -122,7 +122,7 @@ class LogComponent extends AbstractComponent implements LogComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function flushLogs(
         int|string|null $level = null,

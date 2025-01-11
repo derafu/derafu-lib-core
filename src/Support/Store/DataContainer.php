@@ -64,7 +64,7 @@ class DataContainer extends AbstractStore implements DataContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setSchema(array $schema): static
     {
@@ -74,7 +74,7 @@ class DataContainer extends AbstractStore implements DataContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSchema(): array
     {
@@ -82,7 +82,7 @@ class DataContainer extends AbstractStore implements DataContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate(bool $allowUndefinedKeys = false): void
     {

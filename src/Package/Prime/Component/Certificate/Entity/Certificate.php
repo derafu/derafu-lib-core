@@ -77,7 +77,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getKeys(bool $clean = false): array
     {
@@ -88,7 +88,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPublicKey(bool $clean = false): string
     {
@@ -104,7 +104,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getCertificate(bool $clean = false): string
     {
@@ -112,7 +112,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPrivateKey(bool $clean = false): string
     {
@@ -128,7 +128,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPrivateKeyDetails(): array
     {
@@ -142,7 +142,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getData(): array
     {
@@ -154,7 +154,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPkcs12(string $password): string
     {
@@ -171,7 +171,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getId(bool $forceUpper = true): string
     {
@@ -207,7 +207,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -222,7 +222,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getEmail(): string
     {
@@ -237,7 +237,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFrom(): string
     {
@@ -245,7 +245,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTo(): string
     {
@@ -253,7 +253,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTotalDays(): int
     {
@@ -264,7 +264,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getExpirationDays(?string $from = null): int
     {
@@ -278,7 +278,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isActive(?string $when = null): bool
     {
@@ -294,7 +294,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIssuer(): string
     {
@@ -302,7 +302,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getModulus(int $wordwrap = Str::WORDWRAP): string
     {
@@ -318,7 +318,7 @@ class Certificate implements CertificateInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getExponent(int $wordwrap = Str::WORDWRAP): string
     {

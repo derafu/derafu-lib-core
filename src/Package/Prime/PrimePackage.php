@@ -29,6 +29,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComp
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\TemplateComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Contract\PrimePackageInterface;
 
@@ -50,12 +51,13 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
         private EntityComponentInterface $entity,
         private LogComponentInterface $log,
         private SignatureComponentInterface $signature,
+        private TemplateComponentInterface $template,
         private XmlComponentInterface $xml,
     ) {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getComponents(): array
     {
@@ -64,12 +66,13 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
             'entity' => $this->entity,
             'log' => $this->log,
             'signature' => $this->signature,
+            'template' => $this->template,
             'xml' => $this->xml,
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getCertificateComponent(): CertificateComponentInterface
     {
@@ -77,7 +80,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getEntityComponent(): EntityComponentInterface
     {
@@ -85,7 +88,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLogComponent(): LogComponentInterface
     {
@@ -95,7 +98,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSignatureComponent(): SignatureComponentInterface
     {
@@ -103,7 +106,15 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function getTemplateComponent(): TemplateComponentInterface
+    {
+        return $this->template;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getXmlComponent(): XmlComponentInterface
     {

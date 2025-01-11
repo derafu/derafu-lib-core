@@ -43,7 +43,7 @@ class FakerWorker extends AbstractWorker implements FakerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create(
         ?string $id = null,

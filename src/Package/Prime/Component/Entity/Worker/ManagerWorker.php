@@ -110,7 +110,7 @@ class ManagerWorker extends AbstractWorker implements ManagerWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getRepository(string $repository): RepositoryInterface
     {

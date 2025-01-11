@@ -95,7 +95,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -131,7 +131,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getJob(string $job): JobInterface
     {
@@ -148,7 +148,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getJobs(): array
     {
@@ -156,7 +156,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getHandler(string $handler): HandlerInterface
     {
@@ -173,7 +173,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getHandlers(): array
     {
@@ -181,7 +181,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getStrategy(string $strategy): StrategyInterface
     {
@@ -190,9 +190,9 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
             $strategies[] = 'default.' . $strategy;
         }
 
-        foreach ($strategies as $strategy) {
-            if (isset($this->strategies[$strategy])) {
-                return $this->strategies[$strategy];
+        foreach ($strategies as $name) {
+            if (isset($this->strategies[$name])) {
+                return $this->strategies[$name];
             }
         }
 
@@ -205,7 +205,7 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getStrategies(): array
     {

@@ -49,7 +49,7 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function initialize(ConfigurationInterface $configuration): void
     {
@@ -88,7 +88,7 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getContainer(): ContainerBuilder
     {
@@ -96,7 +96,7 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getConfiguration(): ConfigurationInterface
     {

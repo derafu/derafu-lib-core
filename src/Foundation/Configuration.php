@@ -170,7 +170,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -178,7 +178,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getParameters(): array
     {
@@ -194,7 +194,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getServicesPrefix(): string
     {
@@ -202,7 +202,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getKernelClass(): string
     {
@@ -210,7 +210,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getServiceRegistryClass(): string
     {
@@ -218,7 +218,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getCompilerPassClass(): ?string
     {
@@ -226,7 +226,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getProjectDir(): string
     {
@@ -239,7 +239,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function resolvePath(?string $path = null): string
     {
@@ -255,7 +255,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPackageConfiguration(
         string $package

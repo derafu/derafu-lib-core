@@ -46,7 +46,7 @@ abstract class AbstractStore implements StoreInterface
     protected ArrayCollection $data;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function collection(): ArrayCollection
     {
@@ -54,7 +54,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function all(): array
     {
@@ -62,7 +62,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function set(string $key, mixed $value): static
     {
@@ -74,7 +74,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -82,7 +82,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function has(string $key): bool
     {
@@ -90,7 +90,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function clear(string $key = null): void
     {
@@ -104,7 +104,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function matching(Criteria $criteria): ArrayCollection
     {
@@ -112,7 +112,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -120,7 +120,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -128,7 +128,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -136,7 +136,7 @@ abstract class AbstractStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetUnset(mixed $offset): void
     {

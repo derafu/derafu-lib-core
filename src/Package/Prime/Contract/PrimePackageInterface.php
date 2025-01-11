@@ -29,6 +29,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComp
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\TemplateComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
 
 /**
@@ -63,6 +64,13 @@ interface PrimePackageInterface extends PackageInterface
      * @return SignatureComponentInterface
      */
     public function getSignatureComponent(): SignatureComponentInterface;
+
+    /**
+     * Entrega el componente "prime.template".
+     *
+     * @return TemplateComponentInterface
+     */
+    public function getTemplateComponent(): TemplateComponentInterface;
 
     /**
      * Entrega el componente "prime.xml".

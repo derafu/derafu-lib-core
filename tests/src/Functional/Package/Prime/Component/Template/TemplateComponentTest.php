@@ -24,33 +24,113 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Tests\Functional\Package\Prime\Component\Certificate;
 
+use Derafu\Lib\Core\Foundation\Abstract\AbstractApplication;
+use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
+use Derafu\Lib\Core\Foundation\Application;
+use Derafu\Lib\Core\Foundation\Configuration;
+use Derafu\Lib\Core\Foundation\Kernel;
+use Derafu\Lib\Core\Foundation\ServiceConfigurationCompilerPass;
+use Derafu\Lib\Core\Foundation\ServiceProcessingCompilerPass;
+use Derafu\Lib\Core\Helper\Arr;
+use Derafu\Lib\Core\Helper\Selector;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatter;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatterTwigExtension;
 use Derafu\Lib\Core\Package\Prime\Component\Template\TemplateComponent;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\MarkdownRendererStrategy;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\PdfRendererStrategy;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\TwigRendererStrategy;
+use Derafu\Lib\Core\Package\Prime\PrimePackage;
+use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
+use Derafu\Lib\Core\Support\Store\DataContainer;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(TemplateComponent::class)]
 #[CoversClass(RendererWorker::class)]
+#[CoversClass(AbstractApplication::class)]
+#[CoversClass(AbstractServiceRegistry::class)]
+#[CoversClass(Application::class)]
+#[CoversClass(Configuration::class)]
+#[CoversClass(Kernel::class)]
+#[CoversClass(ServiceConfigurationCompilerPass::class)]
+#[CoversClass(ServiceProcessingCompilerPass::class)]
+#[CoversClass(Arr::class)]
+#[CoversClass(Selector::class)]
+#[CoversClass(DataFormatter::class)]
+#[CoversClass(DataFormatterTwigExtension::class)]
+#[CoversClass(MarkdownRendererStrategy::class)]
+#[CoversClass(PdfRendererStrategy::class)]
+#[CoversClass(TwigRendererStrategy::class)]
+#[CoversClass(PrimePackage::class)]
+#[CoversClass(AbstractStore::class)]
+#[CoversClass(DataContainer::class)]
 class TemplateComponentTest extends TestCase
 {
     private RendererWorkerInterface $renderer;
 
     public function setUp(): void
     {
-        $this->renderer = new RendererWorker();
+        $app = Application::getInstance();
+
+        $this->renderer = $app
+            ->getPrimePackage()
+            ->getTemplateComponent()
+            ->getRendererWorker()
+        ;
+
+        $app->getService(DataFormatterInterface::class)
+            ->addFormat('date', function ($date) {
+                $timestamp = strtotime($date);
+                return date('d/m/Y', $timestamp);
+            })
+        ;
     }
 
-    public function testRenderCustomTemplate()
+    public function testRenderCustomTemplateHtml()
     {
-        $testsPath = realpath(dirname(__DIR__, 6));
-        $template = $testsPath . '/fixtures/package/prime/template/custom_template';
+        $template = self::getFixturesPath() . '/package/prime/template/custom_template';
         $data = [
             'title' => 'Derafu',
             'content' => 'I Love Derafu <3',
+            'date' => date('Y-m-d'),
+        ];
+        $html = $this->renderer->render($template, $data);
+
+        $this->assertIsString($html);
+    }
+
+    public function testRenderCustomTemplatePdf()
+    {
+        $template = self::getFixturesPath() . '/package/prime/template/custom_template';
+        $data = [
+            'title' => 'Derafu',
+            'content' => 'I Love Derafu <3',
+            'date' => date('Y-m-d'),
+            'options' => [
+                'format' => 'pdf',
+            ],
         ];
         $pdf = $this->renderer->render($template, $data);
 
         $this->assertIsString($pdf);
+    }
+
+    public function testRenderCustomTemplateMarkdown()
+    {
+        $template = self::getFixturesPath() . '/package/prime/template/custom_template';
+        $data = [
+            'title' => 'Derafu',
+            'content' => 'I Love Derafu <3',
+            'date' => date('Y-m-d'),
+            'options' => [
+                'format' => 'markdown',
+            ],
+        ];
+        $html = $this->renderer->render($template, $data);
+
+        $this->assertIsString($html);
     }
 }

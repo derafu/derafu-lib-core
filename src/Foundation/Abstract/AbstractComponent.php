@@ -38,7 +38,7 @@ abstract class AbstractComponent extends AbstractService implements ComponentInt
     use ConfigurableTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -53,7 +53,7 @@ abstract class AbstractComponent extends AbstractService implements ComponentInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorker(string $worker): WorkerInterface
     {

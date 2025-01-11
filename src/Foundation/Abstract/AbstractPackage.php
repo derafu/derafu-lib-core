@@ -38,7 +38,7 @@ abstract class AbstractPackage extends AbstractService implements PackageInterfa
     use ConfigurableTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -53,7 +53,7 @@ abstract class AbstractPackage extends AbstractService implements PackageInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getComponent(string $component): ComponentInterface
     {

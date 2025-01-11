@@ -73,7 +73,7 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setSchema(array $schema): static
     {
@@ -88,7 +88,7 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSchema(): array
     {
@@ -96,7 +96,7 @@ class JsonContainer extends AbstractStore implements JsonContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate(): void
     {

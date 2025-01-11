@@ -24,13 +24,11 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
-use Derafu\Lib\Core\Foundation\Adapter\ServiceAdapter;
 use Derafu\Lib\Core\Foundation\Configuration;
 use Derafu\Lib\Core\Foundation\Contract\ApplicationInterface;
 use Derafu\Lib\Core\Foundation\Contract\ConfigurationInterface;
 use Derafu\Lib\Core\Foundation\Contract\KernelInterface;
 use Derafu\Lib\Core\Foundation\Contract\PackageInterface;
-use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
 use LogicException;
 use RuntimeException;
 use Symfony\Component\Console\Application as SymfonyConsoleApplication;
@@ -111,7 +109,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function path(?string $path = null): string
     {
@@ -119,7 +117,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function config(string $name, mixed $default = null): mixed
     {
@@ -127,7 +125,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasPackage(string $package): bool
     {
@@ -138,7 +136,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPackage(string $package): PackageInterface
     {
@@ -167,7 +165,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPackages(): array
     {
@@ -184,7 +182,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasService(string $service): bool
     {
@@ -192,21 +190,15 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getService(string $service): ServiceInterface
+    public function getService(string $service): object
     {
-        $instance = $this->kernel->getContainer()->get($service);
-
-        if ($instance instanceof ServiceInterface) {
-            return $instance;
-        }
-
-        return new ServiceAdapter($instance);
+        return $this->kernel->getContainer()->get($service);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getInstance(string|array|null $config = null): static
     {
@@ -221,7 +213,7 @@ abstract class AbstractApplication implements ApplicationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function run(): int
     {

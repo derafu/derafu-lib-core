@@ -25,18 +25,14 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Template\Worker;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererStrategyInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
-use Mpdf\Mpdf;
-use Mpdf\Output\Destination;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Worker de renderización de plantillas.
  *
- * Permite renderizar plantillas Twig a HTML y PDF.
- *
- * TODO: Ordenar código, usar configuraciones/opciones y separar en estrategias.
+ * Permite renderizar plantillas utilizando estrategias según el formato.
+ * Por ejemplo puede renderizar HTML mediante Twig o un PDF usando HTML.
  */
 class RendererWorker extends AbstractWorker implements RendererWorkerInterface
 {
@@ -45,154 +41,21 @@ class RendererWorker extends AbstractWorker implements RendererWorkerInterface
      *
      * @var string
      */
-    private string $defaultFormat = 'pdf';
+    private string $defaultFormat = 'html';
 
     /**
-     * Rutas donde están las plantillas.
-     *
-     * @var array
-     */
-    private array $paths = [];
-
-    /**
-     * Cargador de plantillas mediante el sistema de archivos para Twig.
-     */
-    private FilesystemLoader $filesystemLoader;
-
-    /**
-     * Renderizador de plantillas HTML con Twig.
-     *
-     * @var Environment
-     */
-    private Environment $twig;
-
-    /**
-     * Constructor del worker.
-     *
-     * @param string|array $paths Rutas dónde se buscarán las plantillas.
-     */
-    public function __construct(string|array $paths = [])
-    {
-        $this->paths = is_string($paths) ? [$paths] : $paths;
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function render(string $template, array $data = []): string
     {
         // Formato en el que se renderizará la plantilla.
         $format = $data['options']['format'] ?? $this->defaultFormat;
 
-        // Renderizar HTML de la plantilla Twig.
-        $html = $this->renderHtml($template, $data);
+        // Buscar estrategia según el formato.
+        $strategy = $this->getStrategy($format);
+        assert($strategy instanceof RendererStrategyInterface);
 
-        // Si el formato solicitado es HTML se retorna directamente.
-        if ($format === 'html') {
-            return $html;
-        }
-
-        // Renderizar el PDF a partir del HTML.
-        $configPdf = $data['options']['config']['pdf'] ?? [];
-        $pdf = $this->renderPdf($html, $configPdf);
-
-        // Entregar el contenido del PDF renderizado.
-        return $pdf;
-    }
-
-    /**
-     * Entrega la instancia de Twig.
-     *
-     * Este método evita crearla en el constructor y se crea solo cuando
-     * realmente se utiliza. Útil porque los workers son lazy services.
-     *
-     * @return Environment
-     */
-    private function getTwig(): Environment
-    {
-        if (!isset($this->twig)) {
-            $this->twig = new Environment($this->getFilesystemLoader());
-        }
-
-        return $this->twig;
-    }
-
-    /**
-     * Entrega la instancia del cargador de plantillas desde el sistema de
-     * archivos.
-     *
-     * @return FilesystemLoader
-     */
-    private function getFilesystemLoader(): FilesystemLoader
-    {
-        if (!isset($this->filesystemLoader)) {
-            $this->filesystemLoader = new FilesystemLoader($this->paths);
-        }
-
-        return $this->filesystemLoader;
-    }
-
-    /**
-     * Renderiza una plantilla Twig en HTML.
-     *
-     * @param string $template Plantilla Twig a renderizar.
-     * @param array $data Datos que se pasarán a la plantilla Twig.
-     * @return string Código HTML con el renderizado de la plantilla Twig.
-     */
-    private function renderHtml(string $template, array $data): string
-    {
-        // Resolver plantilla.
-        $template = $this->resolveTemplate($template);
-
-        // Renderizar la plantilla.
-        return $this->getTwig()->render($template, $data);
-    }
-
-    /**
-     * Renderiza un HTML en un documento PDF.
-     *
-     * El renderizado se realiza a partir de un HTML previamente renderizado que
-     * será pasado a PDF.
-     */
-    private function renderPdf(string $html, array $config): string
-    {
-        // Generar el PDF con mPDF.
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
-
-        // Obtener el contenido del PDF.
-        $pdf = $mpdf->Output('', Destination::STRING_RETURN);
-
-        // Entregar el contenido del PDF.
-        return $pdf;
-    }
-
-    /**
-     * Resuelve la plantilla que se está solicitando.
-     *
-     * Se encarga de:
-     *
-     *   - Agregar la extensión a la plantilla.
-     *   - Agregar el directorio si se pasó una ruta absoluta de la plantilla.
-     *
-     * @param string $template
-     * @return string
-     */
-    private function resolveTemplate(string $template): string
-    {
-        // Agregar extensión.
-        if (!str_ends_with($template, '.html.twig')) {
-            $template .= '.html.twig';
-        }
-
-        // Agregar el directorio si se pasó una ruta absoluta.
-        if ($template[0] === '/') {
-            $dir = dirname($template);
-            $this->getFilesystemLoader()->addPath($dir);
-            $template = basename($template);
-        }
-
-        // Entregar nombre de la plantilla.
-        return $template;
+        // Renderizar utilizando la estrategia.
+        return $strategy->render($template, $data);
     }
 }

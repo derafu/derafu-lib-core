@@ -91,7 +91,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function find($id, $lockMode = null, $lockVersion = null): ?object
     {
@@ -102,7 +102,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findAll(): array
     {
@@ -112,7 +112,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findBy(
         array $criteria,
@@ -139,7 +139,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findOneBy(array $criteria, ?array $orderBy = null): ?object
     {
@@ -149,7 +149,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(array $criteria = []): int
     {
@@ -165,7 +165,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findByCriteria(Criteria $criteria): array
     {
@@ -175,7 +175,7 @@ class Repository extends AbstractStore implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getClassName(): string
     {

@@ -54,7 +54,7 @@ class EncoderWorker extends AbstractWorker implements EncoderWorkerInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function encode(
         array $data,

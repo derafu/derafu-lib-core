@@ -69,7 +69,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate(
         string $data,
@@ -96,7 +96,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validateXml(XmlInterface|string $xml): void
     {
@@ -141,7 +141,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createSignatureNode(string $xml): SignatureInterface
     {
@@ -164,7 +164,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validateXmlDigestValue(
         XmlInterface|string $xml,
@@ -205,7 +205,7 @@ class ValidatorWorker extends AbstractWorker implements ValidatorWorkerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validateXmlSignatureValue(
         SignatureInterface $signatureNode

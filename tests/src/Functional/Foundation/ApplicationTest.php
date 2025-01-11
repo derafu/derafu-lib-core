@@ -26,7 +26,6 @@ namespace Derafu\Lib\Tests\Functional\Foundation;
 
 use Derafu\Lib\Core\Foundation\Abstract\AbstractService;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
-use Derafu\Lib\Core\Foundation\Adapter\ServiceAdapter;
 use Derafu\Lib\Core\Foundation\Application;
 use Derafu\Lib\Core\Foundation\Configuration;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
@@ -38,13 +37,13 @@ use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\DataContainer;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use stdClass;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 #[CoversClass(AbstractServiceRegistry::class)]
 #[CoversClass(Application::class)]
 #[CoversClass(ServiceConfigurationCompilerPass::class)]
 #[CoversClass(ServiceProcessingCompilerPass::class)]
-#[CoversClass(ServiceAdapter::class)]
 #[CoversClass(Configuration::class)]
 #[CoversClass(Kernel::class)]
 #[CoversClass(Selector::class)]
@@ -87,19 +86,7 @@ class ApplicationTest extends TestCase
     public function testApplicationGetServiceStdClass(): void
     {
         $service = $this->app->getService('stdClass_service');
-        $this->assertInstanceOf(ServiceInterface::class, $service);
-    }
-
-    // Obtener servicio que requiere un adaptador y llamar a un método.
-    public function testApplicationGetServiceAdaptee(): void
-    {
-        $service = $this->app->getService('adaptee_service');
-
-        $this->assertInstanceOf(ServiceAdapter::class, $service);
-
-        if ($service instanceof ServiceAdapter) {
-            $this->assertSame(123, $service->getId());
-        }
+        $this->assertInstanceOf(stdClass::class, $service);
     }
 
     // Obtener servicio a través de la función global.
@@ -119,12 +106,4 @@ class TestServiceRegistry extends AbstractServiceRegistry
 
 class TestService extends AbstractService
 {
-}
-
-class TestAdaptee
-{
-    public function getId(): int
-    {
-        return 123;
-    }
 }

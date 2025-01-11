@@ -39,7 +39,7 @@ class TemplateComponent extends AbstractComponent implements TemplateComponentIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -49,7 +49,7 @@ class TemplateComponent extends AbstractComponent implements TemplateComponentIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getRendererWorker(): RendererWorkerInterface
     {
@@ -57,7 +57,7 @@ class TemplateComponent extends AbstractComponent implements TemplateComponentIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function render(string $template, array $data = []): string
     {

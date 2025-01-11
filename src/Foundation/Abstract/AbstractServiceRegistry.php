@@ -58,7 +58,7 @@ class AbstractServiceRegistry implements ServiceRegistryInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function register(ContainerBuilder $container): void
     {

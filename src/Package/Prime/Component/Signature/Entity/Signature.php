@@ -118,7 +118,7 @@ class Signature implements SignatureInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setData(array $data): static
     {
@@ -133,7 +133,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getData(): array
     {
@@ -141,7 +141,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function configureSignatureData(
         string $digestValue,
@@ -156,7 +156,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setXml(XmlInterface $xml): static
     {
@@ -166,7 +166,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getXml(): XmlInterface
     {
@@ -208,7 +208,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getReference(): ?string
     {
@@ -236,7 +236,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDigestValue(): ?string
     {
@@ -275,7 +275,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getX509Certificate(): ?string
     {
@@ -285,7 +285,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setSignatureValue(string $signatureValue): static
     {
@@ -302,7 +302,7 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSignatureValue(): ?string
     {

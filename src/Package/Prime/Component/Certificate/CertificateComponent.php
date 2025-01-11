@@ -75,7 +75,7 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -87,7 +87,7 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFakerWorker(): FakerWorkerInterface
     {
@@ -95,7 +95,7 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLoaderWorker(): LoaderWorkerInterface
     {
@@ -103,7 +103,7 @@ class CertificateComponent extends AbstractComponent implements CertificateCompo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getValidatorWorker(): ValidatorWorkerInterface
     {

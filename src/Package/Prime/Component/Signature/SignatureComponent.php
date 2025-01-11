@@ -63,7 +63,7 @@ class SignatureComponent extends AbstractComponent implements SignatureComponent
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getWorkers(): array
     {
@@ -74,7 +74,7 @@ class SignatureComponent extends AbstractComponent implements SignatureComponent
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getGeneratorWorker(): GeneratorWorkerInterface
     {
@@ -82,7 +82,7 @@ class SignatureComponent extends AbstractComponent implements SignatureComponent
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getValidatorWorker(): ValidatorWorkerInterface
     {

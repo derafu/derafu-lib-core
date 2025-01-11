@@ -45,7 +45,7 @@ class Journal extends AbstractStore implements JournalInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function add(mixed $item): static
     {
@@ -55,7 +55,7 @@ class Journal extends AbstractStore implements JournalInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reverse(): array
     {
