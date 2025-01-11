@@ -35,7 +35,6 @@ use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Entity\Data;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatter;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatterTwigExtension;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataHandler;
@@ -61,7 +60,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ServiceProcessingCompilerPass::class)]
 #[CoversClass(Arr::class)]
 #[CoversClass(Selector::class)]
-#[CoversClass(Data::class)]
 #[CoversClass(DataFormatter::class)]
 #[CoversClass(DataFormatterTwigExtension::class)]
 #[CoversClass(DataHandler::class)]

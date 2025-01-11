@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Template\Service;
 
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataHandlerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataInterface;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 
 /**
@@ -36,34 +35,38 @@ use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
  */
 class DataHandler implements DataHandlerInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function handle(
-        DataInterface $data,
+        string $id,
+        mixed $data,
         string|array|callable|DataHandlerInterface|RepositoryInterface $handler = null
     ): string {
-        // Si es un string es una máscara de sprint.
+        // Si es un string es una máscara de sprintf().
         if (is_string($handler)) {
-            $data->setFormatted(sprintf($handler, $data->getValue()));
+            return sprintf($handler, $data);
         }
 
         // Si es un arreglo es el arreglo deberá contener el valor a traducir.
         // Si no existe, se entregará el mismo valor como string.
         elseif (is_array($handler)) {
-            $data->setFormatted($handler[$data->getValue()] ?? (string) $data->getValue());
+            return $handler[$data] ?? (string) $data;
         }
 
         // Si es una función se llama directamente y se retorna su resultado.
         elseif (is_callable($handler)) {
-            $data->setFormatted($handler($data->getValue(), $data->getId()));
+            return $handler($data, $id);
         }
 
         // Si es un repositorio se busca la entidad y se retorna el string que
         // representa la interfaz. Cada Entidad deberá implementar __toString().
         elseif ($handler instanceof RepositoryInterface) {
-            $entity = $handler->find($data->getValue());
-            $data->setFormatted($entity->__toString());
+            $entity = $handler->find($data);
+            return $entity->__toString();
         }
 
         // Entregar los datos formateados.
-        return $data->getFormatted();
+        return (string) $data;
     }
 }

@@ -26,8 +26,6 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Template\Service;
 
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataHandlerInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataInterface;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Entity\Data;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 
 /**
@@ -56,12 +54,15 @@ class DataFormatter implements DataFormatterInterface
     /**
      * Constructor del servicio.
      *
-     * @param array $handlers
+     * @param array $handlers Mapa de handlers para los formatos.
+     * @param DataHandlerInterface|null $handler Handler por defecto a usar.
      */
-    public function __construct(array $handlers = [])
-    {
+    public function __construct(
+        array $handlers = [],
+        DataHandlerInterface $handler = null
+    ) {
         $this->setHandlers($handlers);
-        $this->handler = new DataHandler();
+        $this->handler = $handler ?? new DataHandler();
     }
 
     /**
@@ -105,7 +106,7 @@ class DataFormatter implements DataFormatterInterface
     /**
      * @inheritDoc
      */
-    public function format(string $id, mixed $value): string
+    public function format(string $id, mixed $data): string
     {
         // Si no hay handler exacto revisar si el ID tiene partes.
         if (!isset($this->handlers[$id])) {
@@ -115,23 +116,23 @@ class DataFormatter implements DataFormatterInterface
                 // Separar en handler e ID y si existe el formato se usa.
                 [$handler, $id] = explode('.', $id, 2);
                 if (isset($this->handlers[$handler])) {
-                    return $this->handle($handler, $id, $value);
+                    return $this->handle($handler, $id, $data);
                 }
             }
         }
         // El ID es el formato.
         else {
-            return $this->handle($id, $id, $value);
+            return $this->handle($id, $id, $data);
         }
 
         // Buscar si hay un handler genérico (comodín).
-        if (!isset($this->handlers['*'])) {
-            return $this->handle('*', $id, $value);
+        if (isset($this->handlers['*'])) {
+            return $this->handle('*', $id, $data);
         }
 
         // Si no hay handler para manejar se retorna como string el valor
         // original que se pasó casteado a string (lo que podría fallar).
-        return (string) $value;
+        return (string) $data;
     }
 
     /**
@@ -139,32 +140,21 @@ class DataFormatter implements DataFormatterInterface
      *
      * @param string $name Nombre del handler registrado que se debe utilizar.
      * @param string $id Identificador pasado del formato.
-     * @param mixed $value Valor a formatear.
-     * @return string Valor formateado.
+     * @param mixed $data Datos a formatear.
+     * @return string Datos formateados.
      */
-    private function handle(string $name, string $id, mixed $value): string
+    private function handle(string $name, string $id, mixed $data): string
     {
         $handler = $this->handlers[$name];
-        $data = $this->createDataInstance($id, $value);
 
         if ($handler instanceof DataHandlerInterface) {
-            $handler->handle($data);
+            return $handler->handle($id, $data);
         } else {
-            $this->handler->handle($data);
+            if ($this->handler instanceof DataHandler) {
+                return $this->handler->handle($id, $data, $handler);
+            } else {
+                return $this->handler->handle($id, $data);
+            }
         }
-
-        return $data->getFormatted();
-    }
-
-    /**
-     * Crea una instancia de los datos que se requiere formatear.
-     *
-     * @param string $id
-     * @param mixed $value
-     * @return DataInterface
-     */
-    protected function createDataInstance(string $id, mixed $value): DataInterface
-    {
-        return new Data($id, $value);
     }
 }

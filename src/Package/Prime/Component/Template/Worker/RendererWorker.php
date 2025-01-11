@@ -27,6 +27,8 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Template\Worker;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererStrategyInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Exception\TemplateException;
+use Throwable;
 
 /**
  * Worker de renderización de plantillas.
@@ -56,6 +58,14 @@ class RendererWorker extends AbstractWorker implements RendererWorkerInterface
         assert($strategy instanceof RendererStrategyInterface);
 
         // Renderizar utilizando la estrategia.
-        return $strategy->render($template, $data);
+        try {
+            return $strategy->render($template, $data);
+        } catch (Throwable $e) {
+            throw new TemplateException(sprintf(
+                'Ocurrió un problema al renderizar la plantilla %s: %s',
+                $template,
+                $e->getMessage()
+            ));
+        }
     }
 }

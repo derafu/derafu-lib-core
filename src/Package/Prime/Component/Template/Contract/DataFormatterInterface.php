@@ -73,8 +73,8 @@ interface DataFormatterInterface
      * disponible en el servicio.
      *
      * @param string $id
-     * @param mixed $value
+     * @param mixed $data
      * @return string
      */
-    public function format(string $id, mixed $value): string;
+    public function format(string $id, mixed $data): string;
 }

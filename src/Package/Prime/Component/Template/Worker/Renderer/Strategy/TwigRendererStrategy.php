@@ -27,7 +27,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strat
 use Derafu\Lib\Core\Foundation\Abstract\AbstractStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\Renderer\Strategy\HtmlRendererStrategyInterface;
 use Twig\Environment;
-use Twig\Extension\AbstractExtension;
+use Twig\Extension\ExtensionInterface;
 use Twig\Loader\FilesystemLoader;
 
 /**
@@ -57,7 +57,7 @@ class TwigRendererStrategy extends AbstractStrategy implements HtmlRendererStrat
     /**
      * Extensiones de Twig que se utilizarán al renderizar.
      *
-     * @var AbstractExtension[]
+     * @var ExtensionInterface[]
      */
     private array $extensions;
 
@@ -65,7 +65,7 @@ class TwigRendererStrategy extends AbstractStrategy implements HtmlRendererStrat
      * Constructor de la estrategia.
      *
      * @param string|array $paths Rutas dónde se buscarán las plantillas.
-     * @param AbstractExtension[] $extensions Extensiones que se cargarán.
+     * @param ExtensionInterface[] $extensions Extensiones que se cargarán.
      */
     public function __construct(
         string|array $paths = [],
@@ -106,6 +106,7 @@ class TwigRendererStrategy extends AbstractStrategy implements HtmlRendererStrat
         if (!isset($this->twig)) {
             $this->twig = new Environment($this->getFilesystemLoader());
             foreach ($this->extensions as $extension) {
+                assert($extension instanceof ExtensionInterface);
                 $this->twig->addExtension($extension);
             }
         }

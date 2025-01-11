@@ -34,8 +34,9 @@ interface DataHandlerInterface
     /**
      * Maneja datos según su contexto (se pasa una clase)
      *
-     * @param DataInterface $data Dato que se debe manejar.
+     * @param string $id
+     * @param mixed $data Dato que se debe manejar.
      * @return string
      */
-    public function handle(DataInterface $data): string;
+    public function handle(string $id, mixed $data): string;
 }
