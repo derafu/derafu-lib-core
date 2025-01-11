@@ -35,13 +35,15 @@ use Derafu\Lib\Core\Helper\Arr;
 use Derafu\Lib\Core\Helper\Selector;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\RendererWorkerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Entity\Data;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatter;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatterTwigExtension;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataHandler;
 use Derafu\Lib\Core\Package\Prime\Component\Template\TemplateComponent;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\MarkdownRendererStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\PdfRendererStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\TwigRendererStrategy;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker;
 use Derafu\Lib\Core\Package\Prime\PrimePackage;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\DataContainer;
@@ -59,8 +61,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ServiceProcessingCompilerPass::class)]
 #[CoversClass(Arr::class)]
 #[CoversClass(Selector::class)]
+#[CoversClass(Data::class)]
 #[CoversClass(DataFormatter::class)]
 #[CoversClass(DataFormatterTwigExtension::class)]
+#[CoversClass(DataHandler::class)]
 #[CoversClass(MarkdownRendererStrategy::class)]
 #[CoversClass(PdfRendererStrategy::class)]
 #[CoversClass(TwigRendererStrategy::class)]
@@ -82,7 +86,7 @@ class TemplateComponentTest extends TestCase
         ;
 
         $app->getService(DataFormatterInterface::class)
-            ->addFormat('date', function ($date) {
+            ->addHandler('date', function ($date) {
                 $timestamp = strtotime($date);
                 return date('d/m/Y', $timestamp);
             })

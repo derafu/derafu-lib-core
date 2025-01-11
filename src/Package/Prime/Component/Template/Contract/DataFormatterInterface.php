@@ -32,36 +32,44 @@ use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 interface DataFormatterInterface
 {
     /**
-     * Asigna el mapa de formatos.
+     * Asigna el mapa de handlers.
      *
      * Reemplazará un mapa previo si existía.
      *
-     * @param array $formats
+     * @param array $handlers
      * @return static
      */
-    public function setFormats(array $formats): static;
+    public function setHandlers(array $handlers): static;
 
     /**
-     * Obtiene el mapa de formatos.
+     * Obtiene el mapa de handlers.
      *
-     * @return array<string,string|array|callable|RepositoryInterface>
+     * @return array<string,string|array|callable|DataHandlerInterface|RepositoryInterface>
      */
-    public function getFormats(): array;
+    public function getHandlers(): array;
 
     /**
-     * Agrega un formato al mapa de formatos.
+     * Agrega un handler al mapa de handlers.
      *
      * @param string $id
-     * @param string|array|callable|RepositoryInterface $format
+     * @param string|array|callable|DataHandlerInterface|RepositoryInterface $handler
      * @return static
      */
-    public function addFormat(
+    public function addHandler(
         string $id,
-        string|array|callable|RepositoryInterface $format
+        string|array|callable|DataHandlerInterface|RepositoryInterface $handler
     ): static;
 
     /**
-     * Formatea el valor de un identificador según el mapa de formatos que esté
+     * Obtiene un handler a partir de su identificador.
+     *
+     * @param string $id
+     * @return string|array|callable|DataHandlerInterface|RepositoryInterface|null
+     */
+    public function getHandler(string $id): string|array|callable|DataHandlerInterface|RepositoryInterface|null;
+
+    /**
+     * Formatea el valor de un identificador según el mapa de handlers que esté
      * disponible en el servicio.
      *
      * @param string $id

@@ -68,7 +68,7 @@ class DataFormatterTwigExtension extends AbstractExtension
      *
      * @param mixed $value
      * @param string $id
-     * @return string
+     * @return Markup
      */
     public function format(mixed $value, string $id): Markup
     {

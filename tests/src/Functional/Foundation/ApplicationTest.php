@@ -28,7 +28,6 @@ use Derafu\Lib\Core\Foundation\Abstract\AbstractService;
 use Derafu\Lib\Core\Foundation\Abstract\AbstractServiceRegistry;
 use Derafu\Lib\Core\Foundation\Application;
 use Derafu\Lib\Core\Foundation\Configuration;
-use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
 use Derafu\Lib\Core\Foundation\Kernel;
 use Derafu\Lib\Core\Foundation\ServiceConfigurationCompilerPass;
 use Derafu\Lib\Core\Foundation\ServiceProcessingCompilerPass;

@@ -25,12 +25,15 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Package\Prime\Component\Template\Service;
 
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataHandlerInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Template\Entity\Data;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 
 /**
  * Servicio de formateo de datos.
  *
- * Permite recibir un valor y formatearlo según un mapa de formateos predefinido
+ * Permite recibir un valor y formatearlo según un mapa de handlers predefinido
  * mediante su identificador.
  */
 class DataFormatter implements DataFormatterInterface
@@ -39,26 +42,34 @@ class DataFormatter implements DataFormatterInterface
      * Mapeo de identificadores a la forma que se usará para darle formato a los
      * valores asociados al identificador.
      *
-     * @var array<string,string|array|callable|RepositoryInterface>
+     * @var array<string,string|array|callable|DataHandlerInterface|RepositoryInterface>
      */
-    private array $formats;
+    private array $handlers;
+
+    /**
+     * Handler por defecto de los formatos.
+     *
+     * @var DataHandlerInterface
+     */
+    private DataHandlerInterface $handler;
 
     /**
      * Constructor del servicio.
      *
-     * @param array $formats
+     * @param array $handlers
      */
-    public function __construct(array $formats = [])
+    public function __construct(array $handlers = [])
     {
-        $this->setFormats($formats);
+        $this->setHandlers($handlers);
+        $this->handler = new DataHandler();
     }
 
     /**
      * @inheritDoc
      */
-    public function setFormats(array $formats): static
+    public function setHandlers(array $handlers): static
     {
-        $this->formats = $formats;
+        $this->handlers = $handlers;
 
         return $this;
     }
@@ -66,21 +77,29 @@ class DataFormatter implements DataFormatterInterface
     /**
      * @inheritDoc
      */
-    public function getFormats(): array
+    public function getHandlers(): array
     {
-        return $this->formats;
+        return $this->handlers;
     }
 
     /**
      * @inheritDoc
      */
-    public function addFormat(
+    public function addHandler(
         string $id,
-        string|array|callable|RepositoryInterface $format
+        string|array|callable|DataHandlerInterface|RepositoryInterface $handler
     ): static {
-        $this->formats[$id] = $format;
+        $this->handlers[$id] = $handler;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHandler(string $id): string|array|callable|DataHandlerInterface|RepositoryInterface|null
+    {
+        return $this->handlers[$id] ?? null;
     }
 
     /**
@@ -88,35 +107,64 @@ class DataFormatter implements DataFormatterInterface
      */
     public function format(string $id, mixed $value): string
     {
-        // Si no hay formato, devolver como string el valor pasado.
-        if (!isset($this->formats[$id])) {
-            return (string) $value;
+        // Si no hay handler exacto revisar si el ID tiene partes.
+        if (!isset($this->handlers[$id])) {
+            // Si el ID tiene partes se busca si la primera parte está definida
+            // como handler.
+            if (str_contains($id, '.')) {
+                // Separar en handler e ID y si existe el formato se usa.
+                [$handler, $id] = explode('.', $id, 2);
+                if (isset($this->handlers[$handler])) {
+                    return $this->handle($handler, $id, $value);
+                }
+            }
+        }
+        // El ID es el formato.
+        else {
+            return $this->handle($id, $id, $value);
         }
 
-        // Obtener el formato que se debe utilizar.
-        $format = $this->formats[$id];
-
-        // Si es un string es una máscara de sprint.
-        if (is_string($format)) {
-            return sprintf($format, $value);
+        // Buscar si hay un handler genérico (comodín).
+        if (!isset($this->handlers['*'])) {
+            return $this->handle('*', $id, $value);
         }
 
-        // Si es un arreglo es el arreglo deberá contener el valor a traducir.
-        // Si no existe, se entregará el mismo valor como string.
-        if (is_array($format)) {
-            return $format[$value] ?? (string) $value;
+        // Si no hay handler para manejar se retorna como string el valor
+        // original que se pasó casteado a string (lo que podría fallar).
+        return (string) $value;
+    }
+
+    /**
+     * Maneja el formateao de los datos según cierto handler.
+     *
+     * @param string $name Nombre del handler registrado que se debe utilizar.
+     * @param string $id Identificador pasado del formato.
+     * @param mixed $value Valor a formatear.
+     * @return string Valor formateado.
+     */
+    private function handle(string $name, string $id, mixed $value): string
+    {
+        $handler = $this->handlers[$name];
+        $data = $this->createDataInstance($id, $value);
+
+        if ($handler instanceof DataHandlerInterface) {
+            $handler->handle($data);
+        } else {
+            $this->handler->handle($data);
         }
 
-        // Si es una función se llama directamente y se retorna su resultado.
-        if (is_callable($format)) {
-            return $format($value);
-        }
+        return $data->getFormatted();
+    }
 
-        // Si es un repositorio se busca la entidad y se retorna el string que
-        // representa la interfaz. Cada Entidad deberá implementar __toString().
-        if ($format instanceof RepositoryInterface) {
-            $entity = $format->find($value);
-            return $entity->__toString();
-        }
+    /**
+     * Crea una instancia de los datos que se requiere formatear.
+     *
+     * @param string $id
+     * @param mixed $value
+     * @return DataInterface
+     */
+    protected function createDataInstance(string $id, mixed $value): DataInterface
+    {
+        return new Data($id, $value);
     }
 }
