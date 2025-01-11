@@ -31,6 +31,7 @@ use Derafu\Lib\Core\Helper\Factory;
 use Derafu\Lib\Core\Support\Store\Abstract\AbstractStore;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 use Doctrine\Common\Collections\Criteria;
+use InvalidArgumentException;
 use stdClass;
 
 /**
@@ -95,6 +96,14 @@ class Repository extends AbstractStore implements RepositoryInterface
      */
     public function find($id, $lockMode = null, $lockVersion = null): ?object
     {
+        if (!is_string($id) && !is_int($id)) {
+            throw new InvalidArgumentException(sprintf(
+                'En el método %s:find($id) se pasó un $id de tipo %s y solo se permiten string e int.',
+                static::class,
+                get_debug_type($id)
+            ));
+        }
+
         return isset($this->data[$id])
             ? $this->createEntity($this->data[$id])
             : null
