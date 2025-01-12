@@ -130,7 +130,7 @@ class DataContainer extends AbstractStore implements DataContainerInterface
                 $resolver->setAllowedValues($key, $config['choices']);
             }
 
-            if (!empty($config['default'])) {
+            if (array_key_exists('default', $config)) {
                 $resolver->setDefault($key, $config['default']);
             }
 
