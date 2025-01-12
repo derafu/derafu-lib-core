@@ -51,19 +51,19 @@ class DataHandler implements DataHandlerInterface
         // Si es un arreglo es el arreglo deberá contener el valor a traducir.
         // Si no existe, se entregará el mismo valor como string.
         elseif (is_array($handler)) {
-            return $handler[$data] ?? (string) $data;
+            return (string) ($handler[$data] ?? $data);
         }
 
         // Si es una función se llama directamente y se retorna su resultado.
         elseif (is_callable($handler)) {
-            return $handler($data, $id);
+            return (string) $handler($data, $id);
         }
 
         // Si es un repositorio se busca la entidad y se retorna el string que
         // representa la interfaz. Cada Entidad deberá implementar __toString().
         elseif ($handler instanceof RepositoryInterface) {
             $entity = $handler->find($data);
-            return $entity->__toString();
+            return (string) $entity;
         }
 
         // Entregar los datos formateados.
