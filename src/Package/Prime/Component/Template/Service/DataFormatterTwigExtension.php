@@ -59,7 +59,7 @@ class DataFormatterTwigExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('formatme', [$this, 'format']),
+            new TwigFilter('format_as', [$this, 'format_as']),
         ];
     }
 
@@ -70,7 +70,7 @@ class DataFormatterTwigExtension extends AbstractExtension
      * @param string $id
      * @return Markup
      */
-    public function format(mixed $value, string $id): Markup
+    public function format_as(mixed $value, string $id): Markup
     {
         $html = $this->formatter->format($id, $value);
 
