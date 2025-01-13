@@ -33,6 +33,7 @@ use Derafu\Lib\Core\Support\Xml\XPathQuery;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use DOMNodeList;
 
 /**
  * Clase que representa un documento XML.
@@ -185,7 +186,7 @@ class Xml extends DOMDocument implements XmlInterface
     {
         // Si se proporciona XPath, filtrar los nodos.
         if ($xpath) {
-            $node = XmlUtil::xpath($this, $xpath)->item(0);
+            $node = $this->getNodes($xpath)->item(0);
             if (!$node) {
                 throw new XmlException(sprintf(
                     'No fue posible obtener el nodo con el XPath %s.',
@@ -231,8 +232,8 @@ class Xml extends DOMDocument implements XmlInterface
     public function getSignatureNodeXml(): ?string
     {
         $tag = $this->documentElement->tagName;
-        $xpath = '/*[local-name()="' . $tag . '"]/*[local-name()="Signature"]';
-        $signatureElement = XmlUtil::xpath($this, $xpath)->item(0);
+        $xpath = '/' . $tag . '/Signature';
+        $signatureElement = $this->getNodes($xpath)->item(0);
 
         return $signatureElement?->C14N();
     }
@@ -247,6 +248,18 @@ class Xml extends DOMDocument implements XmlInterface
         }
 
         return $this->xPathQuery->get($query, $params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getNodes(string $query, array $params = []): DOMNodeList
+    {
+        if (!isset($this->xPathQuery)) {
+            $this->xPathQuery = new XPathQuery($this);
+        }
+
+        return $this->xPathQuery->getNodes($query, $params);
     }
 
     /**

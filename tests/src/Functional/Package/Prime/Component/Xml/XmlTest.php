@@ -28,6 +28,7 @@ use Derafu\Lib\Core\Helper\Str;
 use Derafu\Lib\Core\Helper\Xml as XmlUtil;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Entity\Xml;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
+use Derafu\Lib\Core\Support\Xml\XPathQuery;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -35,6 +36,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(XmlException::class)]
 #[CoversClass(Str::class)]
 #[CoversClass(XmlUtil::class)]
+#[CoversClass(XPathQuery::class)]
 class XmlTest extends TestCase
 {
     /**

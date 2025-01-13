@@ -26,6 +26,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Xml\Contract;
 
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Exception\XmlException;
 use DOMNode;
+use DOMNodeList;
 
 /**
  * Interfaz para la clase que representa un documento XML.
@@ -135,6 +136,18 @@ interface XmlInterface extends DOMDocumentInterface
      * @return string|array|null
      */
     public function query(string $query, array $params = []): string|array|null;
+
+    /**
+     * Ejecuta una consulta XPath sobre el documento XML.
+     *
+     * La consulta que se realiza es sencilla, sin namespaces. Si se requiere el
+     * uso de namespace se debe usar directamente la clase XPathQuery.
+     *
+     * @param string $query Consulta XPath con marcadores nombrados (ej.: ":param").
+     * @param array $params Arreglo de parámetros en formato ['param' => 'value'].
+     * @return DOMNodeList
+     */
+    public function getNodes(string $query, array $params = []): DOMNodeList;
 
     /**
      * Realiza una consulta al arreglo del XML utilizando un selector.

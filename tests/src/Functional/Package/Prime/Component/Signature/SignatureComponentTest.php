@@ -44,6 +44,7 @@ use Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\DecoderWorker as XmlDecod
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\EncoderWorker as XmlEncoderWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Worker\ValidatorWorker as XmlValidatorWorker;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\XmlComponent;
+use Derafu\Lib\Core\Support\Xml\XPathQuery;
 use Derafu\Lib\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -65,6 +66,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(AsymmetricKey::class)]
 #[CoversClass(Str::class)]
 #[CoversClass(XmlUtil::class)]
+#[CoversClass(XPathQuery::class)]
 class SignatureComponentTest extends TestCase
 {
     private string $xmlDir;
