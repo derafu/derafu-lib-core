@@ -78,4 +78,17 @@ class DateTest extends TestCase
         // Puntos en lugar de guiones.
         $this->assertNull(Date::validateAndConvert('2023.03.12'));
     }
+
+    public function testDateFormatSpanish(): void
+    {
+        $this->assertSame(
+            'lunes 13 de enero del 2025',
+            Date::formatSpanish('2025-01-13')
+        );
+
+        $this->assertSame(
+            '13 de enero del 2025',
+            Date::formatSpanish('2025-01-13', showDay: false)
+        );
+    }
 }

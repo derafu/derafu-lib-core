@@ -35,6 +35,61 @@ use Carbon\Exceptions\InvalidFormatException;
 class Date extends Carbon
 {
     /**
+     * Días de la semana en español.
+     *
+     * @var array
+     */
+    private const DAYS = [
+        'domingo',
+        'lunes',
+        'martes',
+        'miércoles',
+        'jueves',
+        'viernes',
+        'sábado',
+    ];
+
+    /**
+     * Meses del año en español.
+     *
+     * @var array
+     */
+    private const MONTHS = [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+    ];
+
+    /**
+     * Formatea una fecha en formato YYYY-MM-DD a un string en español.
+     *
+     * @param string $date
+     * @param bool $showDay
+     * @return string
+     */
+    public static function formatSpanish(string $date, bool $showDay = true): string
+    {
+        $unixtime = strtotime($date);
+        $string = date('j \d\e \M\O\N\T\H \d\e\l Y', $unixtime);
+        if ($showDay) {
+            $string = 'DAY ' . $string;
+        }
+        $day = self::DAYS[date('w', $unixtime)];
+        $month = self::MONTHS[date('n', $unixtime) - 1];
+
+        return str_replace(['DAY', 'MONTH'], [$day, $month], $string);
+    }
+
+    /**
      * Valida si una fecha está en el formato Y-m-d y la convierte a un nuevo
      * formato.
      *
