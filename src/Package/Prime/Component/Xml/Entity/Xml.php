@@ -133,6 +133,16 @@ class Xml extends DOMDocument implements XmlInterface
             );
         }
 
+        // Si el XML que se cargará no inicia con el TAG que abre XML se agrega.
+        // Esto es 100% necesario pues si viene en codificación diferente a
+        // UTF-8 (lo más normal) y no viene este tag abriendo el XML al cargar
+        // reclamará que falta la codificación.
+        if (!str_starts_with($source, '<?xml')) {
+            $source = '<?xml version="1.0" encoding="' . $encoding . '"?>'
+                . "\n" . $source
+            ;
+        }
+
         // Obtener estado actual de libxml y cambiarlo antes de cargar el XML
         // para obtener los errores en una variable si falla algo.
         $useInternalErrors = libxml_use_internal_errors(true);
