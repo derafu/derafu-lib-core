@@ -42,7 +42,7 @@ abstract class AbstractApplication implements ApplicationInterface
      *
      * @var KernelInterface
      */
-    private KernelInterface $kernel;
+    protected KernelInterface $kernel;
 
     /**
      * Instancia de la clase para el patrón singleton.
