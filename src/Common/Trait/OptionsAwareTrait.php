@@ -47,7 +47,7 @@ trait OptionsAwareTrait
     public function setOptions(array|DataContainerInterface $options): static
     {
         if (is_array($options)) {
-            $options = new DataContainer($options, $this->optionsSchema ?? []);
+            $options = new DataContainer($options, $this->getOptionsSchema());
         }
 
         $this->options = $options;
@@ -79,5 +79,13 @@ trait OptionsAwareTrait
         }
 
         return $this->setOptions($options)->options;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOptionsSchema(): array
+    {
+        return $this->optionsSchema ?? [];
     }
 }

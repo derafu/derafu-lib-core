@@ -42,13 +42,6 @@ trait ConfigurableTrait
     protected DataContainerInterface $configuration;
 
     /**
-     * Reglas de esquema de las configuraciones.
-     *
-     * @var array
-     */
-    protected array $configurationSchema = [];
-
-    /**
      * {@inheritDoc}
      */
     public function setConfiguration(
@@ -57,7 +50,7 @@ trait ConfigurableTrait
         if (is_array($configuration)) {
             $configuration = new DataContainer(
                 $configuration,
-                $this->configurationSchema
+                $this->getConfigurationSchema()
             );
         }
 
@@ -94,5 +87,13 @@ trait ConfigurableTrait
         }
 
         return $this->setConfiguration($configuration)->configuration;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfigurationSchema(): array
+    {
+        return $this->configurationSchema ?? [];
     }
 }

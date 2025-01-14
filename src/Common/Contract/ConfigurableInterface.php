@@ -58,4 +58,11 @@ interface ConfigurableInterface
     public function resolveConfiguration(
         array $configuration
     ): DataContainerInterface;
+
+    /**
+     * Entrega el esquema con el que se validarán las configuraciones.
+     *
+     * @return array
+     */
+    public function getConfigurationSchema(): array;
 }

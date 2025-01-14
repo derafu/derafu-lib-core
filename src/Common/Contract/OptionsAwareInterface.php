@@ -53,4 +53,11 @@ interface OptionsAwareInterface
      * @return DataContainerInterface Opciones normalizadas y validadas.
      */
     public function resolveOptions(array $options): DataContainerInterface;
+
+    /**
+     * Entrega el esquema con el que se validarán las opciones.
+     *
+     * @return array
+     */
+    public function getOptionsSchema(): array;
 }
