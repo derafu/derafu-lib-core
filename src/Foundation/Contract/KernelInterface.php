@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Foundation\Configuration;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -33,12 +32,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 interface KernelInterface
 {
     /**
-     * Inicializa el kernel.
+     * Constructor del núcleo.
      *
-     * @param Configuration $configuration
-     * @return void
+     * @param ConfigurationInterface $configuration Configuración con la que se
+     * ejecutará el núcleo y la aplicación.
      */
-    public function initialize(Configuration $configuration): void;
+    public function __construct(ConfigurationInterface $configuration);
 
     /**
      * Entrega el contenedor de dependencias.

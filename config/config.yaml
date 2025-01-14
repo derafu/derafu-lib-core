@@ -32,17 +32,3 @@ derafu:
             # el valor `null`. En cuyo caso el archivo services.yaml debe
             # contener toda la configuración necesaria de manera explícita.
             compilerPassClass: Derafu\Lib\Core\Foundation\ServiceProcessingCompilerPass
-
-    # Configuraciones para paquetes.
-    packages:
-        prime:
-            components:
-                entity:
-                    workers:
-                        manager:
-                            entity:
-                                normalizationName: name
-                log:
-                    workers:
-                        logger:
-                            channel: derafu_lib

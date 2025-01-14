@@ -41,18 +41,24 @@ class Kernel implements KernelInterface
     private ContainerBuilder $container;
 
     /**
-     * Constructor del núcleo de la aplicación.
+     * {@inheritDoc}
      */
-    public function __construct()
+    public function __construct(ConfigurationInterface $configuration)
     {
-        $this->container = new ContainerBuilder();
+        $this->initialize($configuration);
     }
 
     /**
-     * {@inheritDoc}
+     * Inicializa el núcleo.
+     *
+     * @param ConfigurationInterface $configuration
+     * @return void
      */
-    public function initialize(ConfigurationInterface $configuration): void
+    private function initialize(ConfigurationInterface $configuration): void
     {
+        // Crear el contenedor de dependencias.
+        $this->container = new ContainerBuilder();
+
         // Registrar configuración como servicio.
         $this->container
             ->register(ConfigurationInterface::class)

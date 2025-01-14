@@ -93,13 +93,6 @@ interface ApplicationInterface
     public function getService(string $service): object;
 
     /**
-     * Ejecuta la aplicación.
-     *
-     * @return int
-     */
-    public function run(): int;
-
-    /**
      * Singleton para obtener siempre la misma instancia.
      *
      * @param ?string $servicesConfigFile Archivo de configuración de servicios.

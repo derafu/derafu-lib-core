@@ -62,10 +62,6 @@ services:
             $paths: '%kernel.project_dir%/resources/templates'
             $extensions:
                 - '@Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatterTwigExtension'
-    Derafu\Lib\Core\Package\Prime\Component\Template\Contract\Renderer\Strategy\MarkdownRendererStrategyInterface:
-        class: Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\MarkdownRendererStrategy
-        arguments:
-            $paths: '%kernel.project_dir%/resources/templates'
     Derafu\Lib\Core\Package\Prime\Component\Template\Contract\Renderer\Strategy\PdfRendererStrategyInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\PdfRendererStrategy
 

@@ -36,7 +36,7 @@ use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
 class DataHandler implements DataHandlerInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function handle(
         string $id,

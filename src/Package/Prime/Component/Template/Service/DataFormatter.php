@@ -66,7 +66,7 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function setHandlers(array $handlers): static
     {
@@ -76,7 +76,7 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getHandlers(): array
     {
@@ -84,7 +84,7 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function addHandler(
         string $id,
@@ -96,7 +96,7 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getHandler(string $id): string|array|callable|DataHandlerInterface|RepositoryInterface|null
     {
@@ -104,7 +104,7 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function format(string $id, mixed $data): string
     {

@@ -39,7 +39,6 @@ use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatter;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataFormatterTwigExtension;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Service\DataHandler;
 use Derafu\Lib\Core\Package\Prime\Component\Template\TemplateComponent;
-use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\MarkdownRendererStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\PdfRendererStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\Renderer\Strategy\TwigRendererStrategy;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker;
@@ -63,7 +62,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(DataFormatter::class)]
 #[CoversClass(DataFormatterTwigExtension::class)]
 #[CoversClass(DataHandler::class)]
-#[CoversClass(MarkdownRendererStrategy::class)]
 #[CoversClass(PdfRendererStrategy::class)]
 #[CoversClass(TwigRendererStrategy::class)]
 #[CoversClass(PrimePackage::class)]
@@ -118,21 +116,5 @@ class TemplateComponentTest extends TestCase
         $pdf = $this->renderer->render($template, $data);
 
         $this->assertIsString($pdf);
-    }
-
-    public function testRenderCustomTemplateMarkdown()
-    {
-        $template = self::getFixturesPath() . '/package/prime/template/custom_template';
-        $data = [
-            'title' => 'Derafu',
-            'content' => 'I Love Derafu <3',
-            'date' => date('Y-m-d'),
-            'options' => [
-                'format' => 'markdown',
-            ],
-        ];
-        $html = $this->renderer->render($template, $data);
-
-        $this->assertIsString($html);
     }
 }

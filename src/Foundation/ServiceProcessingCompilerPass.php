@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation;
 
-use Derafu\Lib\Core\Foundation\Contract\CommandInterface;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
 use Derafu\Lib\Core\Helper\Str;
 use LogicException;
@@ -70,11 +69,6 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)WorkerInterface$/",
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)Worker$/",
         ],
-        // Commands.
-        'command' => [
-            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<command>[A-Za-z0-9_]+)CommandInterface$/",
-            "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Command\\\\(?<command>[A-Za-z0-9_]+)Command$/",
-        ],
         // Jobs.
         'job' => [
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)\\\\Job\\\\(?<job>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)JobInterface$/",
@@ -90,6 +84,15 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Contract\\\\(?<worker>[A-Za-z0-9_]+)\\\\Strategy\\\\(?<strategy>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)StrategyInterface$/",
             "/Package\\\\(?<package>[A-Za-z0-9_]+)\\\\Component\\\\(?<component>[A-Za-z0-9_]+)\\\\Worker\\\\(?<worker>[A-Za-z0-9_]+)\\\\Strategy\\\\(?<strategy>[A-Za-z0-9_]+(?:\\\\[A-Za-z0-9_]+)?)(?P=worker)Strategy$/",
         ],
+    ];
+
+    /**
+     * Interfaces que son procesadas (manejadas) por este ServiceCompiler.
+     *
+     * @var array
+     */
+    protected array $handledInterfaces = [
+        ServiceInterface::class,
     ];
 
     /**
@@ -157,13 +160,13 @@ class ServiceProcessingCompilerPass implements CompilerPassInterface
         Definition $definition,
         ContainerBuilder $container
     ): void {
-        // Solo se procesan servicios que implementen `ServiceInterface`.
+        // Solo se procesan servicios que implementen ciertas interfaces.
         if (
             str_contains($id, '.')
             || !str_contains($id, '\\')
-            || (
-                !in_array(ServiceInterface::class, (array) class_implements($id))
-                && !in_array(CommandInterface::class, (array) class_implements($id))
+            || !array_intersect(
+                $this->handledInterfaces,
+                (array) class_implements($id)
             )
         ) {
             return;

@@ -30,9 +30,6 @@ use Derafu\Lib\Core\Foundation\Contract\ConfigurationInterface;
 use Derafu\Lib\Core\Foundation\Contract\KernelInterface;
 use Derafu\Lib\Core\Foundation\Contract\PackageInterface;
 use LogicException;
-use RuntimeException;
-use Symfony\Component\Console\Application as SymfonyConsoleApplication;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
@@ -80,8 +77,7 @@ abstract class AbstractApplication implements ApplicationInterface
 
         // Iniciar el kernel.
         $kernelClass = $configuration->getKernelClass();
-        $this->kernel = new $kernelClass();
-        $this->kernel->initialize($configuration);
+        $this->kernel = new $kernelClass($configuration);
     }
 
     /**
@@ -210,36 +206,5 @@ abstract class AbstractApplication implements ApplicationInterface
         assert(self::$instance instanceof static);
 
         return self::$instance;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function run(): int
-    {
-        // Validar que sea una ejecución de línea de comandos.
-        if (php_sapi_name() !== 'cli') {
-            throw new RuntimeException(
-                'Esta aplicación solo puede ejecutarse en la línea de comandos.'
-            );
-        }
-
-        // Crear instancia de Symfony Console Application.
-        $consoleApp = new SymfonyConsoleApplication();
-
-        // Registrar comandos del contenedor.
-        $commands = $this->kernel
-            ->getContainer()
-            ->findTaggedServiceIds('service:command')
-        ;
-        foreach ($commands as $id => $tags) {
-            $command = $this->kernel->getContainer()->get($id);
-            if ($command instanceof Command) {
-                $consoleApp->add($command);
-            }
-        }
-
-        // Ejecutar la consola.
-        return $consoleApp->run();
     }
 }
