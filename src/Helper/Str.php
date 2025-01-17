@@ -113,7 +113,7 @@ class Str extends IlluminateStr
      * @param array $data
      * @return string
      */
-    function replacePlaceholders(string $template, array $data): string
+    public static function replacePlaceholders(string $template, array $data): string
     {
         $flatData = Arr::dot($data);
 
