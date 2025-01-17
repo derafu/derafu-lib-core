@@ -118,7 +118,7 @@ class Str extends IlluminateStr
         $flatData = Arr::dot($data);
 
         foreach ($flatData as $key => $value) {
-            $template = str_replace("{{{$key}}}", $value, $template);
+            $template = str_replace("{{{$key}}}", (string) $value, $template);
         }
 
         return $template;
