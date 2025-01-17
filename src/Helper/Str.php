@@ -101,4 +101,26 @@ class Str extends IlluminateStr
 
         return $result ?: $string;
     }
+
+    /**
+     * Reemplaza un listado de placeholders que tiene $template con los valores
+     * que están en $data.
+     *
+     * Si $data es un arreglo con otros arreglos el método aplanará el arreglo y
+     * se reemplazarán los placeholders con la sintaxis de punto ".".
+     *
+     * @param string $template
+     * @param array $data
+     * @return string
+     */
+    function replacePlaceholders(string $template, array $data): string
+    {
+        $flatData = Arr::dot($data);
+
+        foreach ($flatData as $key => $value) {
+            $template = str_replace("{{{$key}}}", $value, $template);
+        }
+
+        return $template;
+    }
 }
