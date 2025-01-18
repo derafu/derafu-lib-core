@@ -26,6 +26,7 @@ namespace Derafu\Lib\Core\Helper;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use InvalidArgumentException;
 
 /**
  * Clase para trabajar con fecha en PHP.
@@ -87,6 +88,34 @@ class Date extends Carbon
         $month = self::MONTHS[date('n', $unixtime) - 1];
 
         return str_replace(['DAY', 'MONTH'], [$day, $month], $string);
+    }
+
+    /**
+     * Formatea un periodo pasado en formato YYYYMM a su representación en
+     * español del mes.
+     *
+     * El resultado para 202501 será "Enero de 2025".
+     *
+     * @param integer $period
+     * @return string
+     */
+    public static function formatPeriodSpanish(int $period): string
+    {
+        // Extraer año y mes.
+        $year = substr((string) $period, 0, 4);
+        $month = substr((string) $period, 4, 2);
+
+        // Validar el mes.
+        $index = (int) $month - 1;
+        if (!isset(self::MONTHS[$index])) {
+            throw new InvalidArgumentException(sprintf(
+                'Mes inválido: %s.',
+                $month
+            ));
+        }
+
+        // Retornar el mes y el año formateados.
+        return ucfirst(self::MONTHS[$index]) . ' de ' . $year;
     }
 
     /**
