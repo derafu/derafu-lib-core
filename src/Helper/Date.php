@@ -26,6 +26,7 @@ namespace Derafu\Lib\Core\Helper;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use DateTime;
 use InvalidArgumentException;
 
 /**
@@ -96,7 +97,7 @@ class Date extends Carbon
      *
      * El resultado para 202501 será "Enero de 2025".
      *
-     * @param integer $period
+     * @param int $period
      * @return string
      */
     public static function formatPeriodSpanish(int $period): string
@@ -116,6 +117,22 @@ class Date extends Carbon
 
         // Retornar el mes y el año formateados.
         return ucfirst(self::MONTHS[$index]) . ' de ' . $year;
+    }
+
+    /**
+     * Valida si la fecha es o no válida según el formato.
+     *
+     * @param string $date Fecha que se quiere validar.
+     * @param string $format Formato que se quiere validar.
+     * @return bool `true` Si la fecha está ok.
+     */
+    public static function validate(
+        string $date,
+        string $format = 'Y-m-d'
+    ): bool {
+        $dt = DateTime::createFromFormat($format, $date);
+
+        return $dt !== false && !array_sum($dt->getLastErrors());
     }
 
     /**
@@ -143,5 +160,26 @@ class Date extends Carbon
         } catch (InvalidFormatException $e) {
             return null;
         }
+    }
+
+    /**
+     * Entrega el último día de un período.
+     *
+     * @param int|null $period
+     * @return string
+     */
+    public static function lastDayPeriod(int $period = null): string
+    {
+        if ($period === null) {
+            $period = date('Ym');
+        }
+
+        $year = substr((string) $period, 0, 4);
+        $month = substr((string) $period, 4, 2);
+
+        $date = DateTime::createFromFormat('Y-m-d', "$year-$month-01");
+        $lastDay = $date->format('t');
+
+        return "$year-$month-$lastDay";
     }
 }
