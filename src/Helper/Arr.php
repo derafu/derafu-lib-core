@@ -124,8 +124,12 @@ class Arr extends IlluminateArr
      * Convierte el último nivel de un array, accedido por notación de puntos,
      * en un arreglo con índice 0 si aún no es un arreglo con índice 0.
      *
+     * Si el índice no existe o tiene un valor que se evalúe como falso no se
+     * realizará el cambio ni se asignará un índice vacío.
+     *
      * @param array &$array Arreglo de entrada a procesar.
      * @param string $path Notación de puntos para navegar en el array.
+     * @return void
      */
     public static function ensureArrayAtPath(array &$array, string $path): void
     {
@@ -134,9 +138,9 @@ class Arr extends IlluminateArr
         $current = &$array;
 
         foreach ($keys as $key) {
-            // Si el nivel actual no existe, crear un arreglo vacío.
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
+            // Si el nivel actual no tiene valor o no es arreglo retornar.
+            if (empty($current[$key]) || !is_array($current[$key])) {
+                return;
             }
 
             // Bajar al siguiente nivel.
