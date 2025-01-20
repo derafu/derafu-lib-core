@@ -655,7 +655,32 @@ enum Currency: string
      */
     public function round(int|float $amount): int|float
     {
-        return round((float) $amount, $this->getDecimals());
+        $decimals = $this->getDecimals();
+
+        $roundedAmount = round((float) $amount, $decimals);
+
+        return $decimals === 0 ? (int) $roundedAmount : $roundedAmount;
+    }
+
+    /**
+     * Formatea como string el monto de una moneda.
+     *
+     * Redondea a los decimales de la moneda y le da formanto usando el
+     * separador decimal y de miles de la moneda.
+     *
+     * @param int|float $amount
+     * @return string
+     */
+    public function format(int|float $amount): string
+    {
+        $roundedAmount = $this->round($amount);
+
+        return number_format(
+            (float) $roundedAmount,
+            $this->getDecimals(),
+            $this->getDecimalSeparator(),
+            $this->getThousandsSeparator()
+        );
     }
 
     /**
@@ -671,14 +696,7 @@ enum Currency: string
     {
         $template = $this->getTemplate();
 
-        $roundedAmount = $this->round($amount);
-
-        $formatedAmount = number_format(
-            (float) $roundedAmount,
-            $this->getDecimals(),
-            $this->getDecimalSeparator(),
-            $this->getThousandsSeparator()
-        );
+        $formatedAmount = $this->format($amount);
 
         return str_replace(
             ['{{symbol}}', '{{amount}}'],
