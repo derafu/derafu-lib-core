@@ -34,12 +34,7 @@ use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
  */
 interface HandlerInterface extends ServiceInterface, OptionsAwareInterface
 {
-    /**
-     * Coordina el flujo de trabajo de un worker coordinando tareas más amplias
-     * y genéricas.
-     *
-     * @param mixed ...$args
-     * @return mixed
-     */
-    public function handle(mixed ...$args): mixed;
+    // Esta interfaz deberá ser extendida definiendo específicamente cada
+    // método handle() con sus tipos de argumentos y tipo de retorno.
+    // public function handle();
 }
