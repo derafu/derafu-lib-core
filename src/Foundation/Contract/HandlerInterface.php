@@ -37,4 +37,19 @@ interface HandlerInterface extends ServiceInterface, OptionsAwareInterface
     // Esta interfaz deberá ser extendida definiendo específicamente cada
     // método handle() con sus tipos de argumentos y tipo de retorno.
     // public function handle();
+
+    /**
+     * Entrega una estrategia específica que el handler maneja.
+     *
+     * @param string $strategy
+     * @return StrategyInterface
+     */
+    public function getStrategy(string $strategy): StrategyInterface;
+
+    /**
+     * Entrega el listado de estrategias que el handler puede manejar.
+     *
+     * @return StrategyInterface[]
+     */
+    public function getStrategies(): array;
 }

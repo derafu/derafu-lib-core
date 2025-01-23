@@ -26,6 +26,8 @@ namespace Derafu\Lib\Core\Foundation\Abstract;
 
 use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\HandlerInterface;
+use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
+use Derafu\Lib\Core\Foundation\Exception\StrategyException;
 
 /**
  * Clase base para los handlers de los workers de la aplicación.
@@ -33,4 +35,56 @@ use Derafu\Lib\Core\Foundation\Contract\HandlerInterface;
 abstract class AbstractHandler extends AbstractService implements HandlerInterface
 {
     use OptionsAwareTrait;
+
+    /**
+     * Estrategias que el handler del worker puede utilizar.
+     *
+     * @var StrategyInterface[]
+     */
+    protected array $strategies;
+
+    /**
+     * Constructor del handler.
+     *
+     * @param array $strategies Estrategias que este handler puede manejar.
+     */
+    public function __construct(iterable $strategies = [])
+    {
+        $this->strategies = is_array($strategies)
+            ? $strategies
+            : iterator_to_array($strategies)
+        ;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStrategy(string $strategy): StrategyInterface
+    {
+        $strategies = [$strategy];
+        if (!str_contains($strategy, '.')) {
+            $strategies[] = 'default.' . $strategy;
+        }
+
+        foreach ($strategies as $name) {
+            if (isset($this->strategies[$name])) {
+                return $this->strategies[$name];
+            }
+        }
+
+        throw new StrategyException(sprintf(
+            'No se encontró la estrategia %s en el handler %s (%s).',
+            $strategy,
+            $this->getName(),
+            $this->getId(),
+        ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStrategies(): array
+    {
+        return $this->strategies;
+    }
 }
