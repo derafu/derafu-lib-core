@@ -59,7 +59,7 @@ class DataFormatter implements DataFormatterInterface
      */
     public function __construct(
         array $handlers = [],
-        DataHandlerInterface $handler = null
+        ?DataHandlerInterface $handler = null
     ) {
         $this->setHandlers($handlers);
         $this->handler = $handler ?? new DataHandler();

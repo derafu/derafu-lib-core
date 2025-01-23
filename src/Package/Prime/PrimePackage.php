@@ -28,6 +28,7 @@ use Derafu\Lib\Core\Foundation\Abstract\AbstractPackage;
 use Derafu\Lib\Core\Package\Prime\Component\Certificate\Contract\CertificateComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface;
+use Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\MailComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\TemplateComponentInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Xml\Contract\XmlComponentInterface;
@@ -42,14 +43,18 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
      * Constructor del paquete.
      *
      * @param CertificateComponentInterface $certificate
+     * @param EntityComponentInterface $entity
      * @param LogComponentInterface $log
+     * @param MailComponentInterface $mail
      * @param SignatureComponentInterface $signature
+     * @param TemplateComponentInterface $template
      * @param XmlComponentInterface $xml
      */
     public function __construct(
         private CertificateComponentInterface $certificate,
         private EntityComponentInterface $entity,
         private LogComponentInterface $log,
+        private MailComponentInterface $mail,
         private SignatureComponentInterface $signature,
         private TemplateComponentInterface $template,
         private XmlComponentInterface $xml,
@@ -65,6 +70,7 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
             'certificate' => $this->certificate,
             'entity' => $this->entity,
             'log' => $this->log,
+            'mail' => $this->mail,
             'signature' => $this->signature,
             'template' => $this->template,
             'xml' => $this->xml,
@@ -95,6 +101,14 @@ class PrimePackage extends AbstractPackage implements PrimePackageInterface
         $config = $this->getComponentConfiguration('log');
 
         return $this->log->setConfiguration($config);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMailComponent(): MailComponentInterface
+    {
+        return $this->mail;
     }
 
     /**

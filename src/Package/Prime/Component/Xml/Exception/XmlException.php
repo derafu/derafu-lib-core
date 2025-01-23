@@ -52,7 +52,7 @@ class XmlException extends Exception
         string $message,
         array $errors = [],
         int $code = 0,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         $message = trim(sprintf(
             '%s %s',

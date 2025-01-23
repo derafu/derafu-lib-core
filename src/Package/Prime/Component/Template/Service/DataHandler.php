@@ -41,7 +41,7 @@ class DataHandler implements DataHandlerInterface
     public function handle(
         string $id,
         mixed $data,
-        string|array|callable|DataHandlerInterface|RepositoryInterface $handler = null
+        string|array|callable|DataHandlerInterface|RepositoryInterface|null $handler = null
     ): string {
         // Si es un string es una máscara de sprintf().
         if (is_string($handler)) {

@@ -92,7 +92,7 @@ abstract class AbstractStore implements StoreInterface
     /**
      * {@inheritDoc}
      */
-    public function clear(string $key = null): void
+    public function clear(?string $key = null): void
     {
         if ($key === null) {
             $this->data = $this->createFrom([]);

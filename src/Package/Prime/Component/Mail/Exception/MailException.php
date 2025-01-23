@@ -22,13 +22,13 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Exception;
+namespace Derafu\Lib\Core\Package\Prime\Component\Mail\Exception;
 
 use Derafu\Lib\Core\Common\Exception\Exception;
 
 /**
- * Excepción general de servicios.
+ * Clase de excepción personalizada para los correos electrónicos.
  */
-class ServiceException extends Exception
+class MailException extends Exception
 {
 }

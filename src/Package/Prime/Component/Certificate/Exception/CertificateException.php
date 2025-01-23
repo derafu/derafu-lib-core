@@ -74,7 +74,7 @@ class CertificateException extends Exception
         string $message,
         array $errors = [],
         int $code = 0,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         if (empty($errors)) {
             while ($error = openssl_error_string()) {

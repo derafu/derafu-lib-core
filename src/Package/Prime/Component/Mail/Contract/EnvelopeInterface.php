@@ -22,13 +22,25 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Exception;
-
-use Derafu\Lib\Core\Common\Exception\Exception;
+namespace Derafu\Lib\Core\Package\Prime\Component\Mail\Contract;
 
 /**
- * Excepción general de servicios.
+ * Interfaz para el sobre con mensajes de correo electrónico.
  */
-class ServiceException extends Exception
+interface EnvelopeInterface
 {
+    /**
+     * Agrega un mensaje de correo electrónico al sobre.
+     *
+     * @param MessageInterface $message
+     * @return static
+     */
+    public function addMessage(MessageInterface $message): static;
+
+    /**
+     * Obtiene la lista de mensajes de correo electrónico que hay en el sobre.
+     *
+     * @return MessageInterface[]
+     */
+    public function getMessages(): array;
 }

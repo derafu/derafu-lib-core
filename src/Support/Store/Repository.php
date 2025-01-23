@@ -54,13 +54,13 @@ class Repository extends AbstractStore implements RepositoryInterface
      * Constructor del repositorio.
      *
      * @param string|array|ArrayAccess $source Arreglo de datos o ruta al archivo PHP.
-     * @param string $entityClass Clase de la entidad que este repositorio usa.
+     * @param string|null $entityClass Clase de la entidad que este repositorio usa.
      * @param string|null $idAttribute Nombre del atributo ID que se debe
      * agregar a los datos cuando se carga el repositorio.
      */
     public function __construct(
         string|array|ArrayAccess $source,
-        string $entityClass = null,
+        ?string $entityClass = null,
         ?string $idAttribute = null
     ) {
         if ($entityClass !== null) {
@@ -79,7 +79,7 @@ class Repository extends AbstractStore implements RepositoryInterface
      */
     protected function load(
         string|array|ArrayAccess|ArrayObject $source,
-        string $idAttribute = null
+        ?string $idAttribute = null
     ): void {
         $data = is_string($source) ? require $source : $source;
         if (!is_array($data)) {

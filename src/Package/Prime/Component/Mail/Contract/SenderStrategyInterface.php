@@ -22,13 +22,21 @@ declare(strict_types=1);
  * En caso contrario, consulte <http://www.gnu.org/licenses/agpl.html>.
  */
 
-namespace Derafu\Lib\Core\Foundation\Exception;
+namespace Derafu\Lib\Core\Package\Prime\Component\Mail\Contract;
 
-use Derafu\Lib\Core\Common\Exception\Exception;
+use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
 
 /**
- * Excepción general de servicios.
+ * Interfaz para las estrategias del worker "prime.mail.sender".
  */
-class ServiceException extends Exception
+interface SenderStrategyInterface extends StrategyInterface
 {
+    /**
+     * Envía sobres con mensaje a través de correo electrónico mediante las
+     * opciones de transporte definidas en el cartero.
+     *
+     * @param PostmanInterface $postman Cartero para el transporte del correo.
+     * @return EnvelopeInterface[] Sobres con mensajes enviados.
+     */
+    public function send(PostmanInterface $postman): array;
 }

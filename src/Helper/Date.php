@@ -168,7 +168,7 @@ class Date extends Carbon
      * @param int|null $period
      * @return string
      */
-    public static function lastDayPeriod(int $period = null): string
+    public static function lastDayPeriod(?int $period = null): string
     {
         if ($period === null) {
             $period = date('Ym');

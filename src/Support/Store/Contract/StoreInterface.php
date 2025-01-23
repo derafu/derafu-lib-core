@@ -78,7 +78,7 @@ interface StoreInterface extends ArrayAccess
      *
      * @param string|null $key Llave que se desea eliminar.
      */
-    public function clear(string $key = null): void;
+    public function clear(?string $key = null): void;
 
     /**
      * Aplica un criterio para filtrar los elementos almacenados.

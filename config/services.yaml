@@ -16,6 +16,8 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Certificate\CertificateComponent
     Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\EntityComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Entity\EntityComponent
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\MailComponentInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Mail\MailComponent
     Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LogComponentInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Log\LogComponent
     Derafu\Lib\Core\Package\Prime\Component\Signature\Contract\SignatureComponentInterface:
@@ -39,6 +41,16 @@ services:
     Derafu\Lib\Core\Package\Prime\Component\Entity\Contract\ManagerWorkerInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Entity\Worker\ManagerWorker
 
+    # Workers del componente "prime.mail".
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\ReceiverWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Mail\Worker\ReceiverWorker
+        arguments:
+            $strategies: !tagged_iterator { tag: 'prime.mail.receiver.strategy', index_by: 'name' }
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\SenderWorkerInterface:
+        class: Derafu\Lib\Core\Package\Prime\Component\Mail\Worker\SenderWorker
+        arguments:
+            $strategies: !tagged_iterator { tag: 'prime.mail.sender.strategy', index_by: 'name' }
+
     # Workers del componente "prime.log".
     Derafu\Lib\Core\Package\Prime\Component\Log\Contract\LoggerWorkerInterface:
         class: Derafu\Lib\Core\Package\Prime\Component\Log\Worker\LoggerWorker
@@ -54,6 +66,15 @@ services:
         class: Derafu\Lib\Core\Package\Prime\Component\Template\Worker\RendererWorker
         arguments:
             $strategies: !tagged_iterator { tag: 'prime.template.renderer.strategy', index_by: 'name' }
+
+    # Estrategias del worker "prime.mail.receiver".
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Worker\Receiver\Strategy\ImapReceiverStrategy: ~
+
+    # Estrategias del worker "prime.mail.sender".
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Worker\Sender\Strategy\SmtpSenderStrategy: ~
+
+    # Servicios del componente "prime.mail".
+    Derafu\Lib\Core\Package\Prime\Component\Mail\Factory\EnvelopeFactory: ~
 
     # Estrategias del worker "prime.template.renderer".
     Derafu\Lib\Core\Package\Prime\Component\Template\Contract\Renderer\Strategy\HtmlRendererStrategyInterface:
