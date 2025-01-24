@@ -16,6 +16,7 @@ build:
           version: 8.2.1
           pecl_extensions:
             - xdebug
+            - imap
   dependencies:
     before:
       - composer install --no-progress --prefer-dist
