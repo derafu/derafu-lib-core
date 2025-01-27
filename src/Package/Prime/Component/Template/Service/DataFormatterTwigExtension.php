@@ -60,6 +60,7 @@ class DataFormatterTwigExtension extends AbstractExtension
     {
         return [
             new TwigFilter('format_as', [$this, 'format_as']),
+            new TwigFilter('to_string', [$this, 'to_string']),
         ];
     }
 
@@ -73,6 +74,19 @@ class DataFormatterTwigExtension extends AbstractExtension
     public function format_as(mixed $value, string $id): Markup
     {
         $html = $this->formatter->format($id, $value);
+
+        return new Markup($html, $this->charset);
+    }
+
+    /**
+     * Convierte un valor a string.
+     *
+     * @param mixed $value
+     * @return Markup
+     */
+    public function to_string(mixed $value): Markup
+    {
+        $html = $this->formatter->format('string', $value);
 
         return new Markup($html, $this->charset);
     }

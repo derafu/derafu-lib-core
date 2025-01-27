@@ -27,6 +27,7 @@ namespace Derafu\Lib\Core\Package\Prime\Component\Template\Service;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataFormatterInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Template\Contract\DataHandlerInterface;
 use Derafu\Lib\Core\Support\Store\Contract\RepositoryInterface;
+use Throwable;
 
 /**
  * Servicio de formateo de datos.
@@ -108,21 +109,19 @@ class DataFormatter implements DataFormatterInterface
      */
     public function format(string $id, mixed $data): string
     {
-        // Si no hay handler exacto revisar si el ID tiene partes.
-        if (!isset($this->handlers[$id])) {
-            // Si el ID tiene partes se busca si la primera parte está definida
-            // como handler.
-            if (str_contains($id, '.')) {
-                // Separar en handler e ID y si existe el formato se usa.
-                [$handler, $id] = explode('.', $id, 2);
-                if (isset($this->handlers[$handler])) {
-                    return $this->handle($handler, $id, $data);
-                }
-            }
-        }
         // El ID es el formato.
-        else {
+        if (isset($this->handlers[$id])) {
             return $this->handle($id, $id, $data);
+        }
+
+        // Si no hay handler exacto revisar si el ID tiene partes. Si el ID
+        // tiene partes se busca si la primera parte está definida como handler.
+        if (str_contains($id, '.')) {
+            // Separar en handler e ID y si existe el formato se usa.
+            [$handler, $id] = explode('.', $id, 2);
+            if (isset($this->handlers[$handler])) {
+                return $this->handle($handler, $id, $data);
+            }
         }
 
         // Buscar si hay un handler genérico (comodín).
@@ -130,13 +129,12 @@ class DataFormatter implements DataFormatterInterface
             return $this->handle('*', $id, $data);
         }
 
-        // Si no hay handler para manejar se retorna como string el valor
-        // original que se pasó casteado a string (lo que podría fallar).
-        return (string) $data;
+        // Si no hay handler para manejar se tratará de convertir a string.
+        return $this->toString($data);
     }
 
     /**
-     * Maneja el formateao de los datos según cierto handler.
+     * Maneja el formateo de los datos según cierto handler.
      *
      * @param string $name Nombre del handler registrado que se debe utilizar.
      * @param string $id Identificador pasado del formato.
@@ -155,6 +153,40 @@ class DataFormatter implements DataFormatterInterface
             } else {
                 return $this->handler->handle($id, $data);
             }
+        }
+    }
+
+    /**
+     * Hace el mejor esfuerzo para tratar de convertir los datos a string.
+     *
+     * Si falla al serializar a string se entregará un string con el tipo de
+     * dato de lo que se trató de serializar y el error por el cual falló.
+     *
+     * @param mixed $data
+     * @return string
+     */
+    private function toString(mixed $data): string
+    {
+        // Si se puede convertir fácilmente, retornar los datos casteados.
+        if (is_scalar($data) || $data === null) {
+            return (string) $data;
+        }
+
+        // Si es objeto e implementa __toString() se usa.
+        if (is_object($data) && method_exists($data, '__toString')) {
+            return (string) $data;
+        }
+
+        // Para arreglos, objetos que no tengan __toString() y otros tipos,
+        // serializar con JSON.
+        try {
+            return json_encode($data, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+        } catch (Throwable $e) {
+            return sprintf(
+                'La serialización para el tipo de dato %s falló: %s',
+                get_debug_type($data),
+                $e->getMessage()
+            );
         }
     }
 }
