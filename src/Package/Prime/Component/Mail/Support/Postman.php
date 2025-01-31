@@ -24,10 +24,10 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Mail\Support;
 
+use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\EnvelopeInterface;
 use Derafu\Lib\Core\Package\Prime\Component\Mail\Contract\PostmanInterface;
 use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
-use Derafu\Lib\Core\Support\Store\DataContainer;
 
 /**
  * Clase que representa un sobre con mensajes que se enviarán por correo
@@ -35,19 +35,14 @@ use Derafu\Lib\Core\Support\Store\DataContainer;
  */
 class Postman implements PostmanInterface
 {
+    use OptionsAwareTrait;
+
     /**
      * Sobres que el cartero transportará.
      *
      * @var EnvelopeInterface[]
      */
     private array $envelopes = [];
-
-    /**
-     * Opciones del cartero para el transporte de los sobres.
-     *
-     * @var DataContainerInterface
-     */
-    private DataContainerInterface $options;
 
     /**
      * Esquema de las opciones del cartero.
@@ -82,27 +77,5 @@ class Postman implements PostmanInterface
     public function getEnvelopes(): array
     {
         return $this->envelopes;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOptions(DataContainerInterface|array $options): static
-    {
-        if (is_array($options)) {
-            $options = new DataContainer($options, $this->optionsSchema);
-        }
-
-        $this->options = $options;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOptions(): DataContainerInterface
-    {
-        return $this->options;
     }
 }

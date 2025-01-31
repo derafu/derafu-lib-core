@@ -24,8 +24,12 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
+use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
 use Derafu\Lib\Core\Common\Trait\IdentifiableTrait;
 use Derafu\Lib\Core\Foundation\Contract\ServiceInterface;
+use Derafu\Lib\Core\Helper\Arr;
+use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
+use Derafu\Lib\Core\Support\Store\DataContainer;
 use Symfony\Component\VarExporter\LazyObjectInterface;
 
 /**
@@ -45,5 +49,47 @@ abstract class AbstractService implements ServiceInterface
         }
 
         return static::class;
+    }
+
+    /**
+     * Resuelve las opciones del servicio a partir del esquema de opciones.
+     *
+     * @param array $options
+     * @return DataContainerInterface
+     */
+    protected function resolveOptions(
+        array|DataContainerInterface $options = []
+    ): DataContainerInterface {
+        // Si las opciones que se pasaron son un contenedor de datos se extraen
+        // como arreglo.
+        if ($options instanceof DataContainerInterface) {
+            $options = $options->all();
+        }
+
+        // Si la clase implementa ConfigurableInterface se busca si tiene
+        // opciones que estén definidas en la configuración para incluir al
+        // resolver las opciones haciendo merge entre las de la configuración y
+        // las que se puedan haber pasado.
+        if ($this instanceof ConfigurableInterface) {
+            $optionsFromConfiguration = $this->getConfiguration()->get('options');
+            if ($optionsFromConfiguration) {
+                $options = Arr::mergeRecursiveDistinct(
+                    $optionsFromConfiguration,
+                    $options
+                );
+            }
+        }
+
+        // Crear un nuevo contenedor con las opciones resuelvas y validar contra
+        // el esquema de las opciones (si está definido).
+        return new DataContainer($options, $this->getOptionsSchema());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOptionsSchema(): array
+    {
+        return $this->optionsSchema ?? [];
     }
 }

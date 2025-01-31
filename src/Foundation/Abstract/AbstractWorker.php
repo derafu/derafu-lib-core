@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
 use Derafu\Lib\Core\Common\Trait\ConfigurableTrait;
-use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\HandlerInterface;
 use Derafu\Lib\Core\Foundation\Contract\JobInterface;
 use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
@@ -33,17 +32,13 @@ use Derafu\Lib\Core\Foundation\Contract\WorkerInterface;
 use Derafu\Lib\Core\Foundation\Exception\HandlerException;
 use Derafu\Lib\Core\Foundation\Exception\JobException;
 use Derafu\Lib\Core\Foundation\Exception\StrategyException;
-use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
 
 /**
  * Clase base para los workers de la aplicación.
  */
 abstract class AbstractWorker extends AbstractService implements WorkerInterface
 {
-    use ConfigurableTrait {
-        setConfiguration as setTraitConfiguration;
-    }
-    use OptionsAwareTrait;
+    use ConfigurableTrait;
 
     /**
      * Trabajos que el worker implementa.
@@ -107,27 +102,6 @@ abstract class AbstractWorker extends AbstractService implements WorkerInterface
         }
 
         return parent::getName();
-    }
-
-    /**
-     * Sobrecarga del método setConfiguration() para poder asignar
-     * automáticamente las opciones del worker que estén en la configuración del
-     * worker.
-     *
-     * @param array|DataContainerInterface $configuration
-     * @return static
-     */
-    public function setConfiguration(
-        array|DataContainerInterface $configuration
-    ): static {
-        $this->setTraitConfiguration($configuration);
-
-        $options = $this->getConfiguration()->get('options');
-        if ($options) {
-            $this->setOptions($options);
-        }
-
-        return $this;
     }
 
     /**

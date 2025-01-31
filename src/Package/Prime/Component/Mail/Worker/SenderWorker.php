@@ -57,9 +57,8 @@ class SenderWorker extends AbstractWorker implements SenderWorkerInterface
      */
     public function send(PostmanInterface $postman): array
     {
-        $options = $this->resolveOptions($postman->getOptions()->all());
+        $options = $this->resolveOptions($postman->getOptions());
         $strategy = $this->getStrategy($options->get('strategy'));
-        $strategy->setOptions($options);
 
         assert($strategy instanceof SenderStrategyInterface);
 

@@ -24,13 +24,13 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Package\Prime\Component\Mail\Contract;
 
-use Derafu\Lib\Core\Support\Store\Contract\DataContainerInterface;
+use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
 
 /**
  * Interfaz para el "cartero" que será usado para el transporte al enviar o
  * recibir los correos electrónicos.
  */
-interface PostmanInterface
+interface PostmanInterface extends OptionsAwareInterface
 {
     /**
      * Agregar un sobre al cartero.
@@ -46,19 +46,4 @@ interface PostmanInterface
      * @return EnvelopeInterface[]
      */
     public function getEnvelopes(): array;
-
-    /**
-     * Asigna las opciones para que el cartero transporte los sobres.
-     *
-     * @param DataContainerInterface|array $options
-     * @return static
-     */
-    public function setOptions(DataContainerInterface|array $options): static;
-
-    /**
-     * Obtiene las opciones que se deben usar para transportar los sobres.
-     *
-     * @return DataContainerInterface
-     */
-    public function getOptions(): DataContainerInterface;
 }

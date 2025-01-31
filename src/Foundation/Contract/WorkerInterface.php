@@ -25,14 +25,13 @@ declare(strict_types=1);
 namespace Derafu\Lib\Core\Foundation\Contract;
 
 use Derafu\Lib\Core\Common\Contract\ConfigurableInterface;
-use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
 
 /**
  * Interfaz para los workers de la aplicación.
  *
  * Coordina y ejecuta trabajos (jobs).
  */
-interface WorkerInterface extends ServiceInterface, ConfigurableInterface, OptionsAwareInterface
+interface WorkerInterface extends ServiceInterface, ConfigurableInterface
 {
     /**
      * Entrega un trabajo específico que el worker implementa.

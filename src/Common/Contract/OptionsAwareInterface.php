@@ -34,6 +34,8 @@ interface OptionsAwareInterface
     /**
      * Asigna las opciones que se deben usar en la clase.
      *
+     * Este método asigna nuevas opciones a la clase.
+     *
      * @param array|DataContainerInterface $options
      * @return static
      */
@@ -48,6 +50,9 @@ interface OptionsAwareInterface
 
     /**
      * Normaliza, y valida, las opciones de la clase.
+     *
+     * Este método resolverá las opciones haciendo merge con las que puedan
+     * haber estado asignadas previamente y asignándolas a la clase.
      *
      * @param array $options Opciones sin normalizar o validar.
      * @return DataContainerInterface Opciones normalizadas y validadas.

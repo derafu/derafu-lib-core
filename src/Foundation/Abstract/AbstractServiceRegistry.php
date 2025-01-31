@@ -32,7 +32,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 /**
  * Clase basa para registrar servicios en el contenedor de dependencias.
  */
-class AbstractServiceRegistry implements ServiceRegistryInterface
+abstract class AbstractServiceRegistry implements ServiceRegistryInterface
 {
     /**
      * Listado con las clases de los ServiceRegistry de los que este depende.

@@ -24,13 +24,11 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
-
 /**
  * Interfaz para las estrategias de los workers de la aplicación.
  *
  * Define cómo ejecutar un paso específico de un trabajo.
  */
-interface StrategyInterface extends ServiceInterface, OptionsAwareInterface
+interface StrategyInterface extends ServiceInterface
 {
 }

@@ -46,7 +46,7 @@ abstract class AbstractMailerStrategy extends AbstractStrategy implements Sender
      */
     public function send(PostmanInterface $postman): array
     {
-        $options = $this->resolveOptions($postman->getOptions()->all());
+        $options = $this->resolveOptions($postman->getOptions());
 
         $mailer = $this->createMailer($options);
 

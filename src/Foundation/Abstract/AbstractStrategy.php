@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
-use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
 
 /**
@@ -32,5 +31,4 @@ use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
  */
 abstract class AbstractStrategy extends AbstractService implements StrategyInterface
 {
-    use OptionsAwareTrait;
 }

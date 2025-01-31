@@ -24,12 +24,10 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
-
 /**
  * Interfaz para las fábricas.
  */
-interface FactoryInterface extends ServiceInterface, OptionsAwareInterface
+interface FactoryInterface extends ServiceInterface
 {
     /**
      * Crea una nueva instancia a partir de los datos pasados.

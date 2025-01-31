@@ -24,15 +24,13 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Contract;
 
-use Derafu\Lib\Core\Common\Contract\OptionsAwareInterface;
-
 /**
  * Interfaz para los handler de los workers de la aplicación.
  *
  * Orquesta y agrupa lógica compleja que puede incluir varios jobs o
  * estrategias.
  */
-interface HandlerInterface extends ServiceInterface, OptionsAwareInterface
+interface HandlerInterface extends ServiceInterface
 {
     // Esta interfaz deberá ser extendida definiendo específicamente cada
     // método handle() con sus tipos de argumentos y tipo de retorno.

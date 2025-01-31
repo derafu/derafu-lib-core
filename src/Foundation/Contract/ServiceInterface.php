@@ -31,4 +31,13 @@ use Derafu\Lib\Core\Common\Contract\IdentifiableInterface;
  */
 interface ServiceInterface extends IdentifiableInterface
 {
+    /**
+     * Obtiene el esquema de las opciones del servicio.
+     *
+     * Si el servicio no implementa opciones mediante la definición de un
+     * esquema se entregará un arreglo vacío.
+     *
+     * @return array
+     */
+    public function getOptionsSchema(): array;
 }

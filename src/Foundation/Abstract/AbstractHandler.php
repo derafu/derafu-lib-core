@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
-use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\HandlerInterface;
 use Derafu\Lib\Core\Foundation\Contract\StrategyInterface;
 use Derafu\Lib\Core\Foundation\Exception\StrategyException;
@@ -34,8 +33,6 @@ use Derafu\Lib\Core\Foundation\Exception\StrategyException;
  */
 abstract class AbstractHandler extends AbstractService implements HandlerInterface
 {
-    use OptionsAwareTrait;
-
     /**
      * Estrategias que el handler del worker puede utilizar.
      *

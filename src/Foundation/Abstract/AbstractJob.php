@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace Derafu\Lib\Core\Foundation\Abstract;
 
-use Derafu\Lib\Core\Common\Trait\OptionsAwareTrait;
 use Derafu\Lib\Core\Foundation\Contract\JobInterface;
 
 /**
@@ -32,5 +31,4 @@ use Derafu\Lib\Core\Foundation\Contract\JobInterface;
  */
 abstract class AbstractJob extends AbstractService implements JobInterface
 {
-    use OptionsAwareTrait;
 }

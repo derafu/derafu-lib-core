@@ -52,7 +52,7 @@ abstract class AbstractMailboxStrategy extends AbstractStrategy implements Recei
      */
     public function receive(PostmanInterface $postman): array
     {
-        $options = $this->resolveOptions($postman->getOptions()->all());
+        $options = $this->resolveOptions($postman->getOptions());
 
         $mailbox = $this->createMailbox($options);
 
